@@ -49,13 +49,14 @@ function wit_fight:draw_background()
 end
 
 function wit_fight:draw_characters()
-  visual_data.sprites.player_character:render(vector(19, 78))
+  visual_data.sprites.pc:render(vector(19, 78))
   visual_data.sprites.npc1:render(vector(86, 78))
 end
 
 function wit_fight:draw_hud()
   wit_fight:draw_bottom_box()
   wit_fight:draw_health_bars()
+  wit_fight:draw_quote_bubble()
 end
 
 function wit_fight:draw_bottom_box()
@@ -68,6 +69,16 @@ function wit_fight:draw_health_bars()
 
   -- npc health
   ui.draw_box(96, 42, 100, 78, colors.dark_blue, colors.blue)
+end
+
+function wit_fight:draw_quote_bubble()
+  ui.draw_rounded_box(5, 20, 123, 34, colors.black, colors.white)
+
+  -- draw bubble tail
+  local pc_bubble_tail_tip = vector(21, 38)
+  local npc_bubble_tail_tip = vector(84, 38)
+  visual_data.sprites.bubble_tail:render(pc_bubble_tail_tip)
+  visual_data.sprites.bubble_tail:render(npc_bubble_tail_tip)
 end
 
 return wit_fight
