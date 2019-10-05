@@ -4,19 +4,19 @@ local flow = require("engine/application/flow")
 local input = require("engine/input/input")
 local ui = require("engine/ui/ui")
 
-local menu_item = require("menu/menu_item")
-
 -- text menu: class representing a menu with labels and arrow-based navigation
 local text_menu = new_class()
 
 -- parameters
 -- items: {menu_item}      sequence of items to display
+-- alignment: alignments   text alignment to use for item display
 --
 -- state
 -- selection_index: int    index of the item currently selected
-function text_menu:_init(items)
+function text_menu:_init(items, alignment)
   -- parameters
   self.items = items
+  self.alignment = alignment
 
   -- state
   self.selection_index = 1
@@ -50,16 +50,23 @@ function text_menu:confirm_selection()
 end
 
 -- render menu, starting at top y, with text centered on x
-function text_menu:draw(top, x)
+function text_menu:draw(x, top)
   local y = top
 
   for i = 1, #self.items do
     -- for current selection, surround with "> <" like this: "> selected item <"
     local label = self.items[i].label
     if i == self.selection_index then
-      label = "> "..label.." <"
+      if self.alignment == alignments.left then
+        label = "> "..label
+      elseif self.alignment == alignments.center then
+        label = "> "..label.." <"
+      end
     end
-    ui.print_centered(label, x, y, colors.white)
+    print("label:"..label)
+    print("x:"..tostr(x))
+    print("y:"..tostr(y))
+    ui.print_aligned(label, x, y, self.alignment, colors.white)
     y = y + character_height
   end
 end

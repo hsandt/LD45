@@ -77,7 +77,7 @@ describe('main_menu', function ()
 
         local s = assert.spy(text_menu.draw)
         s.was_called(1)
-        s.was_called_with(match.ref(menu.text_menu), 56 + 4 * 6, 64)
+        s.was_called_with(match.ref(menu.text_menu), 64, 56 + 4 * 6)
       end)
 
     end)

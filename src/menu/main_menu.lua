@@ -19,7 +19,7 @@ main_menu._items = transform({
 
 -- text_menu: text_menu    component handling menu display and selection
 function main_menu:_init()
-  self.text_menu = text_menu(main_menu._items)
+  self.text_menu = text_menu(main_menu._items, alignments.center)
 end
 
 function main_menu:on_enter()
@@ -43,7 +43,7 @@ function main_menu:render()
   y = y + 4 * character_height
 
   -- skip 4 lines and draw menu content
-  self.text_menu:draw(y, screen_width / 2)
+  self.text_menu:draw(screen_width / 2, y)
 end
 
 return main_menu

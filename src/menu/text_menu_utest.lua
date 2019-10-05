@@ -11,11 +11,14 @@ local menu_item = require("menu/menu_item")
 describe('text_menu', function ()
 
   describe('init', function ()
-    it('should set passed items and set selection index to 1', function ()
-      local menu = text_menu({menu_item("credits", ':credits')})
 
-      assert.are_same({{menu_item("credits", ':credits')}, 1}, {menu.items, menu.selection_index})
+    it('should set passed items and alignment, and set selection index to 1', function ()
+      local menu = text_menu({menu_item("credits", ':credits')}, alignments.left)
+
+      assert.are_same({{menu_item("credits", ':credits')}, alignments.left, 1},
+        {menu.items, menu.alignment, menu.selection_index})
     end)
+
   end)
 
   describe('(with instance)', function ()
@@ -26,7 +29,7 @@ describe('text_menu', function ()
       menu = text_menu({
         menu_item("in-game", ':ingame'),
         menu_item("credits", ':credits')
-      })
+      }, alignments.left)
     end)
 
     describe('update', function ()
@@ -156,21 +159,38 @@ describe('text_menu', function ()
     describe('draw', function ()
 
       setup(function ()
-        stub(ui, "print_centered")
+        stub(ui, "print_aligned")
       end)
 
       teardown(function ()
-        ui.print_centered:revert()
+        ui.print_aligned:revert()
       end)
 
-      it('should print the item labels from a given top, centered on x, on lines of 6px height, with current selection surrounded by "> <"', function ()
-        menu.selection_index = 2  -- credits
-        menu:draw(48, 60)
+      after_each(function ()
+        ui.print_aligned:clear()
+      end)
 
-        local s = assert.spy(ui.print_centered)
+      it('should print the item labels from a given top, passed alignment, on lines of 6px height, with current selection prepended by ">" for left alignment', function ()
+        menu.selection_index = 2  -- credits
+
+        menu:draw(60, 48)
+
+        local s = assert.spy(ui.print_aligned)
         s.was_called(2)
-        s.was_called_with("in-game", 60, 48, colors.white)
-        s.was_called_with("> credits <", 60, 54, colors.white)
+        s.was_called_with("in-game", 60, 48, alignments.left, colors.white)
+        s.was_called_with("> credits", 60, 54, alignments.left, colors.white)
+      end)
+
+      it('should print the item labels from a given top, passed alignment, on lines of 6px height, with current selection surrounded by "> <" for centered alignment', function ()
+        menu.alignment = alignments.center
+        menu.selection_index = 2  -- credits
+
+        menu:draw(60, 48)
+
+        local s = assert.spy(ui.print_aligned)
+        s.was_called(2)
+        s.was_called_with("in-game", 60, 48, alignments.center, colors.white)
+        s.was_called_with("> credits <", 60, 54, alignments.center, colors.white)
       end)
 
     end)
