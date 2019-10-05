@@ -54,21 +54,15 @@ function wit_fight:draw_characters()
 end
 
 function wit_fight:draw_hud()
-  wit_fight:draw_bottom_box()
-  wit_fight:draw_health_bars()
+  wit_fight:draw_floor_number()
   wit_fight:draw_quote_bubble()
+  wit_fight:draw_health_bars()
+  wit_fight:draw_bottom_box()
 end
 
-function wit_fight:draw_bottom_box()
-  ui.draw_rounded_box(0, 89, 127, 127, colors.dark_blue, colors.indigo)
-end
-
-function wit_fight:draw_health_bars()
-  -- player character health
-  ui.draw_box(5, 42, 9, 78, colors.dark_blue, colors.blue)
-
-  -- npc health
-  ui.draw_box(96, 42, 100, 78, colors.dark_blue, colors.blue)
+function wit_fight:draw_floor_number()
+  ui.draw_box(43, 1, 84, 9, colors.black, colors.orange)
+  ui.print_centered("floor 12", 64, 6, colors.black)
 end
 
 function wit_fight:draw_quote_bubble()
@@ -79,6 +73,21 @@ function wit_fight:draw_quote_bubble()
   local npc_bubble_tail_tip = vector(84, 38)
   visual_data.sprites.bubble_tail:render(pc_bubble_tail_tip)
   visual_data.sprites.bubble_tail:render(npc_bubble_tail_tip)
+
+  -- draw demo text
+  api.print("1234567890123456789012345678!\n1234567890123456789012345678!", 7, 22, colors.black)
+end
+
+function wit_fight:draw_health_bars()
+  -- player character health
+  ui.draw_box(5, 42, 9, 78, colors.dark_blue, colors.blue)
+
+  -- npc health
+  ui.draw_box(96, 42, 100, 78, colors.dark_blue, colors.blue)
+end
+
+function wit_fight:draw_bottom_box()
+  ui.draw_rounded_box(0, 89, 127, 127, colors.dark_blue, colors.indigo)
 end
 
 return wit_fight
