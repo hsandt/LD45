@@ -55,10 +55,19 @@ end
 
 function wit_fight:draw_hud()
   wit_fight:draw_bottom_box()
+  wit_fight:draw_health_bars()
 end
 
 function wit_fight:draw_bottom_box()
   ui.draw_rounded_box(0, 89, 127, 127, colors.dark_blue, colors.indigo)
+end
+
+function wit_fight:draw_health_bars()
+  -- player character health
+  ui.draw_box(5, 42, 9, 78, colors.dark_blue, colors.blue)
+
+  -- npc health
+  ui.draw_box(96, 42, 100, 78, colors.dark_blue, colors.blue)
 end
 
 return wit_fight
