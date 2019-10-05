@@ -163,14 +163,14 @@ describe('text_menu', function ()
         ui.print_centered:revert()
       end)
 
-      it('should print the item labels from a given top, on lines of 6px height, with current selection surrounded by "> <"', function ()
+      it('should print the item labels from a given top, centered on x, on lines of 6px height, with current selection surrounded by "> <"', function ()
         menu.selection_index = 2  -- credits
-        menu:draw(48)
+        menu:draw(48, 60)
 
         local s = assert.spy(ui.print_centered)
         s.was_called(2)
-        s.was_called_with("in-game", 64, 48, colors.white)
-        s.was_called_with("> credits <", 64, 54, colors.white)
+        s.was_called_with("in-game", 60, 48, colors.white)
+        s.was_called_with("> credits <", 60, 54, colors.white)
       end)
 
     end)

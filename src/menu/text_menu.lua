@@ -50,7 +50,7 @@ function text_menu:confirm_selection()
 end
 
 -- render menu, starting at top y, with text centered on x
-function text_menu:draw(top)
+function text_menu:draw(top, x)
   local y = top
 
   for i = 1, #self.items do
@@ -59,7 +59,7 @@ function text_menu:draw(top)
     if i == self.selection_index then
       label = "> "..label.." <"
     end
-    ui.print_centered(label, screen_width / 2, y, colors.white)
+    ui.print_centered(label, x, y, colors.white)
     y = y + character_height
   end
 end

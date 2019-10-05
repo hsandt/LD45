@@ -72,12 +72,12 @@ describe('main_menu', function ()
         s.was_called_with("by komehara", 64, 56, colors.white)
       end)
 
-      it('should draw text_menu 4 lines below title + author', function ()
+      it('should draw text_menu 4 lines below title + author, in the middle of screen width', function ()
         menu:render()
 
         local s = assert.spy(text_menu.draw)
         s.was_called(1)
-        s.was_called_with(match.ref(menu.text_menu), 56 + 4 * 6)
+        s.was_called_with(match.ref(menu.text_menu), 56 + 4 * 6, 64)
       end)
 
     end)

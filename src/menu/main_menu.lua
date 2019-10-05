@@ -43,7 +43,7 @@ function main_menu:render()
   y = y + 4 * character_height
 
   -- skip 4 lines and draw menu content
-  self.text_menu:draw(y)
+  self.text_menu:draw(y, screen_width / 2)
 end
 
 return main_menu
