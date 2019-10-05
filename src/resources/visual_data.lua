@@ -5,15 +5,11 @@ require("engine/render/color")
 
 local sprites = {
   cursor = sprite_data(sprite_id_location(1, 0)),
-  -- ex:
-  -- gem = {
-  --   idle   = sprite_data(sprite_id_location(0, 1), nil, vector(4, 4), colors.peach),
-  --   idle1  = sprite_data(sprite_id_location(1, 1), nil, vector(4, 4), colors.peach),  -- glitter +
-  --   idle2  = sprite_data(sprite_id_location(2, 1), nil, vector(4, 4), colors.peach),  -- glitter x
-  --   spin1  = sprite_data(sprite_id_location(0, 2), nil, vector(4, 4), colors.peach),
-  --   spin2  = sprite_data(sprite_id_location(1, 2), nil, vector(4, 4), colors.peach),
-  --   spin3  = sprite_data(sprite_id_location(2, 2), nil, vector(4, 4), colors.peach),
-  -- }
+  upper_stairs_step1 = sprite_data(sprite_id_location(0, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
+  upper_stairs_step2 = sprite_data(sprite_id_location(1, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
+  lower_stairs_step  = sprite_data(sprite_id_location(2, 1), tile_vector(1, 2), vector(0, 0), colors.pink),
+  player_character   = sprite_data(sprite_id_location(0, 6), tile_vector(2, 5), vector(6, 39), colors.pink),
+  npc1               = sprite_data(sprite_id_location(2, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
 }
 
 local anim_sprites = {
