@@ -4,11 +4,15 @@ local animated_sprite_data = require("engine/render/animated_sprite_data")
 require("engine/render/color")
 
 local sprites = {
+  -- ui
   cursor = sprite_data(sprite_id_location(1, 0)),
+  bubble_tail = sprite_data(sprite_id_location(2, 0), nil, vector(3, 7), colors.pink),
+  -- background
   upper_stairs_step1 = sprite_data(sprite_id_location(0, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
   upper_stairs_step2 = sprite_data(sprite_id_location(1, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
   lower_stairs_step  = sprite_data(sprite_id_location(2, 1), tile_vector(1, 2), vector(0, 0), colors.pink),
-  player_character   = sprite_data(sprite_id_location(0, 6), tile_vector(2, 5), vector(6, 39), colors.pink),
+  -- characters
+  pc                 = sprite_data(sprite_id_location(0, 6), tile_vector(2, 5), vector(6, 39), colors.pink),
   npc1               = sprite_data(sprite_id_location(2, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
 }
 
