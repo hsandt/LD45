@@ -12,11 +12,11 @@ describe('text_menu', function ()
 
   describe('init', function ()
 
-    it('should set passed items and alignment, and set selection index to 1', function ()
-      local menu = text_menu({menu_item("credits", ':credits')}, alignments.left)
+    it('should set passed items, alignment and color, and set selection index to 1', function ()
+      local menu = text_menu({menu_item("credits", ':credits')}, alignments.left, colors.red)
 
-      assert.are_same({{menu_item("credits", ':credits')}, alignments.left, 1},
-        {menu.items, menu.alignment, menu.selection_index})
+      assert.are_same({{menu_item("credits", ':credits')}, alignments.left, colors.red, 1},
+        {menu.items, menu.alignment, menu.text_color, menu.selection_index})
     end)
 
   end)
@@ -31,7 +31,7 @@ describe('text_menu', function ()
       menu = text_menu({
         menu_item("in-game", callback1),
         menu_item("credits", callback2)
-      }, alignments.left)
+      }, alignments.left, colors.red)
     end)
 
     describe('update', function ()
@@ -175,8 +175,8 @@ describe('text_menu', function ()
         local s = assert.spy(ui.print_aligned)
         s.was_called(2)
         -- non-selected item is offset to the right
-        s.was_called_with("in-game", 68, 48, alignments.left, colors.white)
-        s.was_called_with("> credits", 60, 54, alignments.left, colors.white)
+        s.was_called_with("in-game", 68, 48, alignments.left, colors.red)
+        s.was_called_with("> credits", 60, 54, alignments.left, colors.red)
       end)
 
       it('should print the item labels from a given top, passed alignment, on lines of 6px height, with current selection surrounded by "> <" for centered alignment', function ()
@@ -187,8 +187,8 @@ describe('text_menu', function ()
 
         local s = assert.spy(ui.print_aligned)
         s.was_called(2)
-        s.was_called_with("in-game", 60, 48, alignments.center, colors.white)
-        s.was_called_with("> credits <", 60, 54, alignments.center, colors.white)
+        s.was_called_with("in-game", 60, 48, alignments.center, colors.red)
+        s.was_called_with("> credits <", 60, 54, alignments.center, colors.red)
       end)
 
     end)

@@ -20,7 +20,7 @@ main_menu._items = transform({
 
 -- text_menu: text_menu    component handling menu display and selection
 function main_menu:_init()
-  self.text_menu = text_menu(main_menu._items, alignments.center)
+  self.text_menu = text_menu(main_menu._items, alignments.center, colors.white)
 end
 
 function main_menu:on_enter()

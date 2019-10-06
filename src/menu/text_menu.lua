@@ -9,13 +9,15 @@ local text_menu = new_class()
 -- parameters
 -- items: {menu_item}      sequence of items to display
 -- alignment: alignments   text alignment to use for item display
+-- text_color: colors      item text color
 --
 -- state
 -- selection_index: int    index of the item currently selected
-function text_menu:_init(items, alignment)
+function text_menu:_init(items, alignment, text_color)
   -- parameters
   self.items = items
   self.alignment = alignment
+  self.text_color = text_color
 
   -- state
   self.selection_index = 1
@@ -70,7 +72,7 @@ function text_menu:draw(x, top)
        end
     end
 
-    ui.print_aligned(label, item_x, y, self.alignment, colors.white)
+    ui.print_aligned(label, item_x, y, self.alignment, self.text_color)
     y = y + character_height
   end
 end

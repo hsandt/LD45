@@ -1,5 +1,6 @@
 local gamestate = require("engine/application/gamestate")
 require("engine/core/class")
+require("engine/render/color")
 local ui = require("engine/ui/ui")
 
 local menu_item = require("menu/menu_item")
@@ -15,7 +16,7 @@ wit_fight.type = ':wit_fight'
 -- quote_menu  text_menu  to select next quote to say
 function wit_fight:_init()
   -- menu items will be filled dynamically
-  self.quote_menu = text_menu({}, alignments.left)
+  self.quote_menu = text_menu({}, alignments.left, colors.dark_blue)
 end
 
 function wit_fight:on_enter()
