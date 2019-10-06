@@ -4,7 +4,7 @@
 # Pass any extra arguments to pico8
 
 # Configuration: cartridge
-cartridge_stem="wit_fight_itest_all"
+cartridge_stem="wit_fighter_itest_all"
 version="0.1"
 
 run_cmd="pico8 -run build/${cartridge_stem}_v${version}_debug.p8 -screenshot_scale 4 -gif_scale 4 $@"

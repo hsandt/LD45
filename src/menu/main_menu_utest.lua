@@ -63,12 +63,12 @@ describe('main_menu', function ()
         text_menu.draw:clear()
       end)
 
-      it('should print "wit fight by komehara" centered, in white', function ()
+      it('should print "wit fighter by komehara" centered, in white', function ()
         menu:render()
 
         local s = assert.spy(ui.print_centered)
         s.was_called(2)
-        s.was_called_with("wit fight", 64, 48, colors.white)
+        s.was_called_with("wit fighter", 64, 48, colors.white)
         s.was_called_with("by komehara", 64, 56, colors.white)
       end)
 

@@ -11,8 +11,8 @@ build_output_path="$(dirname "$0")/build"
 
 # Configuration: cartridge
 author="hsandt"
-title="wit fight"
-cartridge_stem="wit_fight"
+title="wit fighter"
+cartridge_stem="wit_fighter"
 version="0.1"
 
 help() {

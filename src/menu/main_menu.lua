@@ -36,7 +36,7 @@ end
 
 function main_menu:render()
   local y = 48
-  ui.print_centered("wit fight", 64, y, colors.white)
+  ui.print_centered("wit fighter", 64, y, colors.white)
   y = y + 8
   ui.print_centered("by komehara", 64, y, colors.white)
   y = y + 4 * character_height

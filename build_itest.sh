@@ -14,8 +14,8 @@ build_output_path="$(dirname "$0")/build"
 
 # Configuration: cartridge
 author="hsandt"
-title="wit fight itests (all)"
-cartridge_stem="wit_fight_itest_all"
+title="wit fighter itests (all)"
+cartridge_stem="wit_fighter_itest_all"
 version="0.1"
 config='debug'
 symbols='assert,log,visual_logger,tuner,profiler,mouse,itest'
