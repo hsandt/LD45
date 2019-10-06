@@ -1,8 +1,9 @@
 local floor_info = require("content/floor_info")
 local npc_info = require("content/npc_info")
 local quote_info = require("content/quote_info")
+local quote_match_info = require("content/quote_match_info")
 
-local quotes = {
+local attacks = {
   quote( 1, quote_types.attack, 1, "attack 1!"),
   quote( 2, quote_types.attack, 1, "attack 2!"),
   quote( 3, quote_types.attack, 1, "attack 3!"),
@@ -18,21 +19,29 @@ local quotes = {
   quote(13, quote_types.attack, 5, "attack 13!"),
   quote(14, quote_types.attack, 6, "attack 14!"),
   quote(15, quote_types.attack, 6, "attack 15!"),
-  quote(16, quote_types.reply,  1, "reply 1!"),
-  quote(17, quote_types.reply,  1, "reply 2!"),
-  quote(18, quote_types.reply,  1, "reply 3!"),
-  quote(19, quote_types.reply,  2, "reply 4!"),
-  quote(20, quote_types.reply,  2, "reply 5!"),
-  quote(21, quote_types.reply,  3, "reply 6!"),
-  quote(22, quote_types.reply,  3, "reply 7!"),
-  quote(23, quote_types.reply,  3, "reply 8!"),
-  quote(24, quote_types.reply,  4, "reply 9!"),
-  quote(25, quote_types.reply,  4, "reply 10!"),
-  quote(26, quote_types.reply,  5, "reply 11!"),
-  quote(27, quote_types.reply,  5, "reply 12!"),
-  quote(28, quote_types.reply,  5, "reply 13!"),
-  quote(29, quote_types.reply,  6, "reply 14!"),
-  quote(30, quote_types.reply,  6, "reply 15!"),
+}
+
+local replies = {
+  quote( 1, quote_types.reply,  1, "reply 1!"),
+  quote( 2, quote_types.reply,  1, "reply 2!"),
+  quote( 3, quote_types.reply,  1, "reply 3!"),
+  quote( 4, quote_types.reply,  2, "reply 4!"),
+  quote( 5, quote_types.reply,  2, "reply 5!"),
+  quote( 6, quote_types.reply,  3, "reply 6!"),
+  quote( 7, quote_types.reply,  3, "reply 7!"),
+  quote( 8, quote_types.reply,  3, "reply 8!"),
+  quote( 9, quote_types.reply,  4, "reply 9!"),
+  quote(10, quote_types.reply,  4, "reply 10!"),
+  quote(11, quote_types.reply,  5, "reply 11!"),
+  quote(12, quote_types.reply,  5, "reply 12!"),
+  quote(13, quote_types.reply,  5, "reply 13!"),
+  quote(14, quote_types.reply,  6, "reply 14!"),
+  quote(15, quote_types.reply,  6, "reply 15!"),
+}
+
+local quote_matches = {
+  quote_match_info(1, 1),
+  quote_match_info(2, 2),
 }
 
 local floors = {
@@ -72,6 +81,9 @@ local npcs = {
 }
 
 local gameplay_data = {
+  attacks = attacks,
+  replies = replies,
+  quote_matches = quote_matches,
   floors = floors,
   npcs = npcs
 }
