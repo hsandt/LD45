@@ -13,7 +13,15 @@ local sprites = {
   lower_stairs_step  = sprite_data(sprite_id_location(2, 1), tile_vector(1, 2), vector(0, 0), colors.pink),
   -- characters
   pc                 = sprite_data(sprite_id_location(0, 6), tile_vector(2, 5), vector(6, 39), colors.pink),
-  npc1               = sprite_data(sprite_id_location(2, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
+  npc = {
+    [1] = sprite_data(sprite_id_location(2, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
+    [2] = sprite_data(sprite_id_location(4, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
+    [3] = sprite_data(sprite_id_location(6, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
+    [4] = sprite_data(sprite_id_location(8, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
+    [5] = sprite_data(sprite_id_location(10, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
+    [6] = sprite_data(sprite_id_location(12, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
+    [7] = sprite_data(sprite_id_location(14, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
+  }
 }
 
 local anim_sprites = {
