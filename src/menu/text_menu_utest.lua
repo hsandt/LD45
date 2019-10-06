@@ -174,7 +174,8 @@ describe('text_menu', function ()
 
         local s = assert.spy(ui.print_aligned)
         s.was_called(2)
-        s.was_called_with("in-game", 60, 48, alignments.left, colors.white)
+        -- non-selected item is offset to the right
+        s.was_called_with("in-game", 68, 48, alignments.left, colors.white)
         s.was_called_with("> credits", 60, 54, alignments.left, colors.white)
       end)
 

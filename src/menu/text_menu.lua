@@ -55,14 +55,22 @@ function text_menu:draw(x, top)
   for i = 1, #self.items do
     -- for current selection, surround with "> <" like this: "> selected item <"
     local label = self.items[i].label
+    local item_x = x
+
     if i == self.selection_index then
       if self.alignment == alignments.left then
         label = "> "..label
       elseif self.alignment == alignments.center then
         label = "> "..label.." <"
       end
+    else
+      -- if left aligned, move non-selected items to the right to align with selected item
+       if self.alignment == alignments.left then
+         item_x = item_x + 2 * character_width  -- "> " has 2 characters
+       end
     end
-    ui.print_aligned(label, x, y, self.alignment, colors.white)
+
+    ui.print_aligned(label, item_x, y, self.alignment, colors.white)
     y = y + character_height
   end
 end
