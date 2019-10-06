@@ -24,7 +24,7 @@ function _init()
   wit_fight_app:start()
 end
 
-function _update60()
+function _update()
   wit_fight_app:update()
 end
 
