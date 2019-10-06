@@ -35,8 +35,8 @@ function wit_fight:on_enter()
   self:start_fight_with_random_npc()
 
   -- for text demo
-  add(self.quote_menu.items, menu_item("demo quote", function ()
-    printh("test demo quote menu")
+  add(self.quote_menu.items, menu_item("reply 12", function ()
+    self:pc_say_quote(gameplay_data.replies[12])
   end))
   add(self.quote_menu.items, menu_item("demo quote 2", function ()
     printh("test demo quote menu 2")
@@ -93,11 +93,12 @@ end
 
 function wit_fight:pc_say_quote(quote_info)
   self.pc_quote = quote_info
-    -- api.print("1234567890123456789012345678!\n1234567890123456789012345678!", 7, 22, colors.black)
+  self.npc_quote = nil
 end
 
 function wit_fight:npc_say_quote(quote_info)
   self.npc_quote = quote_info
+  self.pc_quote = nil
 end
 
 -- render

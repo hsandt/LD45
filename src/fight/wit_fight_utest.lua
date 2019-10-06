@@ -5,6 +5,7 @@ local ui = require("engine/ui/ui")
 
 local floor_info = require("content/floor_info")
 local npc_info = require("content/npc_info")
+local quote_info = require("content/quote_info")
 local text_menu = require("menu/text_menu")
 local gameplay_data = require("resources/gameplay_data")
 
@@ -219,6 +220,54 @@ describe('wit_fight', function ()
 
   end)
 
+  describe('pc_say_quote', function ()
+
+    local mock_quote_info = quote_info(7, 4, quote_types.reply, "mock quote")
+
+    setup(function ()
+    end)
+
+    teardown(function ()
+    end)
+
+    after_each(function ()
+    end)
+
+    it('should set the pc quote and reset the npc quote', function ()
+      state.npc_quote = mock_quote_info
+
+      state:pc_say_quote(mock_quote_info)
+
+      assert.are_equal(mock_quote_info, state.pc_quote)
+      assert.is_nil(state.npc_quote)
+    end)
+
+  end)
+
+  describe('npc_say_quote', function ()
+
+    local mock_quote_info = quote_info(7, 4, quote_types.reply, "mock quote")
+
+    setup(function ()
+    end)
+
+    teardown(function ()
+    end)
+
+    after_each(function ()
+    end)
+
+    it('should set the npc quote and reset the pc quote', function ()
+      state.pc_quote = mock_quote_info
+
+      state:npc_say_quote(mock_quote_info)
+
+      assert.are_equal(mock_quote_info, state.npc_quote)
+      assert.is_nil(state.pc_quote)
+    end)
+
+  end)
+
   describe('draw_background', function ()
     it('should not error', function ()
       assert.has_no_errors(function ()
@@ -249,7 +298,27 @@ describe('wit_fight', function ()
 
   describe('draw_hud', function ()
 
-    local mock_npc_info = npc_info(7, "employee", 4, {11, 27})
+    it('should not error', function ()
+      assert.has_no_errors(function ()
+        state:draw_hud()
+      end)
+    end)
+
+  end)
+
+  describe('draw_floor_number', function ()
+
+    it('should not error', function ()
+      assert.has_no_errors(function ()
+        state:draw_floor_number()
+      end)
+    end)
+
+  end)
+
+  describe('draw_quote_bubble', function ()
+
+    local mock_quote_info = quote_info(7, 4, quote_types.reply, "mock quote")
 
     it('should not error', function ()
       assert.has_no_errors(function ()
@@ -257,11 +326,59 @@ describe('wit_fight', function ()
       end)
     end)
 
+    it('should not error with pc quote set', function ()
+      state.pc_quote = mock_quote_info
+
+      assert.has_no_errors(function ()
+        state:draw_quote_bubble()
+      end)
+    end)
+
+    it('should not error with npc quote set', function ()
+      state.npc_quote = mock_quote_info
+
+      assert.has_no_errors(function ()
+        state:draw_quote_bubble()
+      end)
+    end)
+
+  end)
+
+  describe('draw_health_bars', function ()
+
+    it('should not error', function ()
+      assert.has_no_errors(function ()
+        state:draw_health_bars()
+      end)
+    end)
+
+  end)
+
+  describe('draw_bottom_box', function ()
+
+    it('should not error', function ()
+      assert.has_no_errors(function ()
+        state:draw_bottom_box()
+      end)
+    end)
+
+  end)
+
+  describe('draw_npc_label', function ()
+
+    local mock_npc_info = npc_info(7, "employee", 4, {11, 27})
+
+    it('should not error', function ()
+      assert.has_no_errors(function ()
+        state:draw_npc_label()
+      end)
+    end)
+
     it('should not error with npc info set', function ()
       state.npc_info = mock_npc_info
 
       assert.has_no_errors(function ()
-        state:draw_hud()
+        state:draw_npc_label()
       end)
     end)
 
