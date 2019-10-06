@@ -1,10 +1,12 @@
 local gamestate = require("engine/application/gamestate")
 require("engine/core/class")
+require("engine/core/math")
 require("engine/render/color")
 local ui = require("engine/ui/ui")
 
 local menu_item = require("menu/menu_item")
 local text_menu = require("menu/text_menu")
+local gameplay_data = require("resources/gameplay_data")
 local visual_data = require("resources/visual_data")
 
 -- wit fight: in-game gamestate for fighting an opponent
@@ -13,13 +15,18 @@ local wit_fight = derived_class(gamestate)
 wit_fight.type = ':wit_fight'
 
 -- state
--- quote_menu  text_menu  to select next quote to say
+-- floor_number  int        current floor the player character is on
+-- quote_menu    text_menu  to select next quote to say
 function wit_fight:_init()
+  self.floor_number = 1
+
   -- menu items will be filled dynamically
   self.quote_menu = text_menu({}, alignments.left, colors.dark_blue)
 end
 
 function wit_fight:on_enter()
+  self:start_fight_with_random_npc()
+
   -- for text demo
   add(self.quote_menu.items, menu_item("demo quote", function ()
     printh("test demo quote menu")
@@ -41,6 +48,42 @@ function wit_fight:render()
   self:draw_characters()
   self:draw_hud()
 end
+
+-- flow
+
+function wit_fight:start_fight_with_random_npc()
+  local random_npc_info = self:pick_non_recent_random_npc_info()
+  self:start_fight_with(random_npc_info)
+end
+
+function wit_fight:pick_non_recent_random_npc_info()
+  local candidate_npc_info_s = self:get_candidate_npc_info_sequence()
+  return pick_random(candidate_npc_info_s)
+end
+
+function wit_fight:get_candidate_npc_info_sequence()
+  local floor_info = gameplay_data:get_floor_info(self.floor_number)
+
+  local candidate_npc_info_s = {}
+  for level = floor_info.npc_level_min, floor_info.npc_level_max do
+    local npc_info_s = gameplay_data:get_npc_info_table_with_level(level)
+    for npc_info in all(npc_info_s) do
+      add(candidate_npc_info_s, npc_info)
+    end
+  end
+
+  return candidate_npc_info_s
+end
+
+function wit_fight:start_fight_with(npc_info)
+  printh("start fight with: "..npc_info.name)
+  -- load npc sprite
+  -- local random_npc_info = self:pick_non_recent_random_npc_info()
+  -- self:start_fight_with()
+  -- start battle flow
+end
+
+-- render
 
 function wit_fight:draw_background()
   -- wall
@@ -77,7 +120,7 @@ end
 
 function wit_fight:draw_floor_number()
   ui.draw_box(43, 1, 84, 9, colors.black, colors.orange)
-  ui.print_centered("floor 12", 64, 6, colors.black)
+  ui.print_centered("floor "..tostr(self.floor_number), 64, 6, colors.black)
 end
 
 function wit_fight:draw_quote_bubble()

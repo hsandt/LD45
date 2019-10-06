@@ -4,39 +4,39 @@ local quote_info = require("content/quote_info")
 local quote_match_info = require("content/quote_match_info")
 
 local attacks = {
-  quote( 1, quote_types.attack, 1, "attack 1!"),
-  quote( 2, quote_types.attack, 1, "attack 2!"),
-  quote( 3, quote_types.attack, 1, "attack 3!"),
-  quote( 4, quote_types.attack, 2, "attack 4!"),
-  quote( 5, quote_types.attack, 2, "attack 5!"),
-  quote( 6, quote_types.attack, 3, "attack 6!"),
-  quote( 7, quote_types.attack, 3, "attack 7!"),
-  quote( 8, quote_types.attack, 3, "attack 8!"),
-  quote( 9, quote_types.attack, 4, "attack 9!"),
-  quote(10, quote_types.attack, 4, "attack 10!"),
-  quote(11, quote_types.attack, 5, "attack 11!"),
-  quote(12, quote_types.attack, 5, "attack 12!"),
-  quote(13, quote_types.attack, 5, "attack 13!"),
-  quote(14, quote_types.attack, 6, "attack 14!"),
-  quote(15, quote_types.attack, 6, "attack 15!"),
+  quote_info( 1, quote_types.attack, 1, "attack 1!"),
+  quote_info( 2, quote_types.attack, 1, "attack 2!"),
+  quote_info( 3, quote_types.attack, 1, "attack 3!"),
+  quote_info( 4, quote_types.attack, 2, "attack 4!"),
+  quote_info( 5, quote_types.attack, 2, "attack 5!"),
+  quote_info( 6, quote_types.attack, 3, "attack 6!"),
+  quote_info( 7, quote_types.attack, 3, "attack 7!"),
+  quote_info( 8, quote_types.attack, 3, "attack 8!"),
+  quote_info( 9, quote_types.attack, 4, "attack 9!"),
+  quote_info(10, quote_types.attack, 4, "attack 10!"),
+  quote_info(11, quote_types.attack, 5, "attack 11!"),
+  quote_info(12, quote_types.attack, 5, "attack 12!"),
+  quote_info(13, quote_types.attack, 5, "attack 13!"),
+  quote_info(14, quote_types.attack, 6, "attack 14!"),
+  quote_info(15, quote_types.attack, 6, "attack 15!"),
 }
 
 local replies = {
-  quote( 1, quote_types.reply,  1, "reply 1!"),
-  quote( 2, quote_types.reply,  1, "reply 2!"),
-  quote( 3, quote_types.reply,  1, "reply 3!"),
-  quote( 4, quote_types.reply,  2, "reply 4!"),
-  quote( 5, quote_types.reply,  2, "reply 5!"),
-  quote( 6, quote_types.reply,  3, "reply 6!"),
-  quote( 7, quote_types.reply,  3, "reply 7!"),
-  quote( 8, quote_types.reply,  3, "reply 8!"),
-  quote( 9, quote_types.reply,  4, "reply 9!"),
-  quote(10, quote_types.reply,  4, "reply 10!"),
-  quote(11, quote_types.reply,  5, "reply 11!"),
-  quote(12, quote_types.reply,  5, "reply 12!"),
-  quote(13, quote_types.reply,  5, "reply 13!"),
-  quote(14, quote_types.reply,  6, "reply 14!"),
-  quote(15, quote_types.reply,  6, "reply 15!"),
+  quote_info( 1, quote_types.reply,  1, "reply 1!"),
+  quote_info( 2, quote_types.reply,  1, "reply 2!"),
+  quote_info( 3, quote_types.reply,  1, "reply 3!"),
+  quote_info( 4, quote_types.reply,  2, "reply 4!"),
+  quote_info( 5, quote_types.reply,  2, "reply 5!"),
+  quote_info( 6, quote_types.reply,  3, "reply 6!"),
+  quote_info( 7, quote_types.reply,  3, "reply 7!"),
+  quote_info( 8, quote_types.reply,  3, "reply 8!"),
+  quote_info( 9, quote_types.reply,  4, "reply 9!"),
+  quote_info(10, quote_types.reply,  4, "reply 10!"),
+  quote_info(11, quote_types.reply,  5, "reply 11!"),
+  quote_info(12, quote_types.reply,  5, "reply 12!"),
+  quote_info(13, quote_types.reply,  5, "reply 13!"),
+  quote_info(14, quote_types.reply,  6, "reply 14!"),
+  quote_info(15, quote_types.reply,  6, "reply 15!"),
 }
 
 local quote_matches = {
@@ -57,27 +57,28 @@ local floors = {
   floor_info(10,  6,  6),
 }
 
-local npcs = {
+-- name npc_info_s (like sequence) to distinguish from a dynamic npc in game session
+local npc_info_s = {
   npc_info(1, "intern designer",      1, {1, 2}),
-  npc_info(1, "intern programmer",    1, {2, 3}),
-  npc_info(1, "intern qa",            1, {1, 3}),
-  npc_info(1, "intern marketing",     1, {1, 2, 3}),
-  npc_info(1, "placement designer",   2, {1, 4}),
-  npc_info(1, "placement programmer", 2, {2, 5}),
-  npc_info(1, "placement qa",         2, {3, 4}),
-  npc_info(1, "placement marketing",  2, {4, 5}),
-  npc_info(1, "junior designer",      3, {3, 6}),
-  npc_info(1, "junior programmer",    3, {4, 7}),
-  npc_info(1, "junior qa",            3, {5, 8}),
-  npc_info(1, "junior marketing",     3, {4, 5, 8}),
-  npc_info(1, "designer",             4, {7, 10}),
-  npc_info(1, "programmer",           4, {1}),
-  npc_info(1, "manager",              4, {1}),
-  npc_info(1, "legal advisor",        4, {1}),
-  npc_info(1, "senior designer",      5, {1}),
-  npc_info(1, "senior programmer",    5, {1}),
-  npc_info(1, "senior qa",            5, {1}),
-  npc_info(1, "senior marketing",     5, {1}),
+  npc_info(2, "intern programmer",    1, {2, 3}),
+  npc_info(3, "intern qa",            1, {1, 3}),
+  npc_info(4, "intern marketing",     1, {1, 2, 3}),
+  npc_info(5, "placement designer",   2, {1, 4}),
+  npc_info(6, "placement programmer", 2, {2, 5}),
+  npc_info(7, "placement qa",         2, {3, 4}),
+  npc_info(8, "placement marketing",  2, {4, 5}),
+  npc_info(9, "junior designer",      3, {3, 6}),
+  npc_info(10, "junior programmer",    3, {4, 7}),
+  npc_info(11, "junior qa",            3, {5, 8}),
+  npc_info(12, "junior marketing",     3, {4, 5, 8}),
+  npc_info(13, "designer",             4, {7, 10}),
+  npc_info(14, "programmer",           4, {1}),
+  npc_info(15, "manager",              4, {1}),
+  npc_info(16, "legal advisor",        4, {1}),
+  npc_info(17, "senior designer",      5, {1}),
+  npc_info(18, "senior programmer",    5, {1}),
+  npc_info(19, "senior qa",            5, {1}),
+  npc_info(20, "senior marketing",     5, {1}),
 }
 
 local gameplay_data = {
@@ -85,7 +86,18 @@ local gameplay_data = {
   replies = replies,
   quote_matches = quote_matches,
   floors = floors,
-  npcs = npcs
+  npcs = npc_info_s
 }
+
+-- data access helpers
+function gameplay_data:get_floor_info(floor_number)
+  return self.floors[floor_number]
+end
+
+function gameplay_data:get_npc_info_table_with_level(level)
+  return filter(self.npcs, function (npc_info)
+    return npc_info.level == level
+  end)
+end
 
 return gameplay_data
