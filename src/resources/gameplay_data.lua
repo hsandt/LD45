@@ -1,3 +1,40 @@
+local floor_info = require("content/floor_info")
+local npc_info = require("content/npc_info")
+local quote_info = require("content/quote_info")
+
+local quotes = {
+  quote( 1, quote_types.attack, "attack!"),
+  quote( 2, quote_types.attack, "attack!"),
+  quote( 3, quote_types.attack, "attack!"),
+  quote( 4, quote_types.attack, "attack!"),
+  quote( 5, quote_types.attack, "attack!"),
+  quote( 6, quote_types.attack, "attack!"),
+  quote( 7, quote_types.attack, "attack!"),
+  quote( 8, quote_types.attack, "attack!"),
+  quote( 9, quote_types.attack, "attack!"),
+  quote( 10, quote_types.attack, "attack!"),
+  quote( 11, quote_types.attack, "attack!"),
+  quote( 12, quote_types.attack, "attack!"),
+  quote( 13, quote_types.attack, "attack!"),
+  quote( 14, quote_types.attack, "attack!"),
+  quote( 15, quote_types.attack, "attack!"),
+  quote( 16, quote_types.reply, "reply!"),
+  quote( 17, quote_types.reply, "reply!"),
+  quote( 18, quote_types.reply, "reply!"),
+  quote( 19, quote_types.reply, "reply!"),
+  quote( 20, quote_types.reply, "reply!"),
+  quote( 21, quote_types.reply, "reply!"),
+  quote( 22, quote_types.reply, "reply!"),
+  quote( 23, quote_types.reply, "reply!"),
+  quote( 24, quote_types.reply, "reply!"),
+  quote( 25, quote_types.reply, "reply!"),
+  quote( 26, quote_types.reply, "reply!"),
+  quote( 27, quote_types.reply, "reply!"),
+  quote( 28, quote_types.reply, "reply!"),
+  quote( 29, quote_types.reply, "reply!"),
+  quote( 30, quote_types.reply, "reply!"),
+}
+
 local floors = {
   floor_info( 1,  1,  1),
   floor_info( 2,  1,  2),
