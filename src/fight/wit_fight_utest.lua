@@ -1,6 +1,10 @@
 require("engine/test/bustedhelper")
 local wit_fight = require("fight/wit_fight")
 
+local ui = require("engine/ui/ui")
+
+local text_menu = require("menu/text_menu")
+
 describe('wit_fight', function ()
 
   local state
@@ -11,6 +15,11 @@ describe('wit_fight', function ()
 
   describe('init', function ()
 
+    it('should create an empty quote menu, aligned left', function ()
+      assert.is_not_nil(text_menu, state.quote_menu)
+      assert.are_same({{}, alignments.left}, {state.quote_menu.items, state.quote_menu.alignment})
+    end)
+
   end)
 
   describe('on_enter', function ()
@@ -18,6 +27,26 @@ describe('wit_fight', function ()
   end)
 
   describe('update', function ()
+
+    setup(function ()
+      stub(text_menu, "update")
+    end)
+
+    teardown(function ()
+      text_menu.update:revert()
+    end)
+
+    after_each(function ()
+      text_menu.update:clear()
+    end)
+
+    it('should update the quote menu', function ()
+      state:update()
+
+      local s = assert.spy(text_menu.update)
+      s.was_called(1)
+      s.was_called_with(match.ref(state.quote_menu))
+    end)
 
   end)
 

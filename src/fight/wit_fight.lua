@@ -2,6 +2,8 @@ local gamestate = require("engine/application/gamestate")
 require("engine/core/class")
 local ui = require("engine/ui/ui")
 
+local menu_item = require("menu/menu_item")
+local text_menu = require("menu/text_menu")
 local visual_data = require("resources/visual_data")
 
 -- wit fight: in-game gamestate for fighting an opponent
@@ -9,16 +11,28 @@ local wit_fight = derived_class(gamestate)
 
 wit_fight.type = ':wit_fight'
 
+-- state
+-- quote_menu  text_menu  to select next quote to say
 function wit_fight:_init()
+  -- menu items will be filled dynamically
+  self.quote_menu = text_menu({}, alignments.left)
 end
 
 function wit_fight:on_enter()
+  -- for text demo
+  add(self.quote_menu.items, menu_item("demo quote", function ()
+    printh("test demo quote menu")
+  end))
+  add(self.quote_menu.items, menu_item("demo quote 2", function ()
+    printh("test demo quote menu 2")
+  end))
 end
 
 function wit_fight:on_exit()
 end
 
 function wit_fight:update()
+  self.quote_menu:update()
 end
 
 function wit_fight:render()
@@ -54,10 +68,10 @@ function wit_fight:draw_characters()
 end
 
 function wit_fight:draw_hud()
-  wit_fight:draw_floor_number()
-  wit_fight:draw_quote_bubble()
-  wit_fight:draw_health_bars()
-  wit_fight:draw_bottom_box()
+  self:draw_floor_number()
+  self:draw_quote_bubble()
+  self:draw_health_bars()
+  self:draw_bottom_box()
 end
 
 function wit_fight:draw_floor_number()
@@ -88,6 +102,9 @@ end
 
 function wit_fight:draw_bottom_box()
   ui.draw_rounded_box(0, 89, 127, 127, colors.dark_blue, colors.indigo)
+
+  -- menu content
+  self.quote_menu:draw(2, 91)
 end
 
 return wit_fight
