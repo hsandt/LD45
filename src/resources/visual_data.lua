@@ -39,9 +39,15 @@ local anim_sprites = {
 local visual_data = {
   sprites = sprites,
   anim_sprites = anim_sprites,
-  
+
   -- misc ui parameters
-  bubble_line_width = 29
+  bubble_line_width = 29,
+  pc_sprite_pos = vector(19, 78),
+  npc_sprite_pos = vector(86, 78),
+  health_bar_center_x_dist_from_char = 12,
+  health_bar_half_width = 2,
+  health_bar_top_from_char = -36,
+  health_bar_bottom_from_char = 0,
 }
 
 return visual_data
