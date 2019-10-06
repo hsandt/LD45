@@ -1,3 +1,5 @@
+require("engine/core/class")
+
 quote_types = enum {
   "attack",
   "reply"

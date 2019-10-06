@@ -1,3 +1,5 @@
+require("engine/core/class")
+
 local floor_info = new_struct()
 
 function floor_info:_init(number, npc_level_min, npc_level_max)

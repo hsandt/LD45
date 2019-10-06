@@ -1,3 +1,5 @@
+require("engine/core/class")
+
 local npc_info = new_struct()
 
 -- id: int

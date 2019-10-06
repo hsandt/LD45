@@ -1,3 +1,5 @@
+require("engine/core/class")
+
 -- connects an attack with a reply, stating that the reply works against the attack
 local quote_match_info = new_struct()
 
