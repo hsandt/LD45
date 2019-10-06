@@ -4,6 +4,7 @@ require("engine/core/math")
 require("engine/render/color")
 local ui = require("engine/ui/ui")
 
+local quote_info = require("content/quote_info")
 local menu_item = require("menu/menu_item")
 local text_menu = require("menu/text_menu")
 local gameplay_data = require("resources/gameplay_data")
@@ -21,7 +22,9 @@ wit_fight.type = ':wit_fight'
 --   npc_info      (npc_info|nil)  opponent npc info (nil until fight starts)
 --   pc_quote      (quote|nil)     current quote used by the pc  (nil if not currently using a quote)
 --   npc_quote     (quote|nil)     current quote used by the npc (nil if not currently using a quote)
-function wit_fight:_init()
+function wit_fight:_init(app)
+  gamestate._init(self, app)
+
   -- menu items will be filled dynamically
   self.quote_menu = text_menu({}, alignments.left, colors.dark_blue)
 
@@ -35,12 +38,7 @@ function wit_fight:on_enter()
   self:start_fight_with_random_npc()
 
   -- for text demo
-  add(self.quote_menu.items, menu_item("reply 12", function ()
-    self:pc_say_quote(gameplay_data.replies[12])
-  end))
-  add(self.quote_menu.items, menu_item("demo quote 2", function ()
-    printh("test demo quote menu 2")
-  end))
+  self:fill_quote_menu()
 end
 
 function wit_fight:on_exit()
@@ -83,7 +81,6 @@ function wit_fight:get_candidate_npc_info_sequence()
 end
 
 function wit_fight:start_fight_with(npc_info)
-  printh("start fight with: "..npc_info.name)
   self.npc_info = npc_info
   -- load npc sprite
   -- start battle flow
@@ -99,6 +96,28 @@ end
 function wit_fight:npc_say_quote(quote_info)
   self.npc_quote = quote_info
   self.pc_quote = nil
+end
+
+-- ui
+
+function wit_fight:fill_quote_menu()
+  local known_quotes
+
+  if #self.app.game_session.pc_known_quotes > 0 then
+    known_quotes = self.app.game_session.pc_known_quotes
+  else
+    -- prepare dummy quote so the menu is not empty
+    -- player will see this at the beginning of the game ("start with nothing")
+    --  and when all other options have already been used
+    -- for now, just attack
+    known_quotes = {quote_info(0, quote_types.attack, 0, "...")}
+  end
+
+  for quote in all(known_quotes) do
+    add(self.quote_menu.items, menu_item(quote.text, function ()
+      self:pc_say_quote(quote)
+    end))
+  end
 end
 
 -- render

@@ -25,20 +25,28 @@ local vlogger = require("engine/debug/visual_logger")
 local ui = require("engine/ui/ui")
 --#endif
 
+local game_session = require("application/game_session")
 local main_menu = require("menu/main_menu")
 local wit_fight = require("fight/wit_fight")
 local visual_data = require("resources/visual_data")
 
 local wit_fight_app = derived_class(gameapp)
 
-function wit_fight_app.instantiate_gamestates() -- override
-  return {main_menu(), wit_fight()}
+function wit_fight_app:_init()
+  gameapp._init(self)
+
+  -- start new game session
+  self.game_session = game_session()
 end
 
-function wit_fight_app.on_pre_start() -- override
+function wit_fight_app:instantiate_gamestates() -- override
+  return {main_menu(self), wit_fight(self)}
 end
 
-function wit_fight_app.on_post_start() -- override
+function wit_fight_app:on_pre_start() -- override
+end
+
+function wit_fight_app:on_post_start() -- override
 --#if mouse
   -- enable mouse devkit
   input:toggle_mouse(true)
@@ -46,13 +54,16 @@ function wit_fight_app.on_post_start() -- override
 --#endif
 end
 
-function wit_fight_app.on_reset() -- override
+function wit_fight_app:on_reset() -- override
+  -- create new game session (let the old one be GC-ed)
+  self.game_session = game_session()
+
 --#if mouse
   ui:set_cursor_sprite_data(nil)
 --#endif
 end
 
-function wit_fight_app.on_update() -- override
+function wit_fight_app:on_update() -- override
 --#if profiler
   profiler.window:update()
 --#endif

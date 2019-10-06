@@ -3,6 +3,7 @@ local wit_fight = require("fight/wit_fight")
 
 local ui = require("engine/ui/ui")
 
+local wit_fight_app = require("application/wit_fight_app")
 local floor_info = require("content/floor_info")
 local npc_info = require("content/npc_info")
 local quote_info = require("content/quote_info")
@@ -14,7 +15,7 @@ describe('wit_fight', function ()
   local state
 
   before_each(function ()
-    state = wit_fight()
+    state = wit_fight(wit_fight_app())
   end)
 
   describe('init', function ()
@@ -45,6 +46,8 @@ describe('wit_fight', function ()
     end)
 
     it('should call start_fight_with_random_npc', function ()
+
+
       state:on_enter()
 
       local s = assert.spy(wit_fight.start_fight_with_random_npc)
@@ -264,6 +267,45 @@ describe('wit_fight', function ()
 
       assert.are_equal(mock_quote_info, state.npc_quote)
       assert.is_nil(state.pc_quote)
+    end)
+
+  end)
+
+  describe('fill_quote_menu', function ()
+
+    local mock_quote_info = quote_info(7, 4, quote_types.reply, "mock quote")
+
+    setup(function ()
+    end)
+
+    teardown(function ()
+    end)
+
+    after_each(function ()
+    end)
+
+    it('(no known quotes) should fill the quote menu with a dummy quote', function ()
+      state.app.game_session.pc_known_quotes = {}
+
+      state:fill_quote_menu()
+
+      -- we don't go as far as checking that the menu item has the right callback,
+      -- as we cannot check directly equality with a lambda; although it would be
+      --  possible indirectly by spying on pc_say_quote and calling the callback
+      assert.are_equal(1, #state.quote_menu.items)
+      assert.are_equal("...", state.quote_menu.items[1].label)
+    end)
+
+    it('(a few known quotes) should fill the quote menu with known quotes', function ()
+      local mock_quote_info1 = quote_info(7, quote_types.attack, 3, "aha!")
+      local mock_quote_info2 = quote_info(8, quote_types.reply, 4, "boo!")
+
+      state.app.game_session.pc_known_quotes = {mock_quote_info1, mock_quote_info2}
+
+      state:fill_quote_menu()
+
+      assert.are_equal(2, #state.quote_menu.items)
+      assert.are_same({"aha!", "boo!"}, {state.quote_menu.items[1].label, state.quote_menu.items[2].label})
     end)
 
   end)

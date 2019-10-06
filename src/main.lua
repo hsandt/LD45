@@ -4,9 +4,11 @@
 -- we must require engine/pico8/api at the top of our main.lua, so API bridges apply to all modules
 require("engine/pico8/api")
 
+local logging = require("engine/debug/logging")
+
 local wit_fight_app = require("application/wit_fight_app")
 
-local logging = require("engine/debug/logging")
+local app = wit_fight_app()
 
 function _init()
 --#if log
@@ -20,14 +22,14 @@ function _init()
   logging.file_log_stream:clear()
 --#endif
 
-  wit_fight_app.initial_gamestate = ':main_menu'
-  wit_fight_app:start()
+  app.initial_gamestate = ':main_menu'
+  app:start()
 end
 
 function _update()
-  wit_fight_app:update()
+  app:update()
 end
 
 function _draw()
-  wit_fight_app:draw()
+  app:draw()
 end

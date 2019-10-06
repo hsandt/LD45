@@ -11,7 +11,10 @@ describe('main_menu', function ()
 
   describe('init', function ()
     it('should set text menu to a new text menu with given items', function ()
-      local menu = main_menu()
+      -- as long as there are no type/attribute checks in _init, we don't need
+      --  to actualy derive from gameapp for the dummy app
+      local dummy_app = {}
+      local menu = main_menu(dummy_app)
 
       assert.are_equal(main_menu._items, menu._items)
     end)
@@ -19,10 +22,11 @@ describe('main_menu', function ()
 
   describe('(with instance)', function ()
 
+    local dummy_app = {}
     local menu
 
     before_each(function ()
-      menu = main_menu()
+      menu = main_menu(dummy_app)
     end)
 
     describe('update', function ()
