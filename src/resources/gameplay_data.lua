@@ -15,7 +15,7 @@ local attacks = {
   quote_info( 9, quote_types.attack, 4, "attack 9!"),
   quote_info(10, quote_types.attack, 4, "attack 10!"),
   quote_info(11, quote_types.attack, 5, "attack 11!"),
-  quote_info(12, quote_types.attack, 5, "attack 12!"),
+  quote_info(12, quote_types.attack, 5, "1234567890123456789012345678! 1234567890123456789012345678!"),
   quote_info(13, quote_types.attack, 5, "attack 13!"),
   quote_info(14, quote_types.attack, 6, "attack 14!"),
   quote_info(15, quote_types.attack, 6, "attack 15!"),

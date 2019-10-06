@@ -18,9 +18,13 @@ describe('wit_fight', function ()
 
   describe('init', function ()
 
-    it('should create an empty quote menu, aligned left', function ()
+    it('should create an empty quote menu component, aligned left', function ()
       assert.is_not_nil(text_menu, state.quote_menu)
       assert.are_same({{}, alignments.left}, {state.quote_menu.items, state.quote_menu.alignment})
+    end)
+
+    it('should initialize other members', function ()
+      assert.are_same({1, nil, nil, nil}, {state.floor_number, state.npc_info, state.pc_quote, state.npc_quote})
     end)
 
   end)
@@ -196,6 +200,8 @@ describe('wit_fight', function ()
 
   describe('start_fight_with', function ()
 
+    local mock_npc_info = npc_info(8, "employee", 4, {11, 27})
+
     setup(function ()
     end)
 
@@ -205,8 +211,10 @@ describe('wit_fight', function ()
     after_each(function ()
     end)
 
-    it('should ...', function ()
-      -- state:start_fight_with()
+    it('should set the current npc info', function ()
+      state:start_fight_with(mock_npc_info)
+
+      assert.are_equal(mock_npc_info, state.npc_info)
     end)
 
   end)
@@ -220,19 +228,43 @@ describe('wit_fight', function ()
   end)
 
   describe('draw_characters', function ()
+
+    local mock_npc_info = npc_info(7, "employee", 4, {11, 27})
+
     it('should not error', function ()
       assert.has_no_errors(function ()
         state:draw_characters()
       end)
     end)
+
+    it('should not error with npc info set', function ()
+      state.npc_info = mock_npc_info
+
+      assert.has_no_errors(function ()
+        state:draw_characters()
+      end)
+    end)
+
   end)
 
   describe('draw_hud', function ()
+
+    local mock_npc_info = npc_info(7, "employee", 4, {11, 27})
+
     it('should not error', function ()
       assert.has_no_errors(function ()
         state:draw_hud()
       end)
     end)
+
+    it('should not error with npc info set', function ()
+      state.npc_info = mock_npc_info
+
+      assert.has_no_errors(function ()
+        state:draw_hud()
+      end)
+    end)
+
   end)
 
 end)

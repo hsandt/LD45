@@ -38,7 +38,10 @@ local anim_sprites = {
 
 local visual_data = {
   sprites = sprites,
-  anim_sprites = anim_sprites
+  anim_sprites = anim_sprites,
+  
+  -- misc ui parameters
+  bubble_line_width = 29
 }
 
 return visual_data

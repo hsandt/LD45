@@ -14,16 +14,21 @@ local wit_fight = derived_class(gamestate)
 
 wit_fight.type = ':wit_fight'
 
+-- components
+--   quote_menu    text_menu       to select next quote to say
 -- state
--- floor_number  int             current floor the player character is on
--- npc_info      (npc_info|nil)  opponent npc info (nil until fight starts)
--- quote_menu    text_menu       to select next quote to say
+--   floor_number  int             current floor the player character is on
+--   npc_info      (npc_info|nil)  opponent npc info (nil until fight starts)
+--   pc_quote      (quote|nil)     current quote used by the pc  (nil if not currently using a quote)
+--   npc_quote     (quote|nil)     current quote used by the npc (nil if not currently using a quote)
 function wit_fight:_init()
-  self.floor_number = 1
-  self.npc_info = nil
-
   -- menu items will be filled dynamically
   self.quote_menu = text_menu({}, alignments.left, colors.dark_blue)
+
+  self.floor_number = 1
+  self.npc_info = nil
+  self.pc_quote = nil
+  self.npc_quote = nil
 end
 
 function wit_fight:on_enter()
@@ -82,6 +87,17 @@ function wit_fight:start_fight_with(npc_info)
   self.npc_info = npc_info
   -- load npc sprite
   -- start battle flow
+  -- mock quote
+  self:npc_say_quote(gameplay_data.attacks[12])
+end
+
+function wit_fight:pc_say_quote(quote_info)
+  self.pc_quote = quote_info
+    -- api.print("1234567890123456789012345678!\n1234567890123456789012345678!", 7, 22, colors.black)
+end
+
+function wit_fight:npc_say_quote(quote_info)
+  self.npc_quote = quote_info
 end
 
 -- render
@@ -109,7 +125,10 @@ end
 
 function wit_fight:draw_characters()
   visual_data.sprites.pc:render(vector(19, 78))
-  visual_data.sprites.npc[self.npc_info.id]:render(vector(86, 78))
+
+  if self.npc_info then
+    visual_data.sprites.npc[self.npc_info.id]:render(vector(86, 78))
+  end
 end
 
 function wit_fight:draw_hud()
@@ -126,16 +145,33 @@ function wit_fight:draw_floor_number()
 end
 
 function wit_fight:draw_quote_bubble()
-  ui.draw_rounded_box(5, 20, 123, 34, colors.black, colors.white)
-
-  -- draw bubble tail
+  -- ui params
   local pc_bubble_tail_tip = vector(21, 38)
   local npc_bubble_tail_tip = vector(84, 38)
-  visual_data.sprites.bubble_tail:render(pc_bubble_tail_tip)
-  visual_data.sprites.bubble_tail:render(npc_bubble_tail_tip)
 
-  -- draw demo text
-  api.print("1234567890123456789012345678!\n1234567890123456789012345678!", 7, 22, colors.black)
+  local should_draw_quote_bubble = false
+  local bubble_tail_tip = nil
+  local bubble_text = nil
+
+  -- pc has priority, but normally we shouldn't set both quotes at the same time
+  if self.pc_quote then
+    bubble_tail_tip = pc_bubble_tail_tip
+    bubble_text = self.pc_quote.text
+    should_draw_quote_bubble = true
+  elseif self.npc_quote then
+    bubble_tail_tip = npc_bubble_tail_tip
+    bubble_text = self.npc_quote.text
+    should_draw_quote_bubble = true
+  end
+
+  if should_draw_quote_bubble then
+    -- draw bubble
+    ui.draw_rounded_box(5, 20, 123, 34, colors.black, colors.white)
+    visual_data.sprites.bubble_tail:render(bubble_tail_tip)
+
+    -- print quote
+    api.print(wwrap(bubble_text, visual_data.bubble_line_width), 7, 22, colors.black)
+  end
 end
 
 function wit_fight:draw_health_bars()
@@ -154,8 +190,10 @@ function wit_fight:draw_bottom_box()
 end
 
 function wit_fight:draw_npc_label()
-  ui.draw_rounded_box(51, 79, 121, 87, colors.indigo, colors.white)
-  ui.print_centered(self.npc_info.name, 86, 84, colors.black)
+  if self.npc_info then
+    ui.draw_rounded_box(51, 79, 121, 87, colors.indigo, colors.white)
+    ui.print_centered(self.npc_info.name, 86, 84, colors.black)
+  end
 end
 
 return wit_fight
