@@ -5,9 +5,11 @@ describe('menu_item', function ()
 
   describe('init', function ()
     it('should set label and target state', function ()
-      local item = menu_item("in-game", ':ingame')
+      local callback = function () end
 
-      assert.are_same({"in-game", ':ingame'}, {item.label, item.target_state})
+      local item = menu_item("in-game", callback)
+
+      assert.are_same({"in-game", callback}, {item.label, item.confirm_callback})
     end)
   end)
 

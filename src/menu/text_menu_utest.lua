@@ -24,11 +24,13 @@ describe('text_menu', function ()
   describe('(with instance)', function ()
 
     local menu
+    local callback1 = function () end
+    local callback2 = spy.new(function () end)
 
     before_each(function ()
       menu = text_menu({
-        menu_item("in-game", ':ingame'),
-        menu_item("credits", ':credits')
+        menu_item("in-game", callback1),
+        menu_item("credits", callback2)
       }, alignments.left)
     end)
 
@@ -136,20 +138,15 @@ describe('text_menu', function ()
 
       describe('confirm_selection', function ()
 
-        setup(function ()
-          stub(flow, "query_gamestate_type")
-        end)
-
-        teardown(function ()
-          flow.query_gamestate_type:revert()
+        after_each(function ()
+          callback2:clear()
         end)
 
         it('should enter the credits state', function ()
           menu:confirm_selection()
 
-          local s = assert.spy(flow.query_gamestate_type)
+          local s = assert.spy(callback2)
           s.was_called(1)
-          s.was_called_with(flow, ':credits')
         end)
 
       end)

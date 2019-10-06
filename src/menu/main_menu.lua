@@ -1,3 +1,4 @@
+local flow = require("engine/application/flow")
 local gamestate = require("engine/application/gamestate")
 require("engine/core/class")
 local input = require("engine/input/input")
@@ -14,7 +15,7 @@ main_menu.type = ':main_menu'
 
 -- sequence of menu items to display, with their target states
 main_menu._items = transform({
-    {"start", ':wit_fight'}
+    {"start", function() flow:query_gamestate_type(':wit_fight') end}
   }, unpacking(menu_item))
 
 -- text_menu: text_menu    component handling menu display and selection
@@ -34,8 +35,6 @@ function main_menu:update()
 end
 
 function main_menu:render()
-  cls()
-
   local y = 48
   ui.print_centered("wit fight", 64, y, colors.white)
   y = y + 8

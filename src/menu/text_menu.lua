@@ -1,6 +1,5 @@
 require("engine/application/constants")
 require("engine/render/color")
-local flow = require("engine/application/flow")
 local input = require("engine/input/input")
 local ui = require("engine/ui/ui")
 
@@ -46,7 +45,7 @@ end
 function text_menu:confirm_selection()
   -- currently, text menu is only used to navigate to other gamestates,
   -- but later, it may support generic on_confirm callbacks
-  flow:query_gamestate_type(self.items[self.selection_index].target_state)
+  self.items[self.selection_index].confirm_callback()
 end
 
 -- render menu, starting at top y, with text centered on x
@@ -63,9 +62,6 @@ function text_menu:draw(x, top)
         label = "> "..label.." <"
       end
     end
-    print("label:"..label)
-    print("x:"..tostr(x))
-    print("y:"..tostr(y))
     ui.print_aligned(label, x, y, self.alignment, colors.white)
     y = y + character_height
   end
