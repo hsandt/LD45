@@ -42,6 +42,11 @@ local replies = {
 local quote_matches = {
   quote_match_info(1, 1),
   quote_match_info(2, 2),
+  quote_match_info(3, 3),
+  quote_match_info(4, 4),
+  quote_match_info(5, 5),
+  quote_match_info(6, 6),
+  quote_match_info(7, 7),
 }
 
 local floors = {
@@ -86,10 +91,20 @@ local gameplay_data = {
   replies = replies,
   quote_matches = quote_matches,
   floors = floors,
-  npcs = npc_info_s
+  npcs = npc_info_s,
+
+  -- misc gameplay parameters
+  fighter_max_hp = 3
 }
 
 -- data access helpers
+
+function gameplay_data:are_quote_matching(attack_info, reply_info)
+  -- quote_match is a struct, so == is equality member, so we can check
+  --  if the wanted match exists directly with contain
+  return contains(quote_matches, quote_match_info(attack_info.id, reply_info.id))
+end
+
 function gameplay_data:get_floor_info(floor_number)
   return self.floors[floor_number]
 end

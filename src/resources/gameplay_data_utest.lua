@@ -7,6 +7,22 @@ local gameplay_data = require("resources/gameplay_data")
 
 describe('gameplay_data', function ()
 
+  describe('are_quote_matching', function ()
+
+    it('should return false if quotes are not matching', function ()
+      local attack = gameplay_data.attacks[6]
+      local reply = gameplay_data.replies[7]
+      assert.is_false(gameplay_data:are_quote_matching(attack, reply))
+    end)
+
+    it('should return true if quotes are matching', function ()
+      local attack = gameplay_data.attacks[7]
+      local reply = gameplay_data.replies[7]
+      assert.is_true(gameplay_data:are_quote_matching(attack, reply))
+    end)
+
+  end)
+
   describe('get_floor_info', function ()
     it('should return info for floor by index', function ()
       local f = gameplay_data:get_floor_info(3)
