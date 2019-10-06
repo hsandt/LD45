@@ -15,12 +15,12 @@ local wit_fight = derived_class(gamestate)
 wit_fight.type = ':wit_fight'
 
 -- state
--- floor_number  int        current floor the player character is on
--- npc_id        (int|nil)  opponent npc id (nil until fight starts)
--- quote_menu    text_menu  to select next quote to say
+-- floor_number  int             current floor the player character is on
+-- npc_info      (npc_info|nil)  opponent npc info (nil until fight starts)
+-- quote_menu    text_menu       to select next quote to say
 function wit_fight:_init()
   self.floor_number = 1
-  self.npc_id = nil
+  self.npc_info = nil
 
   -- menu items will be filled dynamically
   self.quote_menu = text_menu({}, alignments.left, colors.dark_blue)
@@ -79,10 +79,8 @@ end
 
 function wit_fight:start_fight_with(npc_info)
   printh("start fight with: "..npc_info.name)
-  self.npc_id = npc_info.id
+  self.npc_info = npc_info
   -- load npc sprite
-  -- local random_npc_info = self:pick_non_recent_random_npc_info()
-  -- self:start_fight_with()
   -- start battle flow
 end
 
@@ -111,7 +109,7 @@ end
 
 function wit_fight:draw_characters()
   visual_data.sprites.pc:render(vector(19, 78))
-  visual_data.sprites.npc[self.npc_id]:render(vector(86, 78))
+  visual_data.sprites.npc[self.npc_info.id]:render(vector(86, 78))
 end
 
 function wit_fight:draw_hud()
@@ -119,6 +117,7 @@ function wit_fight:draw_hud()
   self:draw_quote_bubble()
   self:draw_health_bars()
   self:draw_bottom_box()
+  self:draw_npc_label()
 end
 
 function wit_fight:draw_floor_number()
@@ -152,6 +151,11 @@ function wit_fight:draw_bottom_box()
 
   -- menu content
   self.quote_menu:draw(2, 91)
+end
+
+function wit_fight:draw_npc_label()
+  ui.draw_rounded_box(51, 79, 121, 87, colors.indigo, colors.white)
+  ui.print_centered(self.npc_info.name, 86, 84, colors.black)
 end
 
 return wit_fight
