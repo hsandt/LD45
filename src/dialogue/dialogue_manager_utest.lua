@@ -37,11 +37,25 @@ describe('dialogue_manager', function ()
       end)
     end)
 
+    it('(should show bottom box) should not error', function ()
+      local d = dialogue_manager()
+      d.should_show_bottom_box = true
+      assert.has_no_errors(function ()
+        d:render()
+      end)
+    end)
+
     it('(current text set) should not error', function ()
       local d = dialogue_manager()
       d.current_text = "hello"
+      assert.has_no_errors(function ()
         d:render()
+      end)
+    end)
 
+    it('(current bottom text set) should not error', function ()
+      local d = dialogue_manager()
+      d.current_bottom_text = "hello"
       assert.has_no_errors(function ()
         d:render()
       end)

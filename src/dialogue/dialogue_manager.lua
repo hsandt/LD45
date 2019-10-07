@@ -13,9 +13,10 @@ local bubble_tail_positions = {
 }
 
 function dialogue_manager:_init()
-  self.current_text = ''
+  self.current_text = nil
   self.current_speaker_index = 1  -- 1 for pc, 2 for npc
   self.should_show_bottom_box = false
+  self.current_bottom_text = nil
 end
 
 function dialogue_manager:start()
@@ -25,14 +26,17 @@ function dialogue_manager:update()
 end
 
 function dialogue_manager:render()
-  log("self.should_show_bottom_box: "..tostr(self.should_show_bottom_box))
   if self.should_show_bottom_box then
     self:draw_bottom_box()
   end
 
-  if #self.current_text > 0 then
+  if self.current_text then
     self:draw_bubble()
     self:draw_text()
+  end
+
+  if self.current_bottom_text then
+    self:draw_bottom_text()
   end
 end
 
@@ -40,9 +44,10 @@ function dialogue_manager:draw_bottom_box()
   ui.draw_rounded_box(0, 89, 127, 127, colors.dark_blue, colors.indigo)
 end
 
-function dialogue_manager:draw_bubble()
-  ui.draw_rounded_box(5, 20, 123, 34, colors.black, colors.white)
-  visual_data.sprites.bubble_tail:render(bubble_tail_positions[self.current_speaker_index])
+-- draw text in bottom box for narration/notification/instruction
+function dialogue_manager:draw_bottom_text()
+  local top_left = visual_data.bottom_box_text_topleft
+  api.print(wwrap(self.current_bottom_text, visual_data.bottom_box_max_chars), top_left.x, top_left.y, colors.black)
 end
 
 function dialogue_manager:draw_bubble()
@@ -51,7 +56,8 @@ function dialogue_manager:draw_bubble()
 end
 
 function dialogue_manager:draw_text()
-  api.print(wwrap(self.current_text, visual_data.bubble_line_width), 7, 22, colors.black)
+  local top_left = visual_data.bubble_text_topleft
+  api.print(wwrap(self.current_text, visual_data.bubble_line_max_chars), top_left.x, top_left.y, colors.black)
 end
 
 return dialogue_manager

@@ -13,6 +13,7 @@ end
 function adventure:on_enter()
   -- show bottom box immediately, otherwise we'll see that the lower stairs is not finished...
   self.app.managers[':dialogue'].should_show_bottom_box = true
+  self.app.managers[':dialogue'].current_bottom_text = 'hello world'
 end
 
 function adventure:on_exit()
