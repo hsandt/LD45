@@ -7,6 +7,7 @@ require("engine/pico8/api")
 local logging = require("engine/debug/logging")
 
 local wit_fight_app = require("application/wit_fight_app")
+local dialogue_manager = require("dialogue/dialogue_manager")
 
 local app = wit_fight_app()
 
@@ -23,6 +24,7 @@ function _init()
 --#endif
 
   app.initial_gamestate = ':main_menu'
+  app:register_managers(dialogue_manager())
   app:start()
 end
 
