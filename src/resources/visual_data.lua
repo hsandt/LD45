@@ -41,6 +41,8 @@ local visual_data = {
   anim_sprites = anim_sprites,
 
   -- misc ui parameters
+  bubble_tail_pos_pc = vector(21, 38),
+  bubble_tail_pos_npc = vector(84, 38),
   bubble_line_width = 29,
   pc_sprite_pos = vector(19, 78),
   npc_sprite_pos = vector(86, 78),
