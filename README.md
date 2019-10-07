@@ -34,7 +34,7 @@ The game is played with the keyboard.
 
 ## USP
 
-As unique sales point compared to Monkey Island:
+I intend to add the following innovations:
 - Multiple replies can work against a given attack (in Monkey Island, only the opposite is true, and only when including the boss)
 - Attacks and replies have a level, which decides how much (mental) damage is dealt to the opponent
-- NPCs learn your quotes (WIP)
+- NPCs learn your quotes
