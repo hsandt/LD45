@@ -4,13 +4,16 @@
 require("engine/pico8/api")
 
 require("engine/test/integrationtest")
-local wit_fight_app = require("application/wit_fight_app")
--- tag to add require for itest files here
---[[add_require]]
 
 --#if log
 local logging = require("engine/debug/logging")
 --#endif
+
+local wit_fight_app = require("application/wit_fight_app")
+local dialogue_manager = require("dialogue/dialogue_manager")
+
+-- tag to add require for itest files here
+--[[add_require]]
 
 local current_itest_index = 0
 
@@ -24,8 +27,10 @@ function _init()
   logging.file_log_stream:clear()
 --#endif
 
-  itest_runner.app = wit_fight_app()
-  wit_fight_app.initial_gamestate = ':main_menu'
+  local app = wit_fight_app()
+  itest_runner.app = app
+  app.initial_gamestate = ':main_menu'
+  app:register_managers(dialogue_manager())
 
   -- start first itest
   init_game_and_start_next_itest()
