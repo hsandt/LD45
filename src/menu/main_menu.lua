@@ -15,7 +15,7 @@ main_menu.type = ':main_menu'
 
 -- sequence of menu items to display, with their target states
 main_menu._items = transform({
-    {"start", function() flow:query_gamestate_type(':wit_fight') end}
+    {"start", function() flow:query_gamestate_type(':adventure') end}
   }, unpacking(menu_item))
 
 -- text_menu: text_menu    component handling menu display and selection

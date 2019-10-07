@@ -29,6 +29,7 @@ local game_session = require("application/game_session")
 local main_menu = require("menu/main_menu")
 local wit_fight = require("fight/wit_fight")
 local visual_data = require("resources/visual_data")
+local adventure = require("story/adventure")
 
 local wit_fight_app = derived_class(gameapp)
 
@@ -40,7 +41,7 @@ function wit_fight_app:_init()
 end
 
 function wit_fight_app:instantiate_gamestates() -- override
-  return {main_menu(self), wit_fight(self)}
+  return {main_menu(self), adventure(self), wit_fight(self)}
 end
 
 function wit_fight_app:on_pre_start() -- override

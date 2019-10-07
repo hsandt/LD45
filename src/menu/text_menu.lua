@@ -1,4 +1,5 @@
 require("engine/application/constants")
+require("engine/core/class")
 require("engine/render/color")
 local input = require("engine/input/input")
 local ui = require("engine/ui/ui")
