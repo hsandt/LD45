@@ -5,6 +5,8 @@ local visual_data = require("resources/visual_data")
 
 local dialogue_manager = new_class()
 
+dialogue_manager.type = ':dialogue'
+
 local bubble_tail_positions = {
   visual_data.bubble_tail_pos_pc,
   visual_data.bubble_tail_pos_npc
