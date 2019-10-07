@@ -6,6 +6,8 @@ It is an adaptation of Monkey Island's "Insult swordfighting", a discipline two 
 
 In this game there are no swords, just the insults, and it takes place in an office staircase full of hateful employees. You play a hackathon organizer seeking financial support from his sister, the CEO of the company, who works at the highest floor.
 
+The link with the theme is that initially, the player character knows no insults at all, and must learn them on the go from his opponents.
+
 ## Development log
 
 v0.1: The current game has almost no interactions as you can only select an empty dialogue line. It consists mostly of a static screen, but was uploaded as such to have something to show for the Ludum Dare.
