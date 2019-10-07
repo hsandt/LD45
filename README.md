@@ -2,9 +2,13 @@
 
 My Ludum Dare 45 entry on the theme "Start with nothing".
 
-It is an adaptation of Monkey Island's "Insult swordfighting", a discipline where characters jousted with each other by throwing insults and comebacks at their opponent. Despite the use of swords, the result of the fight was ultimately decided by how good.
+It is an adaptation of Monkey Island's "Insult swordfighting", a discipline two opponents would throw insults and comebacks at each other. Despite the use of swords, the result of the fight would ultimately decided by how fitting the comebacks were during the verbal joust.
 
 In this game there are no swords, just the insults, and it takes place in an office staircase full of hateful employees. You play a hackathon organizer seeking financial support from his sister, the CEO of the company, who works at the highest floor.
+
+## Development log
+
+v0.1: The current game has almost no interactions as you can only select an empty dialogue line. It consists mostly of a static screen, but was uploaded as such to have something to show for the Ludum Dare.
 
 ## Terminology
 
