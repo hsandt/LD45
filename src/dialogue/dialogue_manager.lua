@@ -15,6 +15,7 @@ local bubble_tail_positions = {
 function dialogue_manager:_init()
   self.current_text = ''
   self.current_speaker_index = 1  -- 1 for pc, 2 for npc
+  self.should_show_bottom_box = false
 end
 
 function dialogue_manager:start()
@@ -24,10 +25,24 @@ function dialogue_manager:update()
 end
 
 function dialogue_manager:render()
+  log("self.should_show_bottom_box: "..tostr(self.should_show_bottom_box))
+  if self.should_show_bottom_box then
+    self:draw_bottom_box()
+  end
+
   if #self.current_text > 0 then
     self:draw_bubble()
     self:draw_text()
   end
+end
+
+function dialogue_manager:draw_bottom_box()
+  ui.draw_rounded_box(0, 89, 127, 127, colors.dark_blue, colors.indigo)
+end
+
+function dialogue_manager:draw_bubble()
+  ui.draw_rounded_box(5, 20, 123, 34, colors.black, colors.white)
+  visual_data.sprites.bubble_tail:render(bubble_tail_positions[self.current_speaker_index])
 end
 
 function dialogue_manager:draw_bubble()
