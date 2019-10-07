@@ -31,7 +31,7 @@ itest_manager:register_itest('player starts game',
 
   -- check that we entered the credits state
   final_assert(function ()
-    return flow.curr_state.type == ':wit_fight', "current game state is not ':wit_fight', has instead type: '"..flow.curr_state.type.."'"
+    return flow.curr_state.type == ':adventure', "current game state is not ':wit_fight', has instead type: '"..flow.curr_state.type.."'"
   end)
 
 end)
