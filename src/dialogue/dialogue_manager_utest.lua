@@ -1,6 +1,9 @@
 require("engine/test/bustedhelper")
 local dialogue_manager = require("dialogue/dialogue_manager")
 
+require("engine/application/constants")
+local visual_data = require("resources/visual_data")
+
 describe('dialogue_manager', function ()
 
   describe('_init', function ()
@@ -45,9 +48,11 @@ describe('dialogue_manager', function ()
       end)
     end)
 
-    it('(current text set) should not error', function ()
+    it('(current speaker and text set) should not error', function ()
       local d = dialogue_manager()
+      d.current_speaker = speakers.pc
       d.current_text = "hello"
+
       assert.has_no_errors(function ()
         d:render()
       end)
@@ -56,9 +61,28 @@ describe('dialogue_manager', function ()
     it('(current bottom text set) should not error', function ()
       local d = dialogue_manager()
       d.current_bottom_text = "hello"
+
       assert.has_no_errors(function ()
         d:render()
       end)
+    end)
+
+  end)
+
+  describe('compute_bubble_bounds', function ()
+
+    it('should return bubble bounds anchored bottom left for pc', function ()
+      local anchor_bottom_left = visual_data.bubble_bottom_left_pc
+      assert.are_same({anchor_bottom_left.x, anchor_bottom_left.y - (3*6+2), anchor_bottom_left.x + (19*4+2),
+          anchor_bottom_left.y},
+        {dialogue_manager.compute_bubble_bounds(speakers.pc, "hello world!\nmy name is girljpeg\nfourswords")})
+    end)
+
+    it('should return bubble bounds anchored bottom left for npc', function ()
+    local anchor_bottom_right = visual_data.bubble_bottom_right_npc
+      assert.are_same({anchor_bottom_right.x - (19*4+2), anchor_bottom_right.y - (3*6+2), anchor_bottom_right.x,
+          anchor_bottom_right.y},
+        {dialogue_manager.compute_bubble_bounds(speakers.npc, "hello world!\nmy name is girljpeg\nfourswords")})
     end)
 
   end)

@@ -41,8 +41,11 @@ local visual_data = {
   anim_sprites = anim_sprites,
 
   -- misc ui parameters
-  bubble_text_topleft = vector(7, 22),
   bubble_line_max_chars = 29,
+  bubble_min_width_pc = 32,
+  bubble_min_width_npc = 48,
+  bubble_bottom_left_pc = vector(5, 34),
+  bubble_bottom_right_npc = vector(123, 34),
   bubble_tail_pos_pc = vector(21, 38),
   bubble_tail_pos_npc = vector(84, 38),
   bottom_box_text_topleft = vector(2, 91),
