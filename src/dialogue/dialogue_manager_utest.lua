@@ -63,4 +63,16 @@ describe('dialogue_manager', function ()
 
   end)
 
+  describe('say', function ()
+
+    it('should set the current speaker and the current text', function ()
+      local d = dialogue_manager()
+
+      d:say(speakers.npc, "hello")
+
+      assert.are_same({speakers.npc, "hello"}, {d.current_speaker, d.current_text})
+    end)
+
+  end)
+
 end)
