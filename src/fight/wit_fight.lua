@@ -153,7 +153,6 @@ end
 
 function wit_fight:draw_hud()
   self:draw_floor_number()
-  self:draw_quote_bubble()
   self:draw_health_bars()
   self:draw_bottom_box()
   self:draw_npc_label()
@@ -162,36 +161,6 @@ end
 function wit_fight:draw_floor_number()
   ui.draw_box(43, 1, 84, 9, colors.black, colors.orange)
   ui.print_centered("floor "..tostr(self.floor_number), 64, 6, colors.black)
-end
-
-function wit_fight:draw_quote_bubble()
-  -- ui params
-  local pc_bubble_tail_tip = vector(21, 38)
-  local npc_bubble_tail_tip = vector(84, 38)
-
-  local should_draw_quote_bubble = false
-  local bubble_tail_tip = nil
-  local bubble_text = nil
-
-  -- pc has priority, but normally we shouldn't set both quotes at the same time
-  if self.pc_quote then
-    bubble_tail_tip = pc_bubble_tail_tip
-    bubble_text = self.pc_quote.text
-    should_draw_quote_bubble = true
-  elseif self.npc_quote then
-    bubble_tail_tip = npc_bubble_tail_tip
-    bubble_text = self.npc_quote.text
-    should_draw_quote_bubble = true
-  end
-
-  if should_draw_quote_bubble then
-    -- draw bubble
-    ui.draw_rounded_box(5, 20, 123, 34, colors.black, colors.white)
-    visual_data.sprites.bubble_tail:render(bubble_tail_tip)
-
-    -- print quote
-    api.print(wwrap(bubble_text, visual_data.bubble_line_width), 7, 22, colors.black)
-  end
 end
 
 function wit_fight:draw_health_bars()

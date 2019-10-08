@@ -358,34 +358,6 @@ describe('wit_fight', function ()
 
   end)
 
-  describe('draw_quote_bubble', function ()
-
-    local mock_quote_info = quote_info(7, 4, quote_types.reply, "mock quote")
-
-    it('should not error', function ()
-      assert.has_no_errors(function ()
-        state:draw_hud()
-      end)
-    end)
-
-    it('should not error with pc quote set', function ()
-      state.pc_quote = mock_quote_info
-
-      assert.has_no_errors(function ()
-        state:draw_quote_bubble()
-      end)
-    end)
-
-    it('should not error with npc quote set', function ()
-      state.npc_quote = mock_quote_info
-
-      assert.has_no_errors(function ()
-        state:draw_quote_bubble()
-      end)
-    end)
-
-  end)
-
   describe('draw_health_bars', function ()
 
     it('should not error', function ()
