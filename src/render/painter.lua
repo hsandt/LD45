@@ -21,8 +21,8 @@ function painter.draw_background()
     pos = pos + vector(6, -6)
   end
   -- lower stairs
-  visual_data.sprites.lower_stairs_step:render(vector(105, 80))
-  visual_data.sprites.lower_stairs_step:render(vector(111, 84))
+  visual_data.sprites.lower_stairs_step:render(vector(104, 80))
+  visual_data.sprites.lower_stairs_step:render(vector(110, 84))
 end
 
 return painter
