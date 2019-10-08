@@ -29,9 +29,9 @@ function adventure:render()
 end
 
 function adventure:play_intro()
-  yield_delay(2)
+  self.app:yield_delay_s(2)
   self.app.managers[':dialogue'].current_bottom_text = 'hello world'
-  yield_delay(2)
+  self.app:yield_delay_s(2)
   self.app.managers[':dialogue'].current_bottom_text = nil
 end
 

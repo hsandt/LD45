@@ -1,6 +1,7 @@
 -- main entry file that uses the gameapp module for a quick bootstrap
 -- the gameapp is also useful for integration tests
 
+require("engine/application/constants")
 local gameapp = require("engine/application/gameapp")
 require("engine/core/class")
 local input = require("engine/input/input")
@@ -34,7 +35,7 @@ local adventure = require("story/adventure")
 local wit_fight_app = derived_class(gameapp)
 
 function wit_fight_app:_init()
-  gameapp._init(self)
+  gameapp._init(self, fps30)
 
   -- start new game session
   self.game_session = game_session()

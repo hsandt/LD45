@@ -12,6 +12,11 @@ local logging = require("engine/debug/logging")
 local wit_fight_app = require("application/wit_fight_app")
 local dialogue_manager = require("dialogue/dialogue_manager")
 
+-- set app immediately so during itest registration by require,
+--   time_trigger can access app fps
+local app = wit_fight_app()
+itest_runner.app = app
+
 -- tag to add require for itest files here
 --[[add_require]]
 
@@ -27,8 +32,7 @@ function _init()
   logging.file_log_stream:clear()
 --#endif
 
-  local app = wit_fight_app()
-  itest_runner.app = app
+
   app.initial_gamestate = ':main_menu'
   app:register_managers(dialogue_manager())
 
