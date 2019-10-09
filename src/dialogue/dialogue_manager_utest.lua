@@ -92,7 +92,7 @@ describe('dialogue_manager', function ()
         s.was_not_called()
       end)
 
-      it('#solo (2 speakers) should update speakers', function ()
+      it('(2 speakers) should update speakers', function ()
         local s1 = speaker_component(vector(1, 0))
         local s2 = speaker_component(vector(2, 0))
         d.speakers = {s1, s2}
@@ -172,10 +172,9 @@ describe('dialogue_manager', function ()
 
         local s = assert.spy(speaker_component.stop)
         s.was_not_called()
-
       end)
 
-      it('(some speaker waiting for input, but no confirm) should not stop speaker', function ()
+      it('(some speaker waiting for input  and confirm input) should stop speaker', function ()
         local speaker = speaker_component(vector(1, 0))
         speaker.current_text = "hello"
         speaker.wait_for_input = true
@@ -187,6 +186,27 @@ describe('dialogue_manager', function ()
         local s = assert.spy(speaker_component.stop)
         s.was_called(1)
         s.was_called_with(match.ref(speaker))
+      end)
+
+    end)
+
+    describe('render_speaker', function ()
+
+      it('should not error', function ()
+        local speaker = speaker_component(vector(1, 0))
+
+        assert.has_no_errors(function ()
+          d:render_speaker(speaker)
+        end)
+      end)
+
+      it('(speaker has current text) should not error', function ()
+        local speaker = speaker_component(vector(1, 0))
+        speaker.current_text = "hello"
+
+        assert.has_no_errors(function ()
+          d:render_speaker(speaker)
+        end)
       end)
 
     end)

@@ -32,7 +32,7 @@ function dialogue_manager:_init()
   -- sequence of speaker_component instances
   self.speakers = {}
 
-  -- bottom box
+  -- bottom box state
   self.should_show_bottom_box = false
   self.current_bottom_text = nil
 end

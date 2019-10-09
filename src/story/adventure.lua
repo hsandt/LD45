@@ -36,21 +36,19 @@ function adventure:render()
 end
 
 function adventure:play_intro()
+  local dm = self.app.managers[':dialogue']
+  local pc_speaker = self.pc.speaker
+
   self.app:yield_delay_s(2)
-  self.app.managers[':dialogue'].current_bottom_text = 'it company "browsing solutions"\nmain building'
+  self.app.managers[':dialogue'].current_bottom_text = '= main building of it company\n"browsing solutions" ='
   self.app:yield_delay_s(4)
   self.app.managers[':dialogue'].current_bottom_text = nil
   self.app:yield_delay_s(2)
-  self.pc.speaker:say("ok, let's sum up")
-  self.app:yield_delay_s(2)
-  self.pc.speaker:say("1. i need funding to organize a hackathon.")
-  self.app:yield_delay_s(2)
-  self.pc.speaker:say("2. my sister is the ceo of this company and could be my sponsor. she's working at the 20th floor.")
-  self.app:yield_delay_s(2)
-  self.pc.speaker:say("3. i don't want be to seen so i'm avoiding the elevator and taking those seemingly endless stairs")
-  self.app:yield_delay_s(4)
-  self.pc.speaker:say("seems good so far. what could go wrong?")
-  self.app:yield_delay_s(4)
+  pc_speaker:say_and_wait_for_input("ok, let's sum up")
+  pc_speaker:say_and_wait_for_input("1. i need funding to organize a hackathon.")
+  pc_speaker:say_and_wait_for_input("2. my sister is the ceo of this company and could be my sponsor. she's working at the 20th floor.")
+  pc_speaker:say_and_wait_for_input("3. i don't want be to seen so i'm avoiding the elevator and taking those seemingly endless stairs")
+  pc_speaker:say_and_wait_for_input("seems good so far. what could go wrong?")
   self.app.managers[':dialogue'].current_bottom_text = 'the end'
 end
 
