@@ -6,9 +6,7 @@ require("engine/pico8/api")
 
 local logging = require("engine/debug/logging")
 
---#if tuner
 local codetuner = require("engine/debug/codetuner")
---#endif
 
 local wit_fight_app = require("application/wit_fight_app")
 local dialogue_manager = require("dialogue/dialogue_manager")
