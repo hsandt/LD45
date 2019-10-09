@@ -23,12 +23,6 @@ function character:_init(sprite, pos, rel_bubble_tail_pos)
   self.pos = pos
 end
 
--- talk
-
-function character:say(text)
-  self.current_text = text
-end
-
 -- render
 
 function character:draw()

@@ -32,6 +32,7 @@ end
 
 function adventure:render()
   painter.draw_background()
+  self.pc:draw()
 end
 
 function adventure:play_intro()
@@ -40,15 +41,15 @@ function adventure:play_intro()
   self.app:yield_delay_s(4)
   self.app.managers[':dialogue'].current_bottom_text = nil
   self.app:yield_delay_s(2)
-  self.app.managers[':dialogue']:say(speakers.pc, "ok, let's sum up")
+  self.pc.speaker:say("ok, let's sum up")
   self.app:yield_delay_s(2)
-  self.app.managers[':dialogue']:say(speakers.pc, "1. i need funding to organize a hackathon.")
+  self.pc.speaker:say("1. i need funding to organize a hackathon.")
   self.app:yield_delay_s(2)
-  self.app.managers[':dialogue']:say(speakers.pc, "2. my sister is the ceo of this company and could be my sponsor. she's working at the 20th floor.")
+  self.pc.speaker:say("2. my sister is the ceo of this company and could be my sponsor. she's working at the 20th floor.")
   self.app:yield_delay_s(2)
-  self.app.managers[':dialogue']:say(speakers.pc, "3. i don't want be to seen so i'm avoiding the elevator and taking those seemingly endless stairs")
+  self.pc.speaker:say("3. i don't want be to seen so i'm avoiding the elevator and taking those seemingly endless stairs")
   self.app:yield_delay_s(4)
-  self.app.managers[':dialogue']:say(speakers.pc, "seems good so far. what could go wrong?")
+  self.pc.speaker:say("seems good so far. what could go wrong?")
   self.app:yield_delay_s(4)
   self.app.managers[':dialogue'].current_bottom_text = 'the end'
 end

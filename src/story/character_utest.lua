@@ -32,14 +32,4 @@ describe('character', function ()
     end)
   end)
 
-  describe('say', function ()
-
-    it('should set the current speaker and the current text', function ()
-      c:say("hello")
-
-      assert.are_equal("hello", c.current_text)
-    end)
-
-  end)
-
 end)

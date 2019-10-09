@@ -14,4 +14,12 @@ function speaker_component:_init(bubble_tail_pos)
   self.current_text = nil
 end
 
+function speaker_component:say(text)
+  self.current_text = text
+end
+
+function speaker_component:stop()
+  self.current_text = nil
+end
+
 return speaker_component
