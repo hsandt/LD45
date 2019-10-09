@@ -1,6 +1,7 @@
 require("engine/application/constants")
 require("engine/core/class")
 require("engine/core/helper")
+local input = require("engine/input/input")
 local ui = require("engine/ui/ui")
 local wtk = require("wtk/pico8wtk")
 
@@ -40,6 +41,9 @@ function dialogue_manager:start()
 end
 
 function dialogue_manager:update()
+  for speaker in all(self.speakers) do
+    self:update_speaker(speaker)
+  end
 end
 
 function dialogue_manager:render()
@@ -58,6 +62,12 @@ end
 
 function dialogue_manager:add_speaker(speaker)
   add(self.speakers, speaker)
+end
+
+function dialogue_manager:update_speaker(speaker)
+  if speaker.current_text and speaker.wait_for_input and input:is_just_pressed(button_ids.o) then
+    speaker:stop()
+  end
 end
 
 -- if speaking, render the bubble with text for that speaker

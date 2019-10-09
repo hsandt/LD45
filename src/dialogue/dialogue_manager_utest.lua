@@ -2,92 +2,196 @@ require("engine/test/bustedhelper")
 local dialogue_manager = require("dialogue/dialogue_manager")
 
 require("engine/application/constants")
+local input = require("engine/input/input")
 
 local speaker_component = require("dialogue/speaker_component")
 local visual_data = require("resources/visual_data")
 
 describe('dialogue_manager', function ()
 
-  describe('_init', function ()
-    it('should init a dialogue_manager', function ()
-      local d = dialogue_manager()
-      assert.is_not_nil(d)
-    end)
-  end)
+  describe('(with instance d)', function ()
 
-  describe('start', function ()
-    it('should not error', function ()
-      local d = dialogue_manager()
-      assert.has_no_errors(function ()
-        d:start()
+    local d
+
+    before_each(function ()
+      d = dialogue_manager()
+    end)
+
+    describe('_init', function ()
+      it('should init a dialogue_manager', function ()
+        assert.is_not_nil(d)
       end)
     end)
-  end)
 
-  describe('update', function ()
-    it('should not error', function ()
-      local d = dialogue_manager()
-      assert.has_no_errors(function ()
+    describe('start', function ()
+      it('should not error', function ()
+        assert.has_no_errors(function ()
+          d:start()
+        end)
+      end)
+    end)
+
+    describe('update', function ()
+
+      setup(function ()
+        stub(dialogue_manager, "update_speaker")
+      end)
+
+      teardown(function ()
+        dialogue_manager.update_speaker:revert()
+      end)
+
+      after_each(function ()
+        input:init()
+
+        dialogue_manager.update_speaker:clear()
+      end)
+
+      it('(no speakers) should do nothing', function ()
         d:update()
+
+        local s = assert.spy(dialogue_manager.update_speaker)
+        s.was_not_called()
       end)
-    end)
-  end)
 
-  describe('render', function ()
+      it('(2 speakers) should update speakers', function ()
+        local s1 = speaker_component(vector(1, 0))
+        local s2 = speaker_component(vector(2, 0))
+        d.speakers = {s1, s2}
 
-    it('should not error', function ()
-      local d = dialogue_manager()
-      assert.has_no_errors(function ()
-        d:render()
+        d:update()
+
+        local s = assert.spy(dialogue_manager.update_speaker)
+        s.was_called(2)
+        s.was_called_with(match.ref(d), match.ref(s1))
+        s.was_called_with(match.ref(d), match.ref(s2))
       end)
+
     end)
 
-    it('(should show bottom box) should not error', function ()
-      local d = dialogue_manager()
-      d.should_show_bottom_box = true
-      assert.has_no_errors(function ()
-        d:render()
+    describe('render', function ()
+
+      setup(function ()
+        stub(dialogue_manager, "render_speaker")
       end)
-    end)
 
-    it('(some active speaker) should not error', function ()
-      local d = dialogue_manager()
-
-      local s = speaker_component(vector(1, 0))
-      s.current_text = "hello"
-      d.speakers = {s}
-        d:render()
-
-      assert.has_no_errors(function ()
-        d:render()
+      teardown(function ()
+        dialogue_manager.render_speaker:revert()
       end)
-    end)
 
-    it('(current bottom text set) should not error', function ()
-      local d = dialogue_manager()
-      d.current_bottom_text = "hello"
+      after_each(function ()
+        input:init()
 
-      assert.has_no_errors(function ()
-        d:render()
+        dialogue_manager.render_speaker:clear()
       end)
+
+      it('(no speakers) should do nothing', function ()
+        d:update()
+
+        local s = assert.spy(dialogue_manager.render_speaker)
+        s.was_not_called()
+      end)
+
+      it('#solo (2 speakers) should update speakers', function ()
+        local s1 = speaker_component(vector(1, 0))
+        local s2 = speaker_component(vector(2, 0))
+        d.speakers = {s1, s2}
+
+        d:render()
+
+        local s = assert.spy(dialogue_manager.render_speaker)
+        s.was_called(2)
+        s.was_called_with(match.ref(d), match.ref(s1))
+        s.was_called_with(match.ref(d), match.ref(s2))
+      end)
+
+      it('(should show bottom box) should not error', function ()
+        d.should_show_bottom_box = true
+        assert.has_no_errors(function ()
+          d:render()
+        end)
+      end)
+
+      it('(some active speaker) should not error', function ()
+
+        local s = speaker_component(vector(1, 0))
+        s.current_text = "hello"
+        d.speakers = {s}
+
+        assert.has_no_errors(function ()
+          d:render()
+        end)
+      end)
+
+      it('(current bottom text set) should not error', function ()
+        d.current_bottom_text = "hello"
+
+        assert.has_no_errors(function ()
+          d:render()
+        end)
+      end)
+
     end)
 
-  end)
+    describe('add_speaker', function ()
 
-  describe('add_speaker', function ()
+      it('should add a speaker component to the speakers', function ()
 
-    it('should add a speaker component to the speakers', function ()
-      local d = dialogue_manager()
+        local s1 = speaker_component(vector(1, 0))
+        local s2 = speaker_component(vector(2, 0))
+        d:add_speaker(s1)
+        d:add_speaker(s2)
 
-      local s1 = speaker_component(vector(1, 0))
-      local s2 = speaker_component(vector(2, 0))
-      d:add_speaker(s1)
-      d:add_speaker(s2)
+        assert.are_same({s1, s2}, d.speakers)
+      end)
 
-      assert.are_same({s1, s2}, d.speakers)
     end)
 
-  end)
+    describe('update_speaker', function ()
+
+      setup(function ()
+        stub(speaker_component, "stop")
+      end)
+
+      teardown(function ()
+        speaker_component.stop:revert()
+      end)
+
+      after_each(function ()
+        input:init()
+
+        speaker_component.stop:clear()
+      end)
+
+      it('(some speaker waiting for input, but no confirm) should not stop speaker', function ()
+        local speaker = speaker_component(vector(1, 0))
+        speaker.current_text = "hello"
+        speaker.wait_for_input = true
+
+        d:update()
+
+        local s = assert.spy(speaker_component.stop)
+        s.was_not_called()
+
+      end)
+
+      it('(some speaker waiting for input, but no confirm) should not stop speaker', function ()
+        local speaker = speaker_component(vector(1, 0))
+        speaker.current_text = "hello"
+        speaker.wait_for_input = true
+        input.players_btn_states[0][button_ids.o] = btn_states.just_pressed
+
+        -- normally d.speakers = {speaker} but we can test by passing directly s
+        d:update_speaker(speaker)
+
+        local s = assert.spy(speaker_component.stop)
+        s.was_called(1)
+        s.was_called_with(match.ref(speaker))
+      end)
+
+    end)
+
+  end)  -- (with instance d)
 
   describe('compute_bubble_bounds', function ()
 
@@ -122,6 +226,5 @@ describe('dialogue_manager', function ()
     end)
 
   end)
-
 
 end)
