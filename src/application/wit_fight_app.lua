@@ -54,10 +54,6 @@ function wit_fight_app:on_post_start() -- override
   input:toggle_mouse(true)
   ui:set_cursor_sprite_data(visual_data.sprites.cursor)
 --#endif
-
---#if profiler
-  profiler.window:show(colors.orange)
---#endif
 end
 
 function wit_fight_app:on_reset() -- override
