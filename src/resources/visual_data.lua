@@ -41,17 +41,24 @@ local visual_data = {
   anim_sprites = anim_sprites,
 
   -- misc ui parameters
-  bubble_line_max_chars = 29,
-  bubble_min_width_pc = 32,
-  bubble_min_width_npc = 48,
-  bubble_bottom_left_pc = vector(5, 34),
-  bubble_bottom_right_npc = vector(123, 34),
-  bubble_tail_pos_pc = vector(21, 38),
-  bubble_tail_pos_npc = vector(84, 38),
-  bottom_box_text_topleft = vector(2, 91),
-  bottom_box_max_chars = 31,
+
+  -- characters
   pc_sprite_pos = vector(19, 78),
   npc_sprite_pos = vector(86, 78),
+
+  -- bubble text
+  bubble_screen_margin_x = 4,   -- margin-x from the screen edges
+  bubble_line_max_chars = 29,   -- maximum chars per line in bubble text
+  bubble_min_width = 32,
+  bubble_tail_height = 4,
+  rel_bubble_tail_pos_pc = vector(2, -40),
+  rel_bubble_tail_pos_npc = vector(-2, -40),
+
+  -- bottom box
+  bottom_box_text_topleft = vector(2, 91),
+  bottom_box_max_chars = 31,
+
+  -- health bar
   health_bar_center_x_dist_from_char = 12,
   health_bar_half_width = 2,
   health_bar_top_from_char = -36,

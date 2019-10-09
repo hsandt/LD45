@@ -2,6 +2,8 @@ require("engine/test/bustedhelper")
 local dialogue_manager = require("dialogue/dialogue_manager")
 
 require("engine/application/constants")
+
+local speaker_component = require("dialogue/speaker_component")
 local visual_data = require("resources/visual_data")
 
 describe('dialogue_manager', function ()
@@ -48,10 +50,13 @@ describe('dialogue_manager', function ()
       end)
     end)
 
-    it('(current speaker and text set) should not error', function ()
+    it('(some active speaker) should not error', function ()
       local d = dialogue_manager()
-      d.current_speaker = speakers.pc
-      d.current_text = "hello"
+
+      local s = speaker_component(vector(1, 0))
+      s.current_text = "hello"
+      d.speakers = {s}
+        d:render()
 
       assert.has_no_errors(function ()
         d:render()
@@ -69,34 +74,54 @@ describe('dialogue_manager', function ()
 
   end)
 
-  describe('compute_bubble_bounds', function ()
+  describe('add_speaker', function ()
 
-    it('should return bubble bounds anchored bottom left for pc', function ()
-      local anchor_bottom_left = visual_data.bubble_bottom_left_pc
-      assert.are_same({anchor_bottom_left.x, anchor_bottom_left.y - (3*6+2), anchor_bottom_left.x + (19*4+2),
-          anchor_bottom_left.y},
-        {dialogue_manager.compute_bubble_bounds(speakers.pc, "hello world!\nmy name is girljpeg\nfourswords")})
-    end)
-
-    it('should return bubble bounds anchored bottom left for npc', function ()
-    local anchor_bottom_right = visual_data.bubble_bottom_right_npc
-      assert.are_same({anchor_bottom_right.x - (19*4+2), anchor_bottom_right.y - (3*6+2), anchor_bottom_right.x,
-          anchor_bottom_right.y},
-        {dialogue_manager.compute_bubble_bounds(speakers.npc, "hello world!\nmy name is girljpeg\nfourswords")})
-    end)
-
-  end)
-
-  describe('say', function ()
-
-    it('should set the current speaker and the current text', function ()
+    it('should add a speaker component to the speakers', function ()
       local d = dialogue_manager()
 
-      d:say(speakers.npc, "hello")
+      local s1 = speaker_component(vector(1, 0))
+      local s2 = speaker_component(vector(2, 0))
+      d:add_speaker(s1)
+      d:add_speaker(s2)
 
-      assert.are_same({speakers.npc, "hello"}, {d.current_speaker, d.current_text})
+      assert.are_same({s1, s2}, d.speakers)
     end)
 
   end)
+
+  describe('compute_bubble_bounds', function ()
+
+    it('(anchor far from both edges enough) should return bubble bounds', function ()
+      -- longest line has 12 characters
+      assert.are_same({30-(12*4+2)/2, 18, 30+(12*4+2)/2, 26},
+        {dialogue_manager.compute_bubble_bounds("hello world!", vector(30, 30))})
+    end)
+
+    it('(anchor close to left) should return bubble bounds clamped on left', function ()
+      -- longest line has 19 characters
+      assert.are_same({4, 6, 4+(19*4+2), 26},
+        {dialogue_manager.compute_bubble_bounds("hello world!\nmy name is girljpeg\nfourswords", vector(10, 30))})
+    end)
+
+    it('(anchor close to right) should return bubble bounds clamped on right', function ()
+      -- longest line has 19 characters
+      assert.are_same({124-(19*4+2), 6, 124, 26},
+        {dialogue_manager.compute_bubble_bounds("hello world!\nmy name is girljpeg\nfourswords", vector(100, 30))})
+    end)
+
+    it('(text is too long for anything, anchor on left side) should return bubble bounds clamped on both sides', function ()
+      -- longest line has 30 characters... too many to fit, it's really just to cover the weird cases
+      assert.are_same({4, 18, 124, 26},
+        {dialogue_manager.compute_bubble_bounds("123456789012345678901234567890", vector(20, 30))})
+    end)
+
+    it('(text is too long for anything, anchor on right side) should return bubble bounds clamped on both sides', function ()
+      -- longest line has 30 characters... too many to fit, it's really just to cover the weird cases
+      assert.are_same({4, 18, 124, 26},
+        {dialogue_manager.compute_bubble_bounds("123456789012345678901234567890", vector(100, 30))})
+    end)
+
+  end)
+
 
 end)
