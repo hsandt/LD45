@@ -52,28 +52,38 @@ describe('main_menu', function ()
     describe('render', function ()
 
       setup(function ()
-        stub(ui, "print_centered")
+        stub(main_menu, "draw_title")
+        stub(main_menu, "draw_instructions")
         -- stub text_menu.draw completely to avoid altering the count of ui.print_centered calls
         stub(text_menu, "draw")
       end)
 
       teardown(function ()
-        ui.print_centered:revert()
+        main_menu.draw_title:revert()
+        main_menu.draw_instructions:revert()
         text_menu.draw:revert()
       end)
 
       after_each(function ()
-        ui.print_centered:clear()
+        main_menu.draw_title:clear()
+        main_menu.draw_instructions:clear()
         text_menu.draw:clear()
       end)
 
-      it('should print "wit fighter by komehara" centered, in white', function ()
+      it('should draw title', function ()
         menu:render()
 
-        local s = assert.spy(ui.print_centered)
-        s.was_called(2)
-        s.was_called_with("wit fighter", 64, 48, colors.white)
-        s.was_called_with("by komehara", 64, 56, colors.white)
+        local s = assert.spy(main_menu.draw_title)
+        s.was_called(1)
+        s.was_called_with(match.ref(menu))
+      end)
+
+      it('should draw instructions', function ()
+        menu:render()
+
+        local s = assert.spy(main_menu.draw_instructions)
+        s.was_called(1)
+        s.was_called_with(match.ref(menu))
       end)
 
       it('should draw text_menu 4 lines below title + author, in the middle of screen width', function ()
@@ -82,6 +92,55 @@ describe('main_menu', function ()
         local s = assert.spy(text_menu.draw)
         s.was_called(1)
         s.was_called_with(match.ref(menu.text_menu), 64, 56 + 4 * 6)
+      end)
+
+    end)
+
+    describe('draw_title', function ()
+
+      setup(function ()
+        stub(ui, "print_centered")
+      end)
+
+      teardown(function ()
+        ui.print_centered:revert()
+      end)
+
+      after_each(function ()
+        ui.print_centered:clear()
+      end)
+
+      it('should print "wit fighter by komehara" centered, in white', function ()
+        menu:draw_title()
+
+        local s = assert.spy(ui.print_centered)
+        s.was_called(2)
+        s.was_called_with("wit fighter", 64, 48, colors.white)
+        s.was_called_with("by komehara", 64, 56, colors.white)
+      end)
+
+    end)
+
+    describe('draw_instructions', function ()
+
+      setup(function ()
+        stub(api, "print")
+      end)
+
+      teardown(function ()
+        api.print:revert()
+      end)
+
+      after_each(function ()
+        api.print:clear()
+      end)
+
+      it('should print a few lines', function ()
+        menu:draw_instructions()
+
+        local s = assert.spy(api.print)
+        s.was_called(5)
+        -- no need to check what exactly is printed
       end)
 
     end)

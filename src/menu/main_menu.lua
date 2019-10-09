@@ -37,14 +37,30 @@ function main_menu:update()
 end
 
 function main_menu:render()
-  local y = 48
-  ui.print_centered("wit fighter", 64, y, colors.white)
+  self:draw_title()
+  self.text_menu:draw(screen_width / 2, 46)
+  self:draw_instructions()
+end
+
+function main_menu:draw_title()
+  local y = 14
+  ui.print_centered("* wit fighter *", 64, y, colors.white)
   y = y + 8
   ui.print_centered("by komehara", 64, y, colors.white)
-  y = y + 4 * character_height
+end
 
-  -- skip 4 lines and draw menu content
-  self.text_menu:draw(screen_width / 2, y)
+function main_menu:draw_instructions()
+  local y = 66
+  ui.print_centered(wwrap("learn verbal attacks and matching replies", 25), 64, y, colors.white)
+  y = y + 15
+  ui.print_centered(wwrap("win to reach the top!", 25), 64, y, colors.white)
+
+  y = 96
+  api.print("arrows: navigate", 33, y, colors.white)
+  y = y + 6
+  api.print("z/c/n: confirm", 33, y, colors.white)
+  y = y + 6
+  api.print("x/v/m: cancel", 33, y, colors.white)
 end
 
 return main_menu
