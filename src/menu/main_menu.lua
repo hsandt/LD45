@@ -38,7 +38,7 @@ end
 
 function main_menu:render()
   self:draw_title()
-  self.text_menu:draw(screen_width / 2, 46)
+  self.text_menu:draw(screen_width / 2, 77)
   self:draw_instructions()
 end
 
@@ -50,7 +50,7 @@ function main_menu:draw_title()
 end
 
 function main_menu:draw_instructions()
-  local y = 66
+  local y = 41
   ui.print_centered(wwrap("learn verbal attacks and matching replies", 25), 64, y, colors.white)
   y = y + 15
   ui.print_centered(wwrap("win to reach the top!", 25), 64, y, colors.white)
