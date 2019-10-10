@@ -34,14 +34,24 @@ function text_menu:_init(alignment, text_color)
   self.selection_index = 0
 end
 
+-- idea: make a uniform_action_menu which takes a single function,
+--   and one generic parameter (or more) per item, and always calls
+--   the function(parameter) on confirm, since most menus apply the same function
+
 -- Activate the menu, fill items with given sequence and initialise selection
 --
--- We copy the sequence content to avoid referencing the passed sequence,
---   which may change later. This is a shallow copy, so menu items are still referenced.
+-- We deep copy the sequence content to avoid referencing the passed sequence,
+--   which may change later.
 function text_menu:show_items(items)
   assert(#items > 0)
   self.active = true
-  self.items = copy_seq(items)
+
+  -- deep copy of menu items to be safe on future change
+  clear_table(self.items)
+  for item in all(items) do
+    add(self.items, item:copy())
+  end
+
   self.selection_index = 1
 end
 
@@ -79,6 +89,10 @@ function text_menu:confirm_selection()
   -- currently, text menu is only used to navigate to other gamestates,
   -- but later, it may support generic on_confirm callbacks
   self.items[self.selection_index].confirm_callback()
+
+  -- just deactivate menu, so we can reuse the items later if menu is static
+  -- (by setting self.active = true), else next time show_items to refill the items
+  self.active = false
 end
 
 -- render menu, starting at top y, with text centered on x

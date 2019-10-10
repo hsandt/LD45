@@ -25,6 +25,7 @@ describe('text_menu', function ()
 
     local callback1 = function () end
     local callback2 = spy.new(function () end)
+
     local mock_items = {
       menu_item("in-game", callback1),
       menu_item("credits", callback2)
@@ -52,12 +53,13 @@ describe('text_menu', function ()
         assert.is_true(menu.active)
       end)
 
-      it('should fill items with item references', function ()
+      it('should fill items with deep copy of items', function ()
         menu:show_items(mock_items)
 
-        assert.are_equal(2, #menu.items)
-        assert.are_equal(mock_items[1], menu.items[1])
-        assert.are_equal(mock_items[2], menu.items[2])
+        assert.are_same(mock_items, menu.items)
+        assert.are_not_equal(mock_items, menu.items)
+        assert.is_false(rawequal(mock_items[1], menu.items[1]))
+        assert.is_false(rawequal(mock_items[2], menu.items[2]))
       end)
 
       it('should init the selection index', function ()
@@ -179,6 +181,16 @@ describe('text_menu', function ()
 
       before_each(function ()
         menu:show_items(mock_items)
+      end)
+
+      describe('confirm_selection', function ()
+
+        it('should deactivate the menu (keeping items)', function ()
+          menu:confirm_selection()
+
+          assert.is_false(menu.active)
+        end)
+
       end)
 
       describe('(when selection index is 1)', function ()
