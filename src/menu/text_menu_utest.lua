@@ -12,26 +12,87 @@ describe('text_menu', function ()
 
   describe('init', function ()
 
-    it('should set passed items, alignment and color, and set selection index to 1', function ()
-      local menu = text_menu({menu_item("credits", ':credits')}, alignments.left, colors.red)
+    it('should set passed items, alignment and color, and set selection index to 0', function ()
+      local menu = text_menu(alignments.left, colors.red)
 
-      assert.are_same({{menu_item("credits", ':credits')}, alignments.left, colors.red, 1},
-        {menu.items, menu.alignment, menu.text_color, menu.selection_index})
+      assert.are_same({alignments.left, colors.red, {}, false, 0},
+        {menu.alignment, menu.text_color, menu.items, menu.active, menu.selection_index})
     end)
 
   end)
 
   describe('(with instance)', function ()
 
-    local menu
     local callback1 = function () end
     local callback2 = spy.new(function () end)
+    local mock_items = {
+      menu_item("in-game", callback1),
+      menu_item("credits", callback2)
+    }
+
+    local menu
 
     before_each(function ()
-      menu = text_menu({
-        menu_item("in-game", callback1),
-        menu_item("credits", callback2)
-      }, alignments.left, colors.red)
+      menu = text_menu(alignments.left, colors.red)
+    end)
+
+    describe('show_items', function ()
+
+      it('should error with empty items', function ()
+        local menu = text_menu(alignments.left, colors.red)
+
+        assert.has_errors(function ()
+            menu.show_items({})
+        end)
+      end)
+
+      it('should activate the menu', function ()
+        menu:show_items(mock_items)
+
+        assert.is_true(menu.active)
+      end)
+
+      it('should fill items with item references', function ()
+        menu:show_items(mock_items)
+
+        assert.are_equal(2, #menu.items)
+        assert.are_equal(mock_items[1], menu.items[1])
+        assert.are_equal(mock_items[2], menu.items[2])
+      end)
+
+      it('should init the selection index', function ()
+        menu:show_items(mock_items)
+
+        assert.are_equal(1, menu.selection_index)
+      end)
+
+    end)
+
+    describe('clear', function ()
+
+      before_each(function ()
+        -- rely on show_items being correct
+        menu:show_items(mock_items)
+      end)
+
+      it('should deactivate the menu', function ()
+        menu:clear(mock_items)
+
+        assert.is_false(menu.active)
+      end)
+
+      it('should empty items', function ()
+        menu:clear(mock_items)
+
+        assert.are_equal(0, #menu.items)
+      end)
+
+      it('should clear the selection index', function ()
+        menu:clear(mock_items)
+
+        assert.are_equal(0, menu.selection_index)
+      end)
+
     end)
 
     describe('update', function ()
@@ -58,100 +119,132 @@ describe('text_menu', function ()
         text_menu.confirm_selection:clear()
       end)
 
-      it('(when input up is down) it should move cursor up', function ()
-        input.players_btn_states[0][button_ids.up] = btn_states.just_pressed
+      describe('(inactive)', function ()
 
-        menu:update()
+        it('(when various inputs are down) it should still do nothing', function ()
+          input.players_btn_states[0][button_ids.up] = btn_states.just_pressed
+          input.players_btn_states[0][button_ids.down] = btn_states.just_pressed
+          input.players_btn_states[0][button_ids.o] = btn_states.just_pressed
 
-        local s = assert.spy(text_menu.select_previous)
-        s.was_called(1)
-        s.was_called_with(match.ref(menu))
-      end)
+          menu:update()
 
-      it('(when input down is down) it should move cursor down', function ()
-        input.players_btn_states[0][button_ids.down] = btn_states.just_pressed
-
-        menu:update()
-
-        local s = assert.spy(text_menu.select_next)
-        s.was_called(1)
-        s.was_called_with(match.ref(menu))
-      end)
-
-      it('(when input o is down) it should confirm selection', function ()
-        input.players_btn_states[0][button_ids.o] = btn_states.just_pressed
-
-        menu:update()
-
-        local s = assert.spy(text_menu.confirm_selection)
-        s.was_called(1)
-        s.was_called_with(match.ref(menu))
-      end)
-
-    end)
-
-    describe('(when selection index is 1)', function ()
-
-      describe('select_previous', function ()
-
-        it('should not change selection index due to clamping', function ()
-          menu:select_previous()
-          assert.are_equal(1, menu.selection_index)
+          assert.spy(text_menu.select_previous).was_not_called()
+          assert.spy(text_menu.select_next).was_not_called()
+          assert.spy(text_menu.confirm_selection).was_not_called()
         end)
 
       end)
 
-      describe('select_next', function ()
+      describe('(active)', function ()
 
-        it('should increment selection index', function ()
-          menu:select_next()
-          assert.are_equal(2, menu.selection_index)
+        before_each(function ()
+          menu:show_items(mock_items)
+        end)
+
+        it('(when input up is just pressed) it should move cursor up', function ()
+          input.players_btn_states[0][button_ids.up] = btn_states.just_pressed
+
+          menu:update()
+
+          local s = assert.spy(text_menu.select_previous)
+          s.was_called(1)
+          s.was_called_with(match.ref(menu))
+        end)
+
+        it('(when input down is just pressed) it should move cursor down', function ()
+          input.players_btn_states[0][button_ids.down] = btn_states.just_pressed
+
+          menu:update()
+
+          local s = assert.spy(text_menu.select_next)
+          s.was_called(1)
+          s.was_called_with(match.ref(menu))
+        end)
+
+        it('(when input o is just pressed) it should confirm selection', function ()
+          input.players_btn_states[0][button_ids.o] = btn_states.just_pressed
+
+          menu:update()
+
+          local s = assert.spy(text_menu.confirm_selection)
+          s.was_called(1)
+          s.was_called_with(match.ref(menu))
         end)
 
       end)
 
-    end)
+    end)  -- update
 
-    describe('(when selection index is max (2))', function ()
+    describe('(showing 2 items)', function ()
 
       before_each(function ()
-        menu.selection_index = 2
+        menu:show_items(mock_items)
       end)
 
-      describe('select_previous', function ()
+      describe('(when selection index is 1)', function ()
 
-        it('should decrement selection index', function ()
-          menu:select_previous()
-          assert.are_equal(1, menu.selection_index)
+        describe('select_previous', function ()
+
+          it('should not change selection index due to clamping', function ()
+            menu:select_previous()
+            assert.are_equal(1, menu.selection_index)
+          end)
+
+        end)
+
+        describe('select_next', function ()
+
+          it('should increment selection index', function ()
+            menu:select_next()
+            assert.are_equal(2, menu.selection_index)
+          end)
+
         end)
 
       end)
 
-      describe('select_next', function ()
+      describe('(when selection index is max (2))', function ()
 
-        it('should not change selection index due to clamping', function ()
-          menu:select_next()
-          assert.are_equal(2, menu.selection_index)
+        before_each(function ()
+          menu.selection_index = 2
+        end)
+
+        describe('select_previous', function ()
+
+          it('should decrement selection index', function ()
+            menu:select_previous()
+            assert.are_equal(1, menu.selection_index)
+          end)
+
+        end)
+
+        describe('select_next', function ()
+
+          it('should not change selection index due to clamping', function ()
+            menu:select_next()
+            assert.are_equal(2, menu.selection_index)
+          end)
+
+        end)
+
+        describe('confirm_selection', function ()
+
+          after_each(function ()
+            callback2:clear()
+          end)
+
+          it('should enter the credits state', function ()
+            menu:confirm_selection()
+
+            local s = assert.spy(callback2)
+            s.was_called(1)
+          end)
+
         end)
 
       end)
 
-      describe('confirm_selection', function ()
-
-        after_each(function ()
-          callback2:clear()
-        end)
-
-        it('should enter the credits state', function ()
-          menu:confirm_selection()
-
-          local s = assert.spy(callback2)
-          s.was_called(1)
-        end)
-
-      end)
-
-    end)
+    end)  -- (showing 2 items)
 
     describe('draw', function ()
 
@@ -167,31 +260,49 @@ describe('text_menu', function ()
         ui.print_aligned:clear()
       end)
 
-      it('should print the item labels from a given top, passed alignment, on lines of 6px height, with current selection prepended by ">" for left alignment', function ()
-        menu.selection_index = 2  -- credits
+      describe('(inactive)', function ()
 
-        menu:draw(60, 48)
+        it('it should do nothing', function ()
+          menu:draw(77, 99)
 
-        local s = assert.spy(ui.print_aligned)
-        s.was_called(2)
-        -- non-selected item is offset to the right
-        s.was_called_with("in-game", 68, 48, alignments.left, colors.red)
-        s.was_called_with("> credits", 60, 54, alignments.left, colors.red)
+          assert.spy(ui.print_aligned).was_not_called()
+        end)
+
       end)
 
-      it('should print the item labels from a given top, passed alignment, on lines of 6px height, with current selection surrounded by "> <" for centered alignment', function ()
-        menu.alignment = alignments.center
-        menu.selection_index = 2  -- credits
+      describe('(showing 2 items)', function ()
 
-        menu:draw(60, 48)
+        before_each(function ()
+          menu:show_items(mock_items)
+        end)
 
-        local s = assert.spy(ui.print_aligned)
-        s.was_called(2)
-        s.was_called_with("in-game", 60, 48, alignments.center, colors.red)
-        s.was_called_with("> credits <", 60, 54, alignments.center, colors.red)
-      end)
+        it('should print the item labels from a given top, passed alignment, on lines of 6px height, with current selection prepended by ">" for left alignment', function ()
+          menu.selection_index = 2  -- credits
 
-    end)
+          menu:draw(60, 48)
+
+          local s = assert.spy(ui.print_aligned)
+          s.was_called(2)
+          -- non-selected item is offset to the right
+          s.was_called_with("in-game", 68, 48, alignments.left, colors.red)
+          s.was_called_with("> credits", 60, 54, alignments.left, colors.red)
+        end)
+
+        it('should print the item labels from a given top, passed alignment, on lines of 6px height, with current selection surrounded by "> <" for centered alignment', function ()
+          menu.alignment = alignments.center
+          menu.selection_index = 2  -- credits
+
+          menu:draw(60, 48)
+
+          local s = assert.spy(ui.print_aligned)
+          s.was_called(2)
+          s.was_called_with("in-game", 60, 48, alignments.center, colors.red)
+          s.was_called_with("> credits <", 60, 54, alignments.center, colors.red)
+        end)
+
+      end)  -- (showing 2 items)
+
+    end)  -- draw
 
   end)  -- (with instance)
 

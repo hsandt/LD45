@@ -10,13 +10,25 @@ local text_menu = require("menu/text_menu")
 describe('main_menu', function ()
 
   describe('init', function ()
+
+    setup(function ()
+      stub(text_menu, "show_items")
+    end)
+
+    teardown(function ()
+      text_menu.show_items:revert()
+    end)
+
     it('should set text menu to a new text menu with given items', function ()
       -- as long as there are no type/attribute checks in _init, we don't need
       --  to actualy derive from gameapp for the dummy app
       local dummy_app = {}
       local menu = main_menu(dummy_app)
 
-      assert.are_equal(main_menu._items, menu._items)
+      assert.are_same({alignments.center, colors.white}, {menu.text_menu.alignment, menu.text_menu.text_color})
+      local s = assert.spy(text_menu.show_items)
+      s.was_called(1)
+      s.was_called_with(match.ref(menu.text_menu), match.ref(main_menu._items))
     end)
   end)
 
@@ -86,12 +98,12 @@ describe('main_menu', function ()
         s.was_called_with(match.ref(menu))
       end)
 
-      it('should draw text_menu 4 lines below title + author, in the middle of screen width', function ()
+      it('should draw text_menu', function ()
         menu:render()
 
         local s = assert.spy(text_menu.draw)
         s.was_called(1)
-        s.was_called_with(match.ref(menu.text_menu), 64, 56 + 4 * 6)
+        -- no need to check where exactly it is printed
       end)
 
     end)
@@ -115,8 +127,7 @@ describe('main_menu', function ()
 
         local s = assert.spy(ui.print_centered)
         s.was_called(2)
-        s.was_called_with("wit fighter", 64, 48, colors.white)
-        s.was_called_with("by komehara", 64, 56, colors.white)
+        -- no need to check what exactly is printed
       end)
 
     end)
@@ -124,22 +135,28 @@ describe('main_menu', function ()
     describe('draw_instructions', function ()
 
       setup(function ()
+        stub(ui, "print_centered")
         stub(api, "print")
       end)
 
       teardown(function ()
+        ui.print_centered:revert()
         api.print:revert()
       end)
 
       after_each(function ()
+        ui.print_centered:clear()
         api.print:clear()
       end)
 
       it('should print a few lines', function ()
         menu:draw_instructions()
 
+        local s = assert.spy(ui.print_centered)
+        s.was_called(2)
+
         local s = assert.spy(api.print)
-        s.was_called(5)
+        s.was_called(3)
         -- no need to check what exactly is printed
       end)
 
