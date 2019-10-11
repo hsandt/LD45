@@ -40,3 +40,7 @@ I intend to add the following innovations:
 - Multiple replies can work against a given attack (in Monkey Island, only the opposite is true, and only when including the boss)
 - Attacks and replies have a level, which decides how much (mental) damage is dealt to the opponent
 - NPCs learn your quotes
+
+## Development notes
+
+This game has been developed with my own framework for PICO-8, [pico-boots](https://github.com/hsandt/pico-boots).
