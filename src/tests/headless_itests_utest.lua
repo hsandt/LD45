@@ -2,12 +2,20 @@
 require("engine/test/bustedhelper")
 require("engine/test/headless_itest")
 require("engine/test/integrationtest")
-local wit_fight_app = require("application/wit_fight_app")
-local dialogue_manager = require("dialogue/dialogue_manager")
+local logging = require("engine/debug/logging")
 
-local app = wit_fight_app()
+local wit_fighter_app = require("application/wit_fighter_app")
+local dialogue_manager = require("dialogue/dialogue_manager")
+local fight_manager = require("fight/fight_manager")
+
+local app = wit_fighter_app()
 app.initial_gamestate = ':main_menu'
-app:register_managers(dialogue_manager())
+app:register_managers(dialogue_manager(), fight_manager())
+
+logging.logger:register_stream(logging.console_log_stream)
+logging.logger:register_stream(logging.file_log_stream)
+logging.file_log_stream.file_prefix = "wit_fighter_headless_itests"
+
 
 -- set app immediately so during itest registration by require,
 --   time_trigger can access app fps

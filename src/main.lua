@@ -8,10 +8,11 @@ local logging = require("engine/debug/logging")
 
 local codetuner = require("engine/debug/codetuner")
 
-local wit_fight_app = require("application/wit_fight_app")
+local wit_fighter_app = require("application/wit_fighter_app")
 local dialogue_manager = require("dialogue/dialogue_manager")
+local fight_manager = require("fight/fight_manager")
 
-local app = wit_fight_app()
+local app = wit_fighter_app()
 
 function _init()
 --#if log
@@ -36,7 +37,7 @@ function _init()
 --#endif
 
   app.initial_gamestate = ':main_menu'
-  app:register_managers(dialogue_manager())
+  app:register_managers(dialogue_manager(), fight_manager())
   app:start()
 end
 

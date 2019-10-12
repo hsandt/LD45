@@ -11,6 +11,7 @@ local logging = require("engine/debug/logging")
 
 local wit_fight_app = require("application/wit_fight_app")
 local dialogue_manager = require("dialogue/dialogue_manager")
+local fight_manager = require("fight/fight_manager")
 
 -- set app immediately so during itest registration by require,
 --   time_trigger can access app fps
@@ -27,6 +28,7 @@ function _init()
   -- register log streams to output logs to both the console and the file log
   logging.logger:register_stream(logging.console_log_stream)
   logging.logger:register_stream(logging.file_log_stream)
+  logging.file_log_stream.file_prefix = "wit_fighter_itest"
 
   -- clear log file on new itest session
   logging.file_log_stream:clear()
@@ -34,7 +36,7 @@ function _init()
 
 
   app.initial_gamestate = ':main_menu'
-  app:register_managers(dialogue_manager())
+  app:register_managers(dialogue_manager(), fight_manager())
 
   -- start first itest
   init_game_and_start_next_itest()
