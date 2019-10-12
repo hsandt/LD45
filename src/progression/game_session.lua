@@ -6,6 +6,7 @@ local npc = require("progression/npc")
 local game_session = new_class()
 
 function game_session:_init()
+  -- current floor number the player character is located at
   self.floor_number = 1
 
   -- "start with nothing"

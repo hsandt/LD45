@@ -91,7 +91,7 @@ local gameplay_data = {
   replies = replies,
   quote_matches = quote_matches,
   floors = floors,
-  npcs = npc_info_s,
+  npc_info_s = npc_info_s,
 
   -- misc gameplay parameters
   fighter_max_hp = 3
@@ -110,7 +110,7 @@ function gameplay_data:get_floor_info(floor_number)
 end
 
 function gameplay_data:get_npc_info_table_with_level(level)
-  return filter(self.npcs, function (npc_info)
+  return filter(self.npc_info_s, function (npc_info)
     return npc_info.level == level
   end)
 end
