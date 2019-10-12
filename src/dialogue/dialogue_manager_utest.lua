@@ -5,6 +5,7 @@ require("engine/application/constants")
 local input = require("engine/input/input")
 
 local speaker_component = require("dialogue/speaker_component")
+local text_menu = require("menu/text_menu")
 local visual_data = require("resources/visual_data")
 
 describe('dialogue_manager', function ()
@@ -63,8 +64,8 @@ describe('dialogue_manager', function ()
 
         local s = assert.spy(dialogue_manager.update_speaker)
         s.was_called(2)
-        s.was_called_with(match.ref(d), match.ref(s1))
-        s.was_called_with(match.ref(d), match.ref(s2))
+        s.was_called_with(match.ref(s1))
+        s.was_called_with(match.ref(s2))
       end)
 
     end)
@@ -101,8 +102,8 @@ describe('dialogue_manager', function ()
 
         local s = assert.spy(dialogue_manager.render_speaker)
         s.was_called(2)
-        s.was_called_with(match.ref(d), match.ref(s1))
-        s.was_called_with(match.ref(d), match.ref(s2))
+        s.was_called_with(match.ref(s1))
+        s.was_called_with(match.ref(s2))
       end)
 
       it('(should show bottom box) should not error', function ()
@@ -147,71 +148,98 @@ describe('dialogue_manager', function ()
 
     end)
 
-    describe('update_speaker', function ()
+    describe('prompt_items', function ()
 
       setup(function ()
-        stub(speaker_component, "stop")
+        stub(text_menu, "show_items")
       end)
 
       teardown(function ()
-        speaker_component.stop:revert()
+        text_menu.show_items:revert()
       end)
 
       after_each(function ()
-        input:init()
-
-        speaker_component.stop:clear()
+        text_menu.show_items:clear()
       end)
 
-      it('(some speaker waiting for input, but no confirm) should not stop speaker', function ()
-        local speaker = speaker_component(vector(1, 0))
-        speaker.current_text = "hello"
-        speaker.wait_for_input = true
+      it('should show items in text menu component', function ()
+        local fake_items = {}  -- dummy menu item sequence
+        d:prompt_items(fake_items)
 
-        d:update()
-
-        local s = assert.spy(speaker_component.stop)
-        s.was_not_called()
-      end)
-
-      it('(some speaker waiting for input  and confirm input) should stop speaker', function ()
-        local speaker = speaker_component(vector(1, 0))
-        speaker.current_text = "hello"
-        speaker.wait_for_input = true
-        input.players_btn_states[0][button_ids.o] = btn_states.just_pressed
-
-        -- normally d.speakers = {speaker} but we can test by passing directly s
-        d:update_speaker(speaker)
-
-        local s = assert.spy(speaker_component.stop)
+        local s = assert.spy(text_menu.show_items)
         s.was_called(1)
-        s.was_called_with(match.ref(speaker))
-      end)
-
-    end)
-
-    describe('render_speaker', function ()
-
-      it('should not error', function ()
-        local speaker = speaker_component(vector(1, 0))
-
-        assert.has_no_errors(function ()
-          d:render_speaker(speaker)
-        end)
-      end)
-
-      it('(speaker has current text) should not error', function ()
-        local speaker = speaker_component(vector(1, 0))
-        speaker.current_text = "hello"
-
-        assert.has_no_errors(function ()
-          d:render_speaker(speaker)
-        end)
+        s.was_called_with(match.ref(d.text_menu), match.ref(fake_items))
       end)
 
     end)
 
   end)  -- (with instance d)
+
+  -- static
+
+  describe('update_speaker', function ()
+
+    setup(function ()
+      stub(speaker_component, "stop")
+    end)
+
+    teardown(function ()
+      speaker_component.stop:revert()
+    end)
+
+    after_each(function ()
+      input:init()
+
+      speaker_component.stop:clear()
+    end)
+
+    it('(some speaker waiting for input, but no confirm) should not stop speaker', function ()
+      local speaker = speaker_component(vector(1, 0))
+      speaker.current_text = "hello"
+      speaker.wait_for_input = true
+
+      dialogue_manager.update_speaker(speaker)
+
+      local s = assert.spy(speaker_component.stop)
+      s.was_not_called()
+    end)
+
+    it('(some speaker waiting for input  and confirm input) should stop speaker', function ()
+      local speaker = speaker_component(vector(1, 0))
+      speaker.current_text = "hello"
+      speaker.wait_for_input = true
+      input.players_btn_states[0][button_ids.o] = btn_states.just_pressed
+
+      -- normally d.speakers = {speaker} but we can test by passing directly s
+      dialogue_manager.update_speaker(speaker)
+
+      local s = assert.spy(speaker_component.stop)
+      s.was_called(1)
+      s.was_called_with(match.ref(speaker))
+    end)
+
+  end)
+
+  describe('render_speaker', function ()
+
+    it('should not error', function ()
+      local speaker = speaker_component(vector(1, 0))
+
+      assert.has_no_errors(function ()
+        dialogue_manager.render_speaker(speaker)
+      end)
+    end)
+
+    it('(speaker has current text) should not error', function ()
+      local speaker = speaker_component(vector(1, 0))
+      speaker.current_text = "hello"
+
+      assert.has_no_errors(function ()
+        dialogue_manager.render_speaker(speaker)
+      end)
+    end)
+
+  end)
 
   describe('compute_bubble_bounds', function ()
 

@@ -1,10 +1,12 @@
 require("engine/application/constants")
+local manager = require("engine/application/manager")
 require("engine/core/class")
 require("engine/core/helper")
 local input = require("engine/input/input")
 local ui = require("engine/ui/ui")
 local wtk = require("wtk/pico8wtk")
 
+local text_menu = require("menu/text_menu")
 local visual_data = require("resources/visual_data")
 
 speakers = enum {
@@ -24,11 +26,16 @@ local bubble_tail_positions = {
   visual_data.bubble_tail_pos_npc
 }
 
-local dialogue_manager = new_class()
+local dialogue_manager = derived_class(manager)
 
 dialogue_manager.type = ':dialogue'
 
 function dialogue_manager:_init()
+  manager._init(self)
+
+  -- component
+  self.text_menu = text_menu({}, alignments.left, colors.dark_blue)
+
   -- sequence of speaker_component instances
   self.speakers = {}
 
@@ -37,18 +44,20 @@ function dialogue_manager:_init()
   self.current_bottom_text = nil
 end
 
-function dialogue_manager:start()
+function dialogue_manager:start()  -- override
 end
 
-function dialogue_manager:update()
+function dialogue_manager:update()  -- override
+  self.text_menu:update()
+
   for speaker in all(self.speakers) do
-    self:update_speaker(speaker)
+    dialogue_manager.update_speaker(speaker)
   end
 end
 
-function dialogue_manager:render()
+function dialogue_manager:render()  -- override
   for speaker in all(self.speakers) do
-    self:render_speaker(speaker)
+    dialogue_manager.render_speaker(speaker)
   end
 
   if self.should_show_bottom_box then
@@ -64,24 +73,40 @@ function dialogue_manager:add_speaker(speaker)
   add(self.speakers, speaker)
 end
 
-function dialogue_manager:update_speaker(speaker)
+-- prompt items: {menu_item}
+function dialogue_manager:prompt_items(items)
+  self.text_menu:show_items(items)
+end
+
+-- render
+
+-- draw text in bottom box for narration/notification/instruction
+function dialogue_manager:draw_bottom_text()
+  local top_left = visual_data.bottom_box_text_topleft
+  api.print(wwrap(self.current_bottom_text, visual_data.bottom_box_max_chars), top_left.x, top_left.y, colors.black)
+end
+
+-- static
+function dialogue_manager.update_speaker(speaker)
   if speaker.current_text and speaker.wait_for_input and input:is_just_pressed(button_ids.o) then
     speaker:stop()
   end
 end
 
 -- if speaking, render the bubble with text for that speaker
-function dialogue_manager:render_speaker(speaker)
+-- static
+function dialogue_manager.render_speaker(speaker)
   if speaker.current_text then
-    self:draw_bubble_with_text(speaker.current_text, speaker.bubble_tail_pos)
+    dialogue_manager.draw_bubble_with_text(speaker.current_text, speaker.bubble_tail_pos)
   end
 end
 
-function dialogue_manager:draw_bubble_with_text(text, bubble_tail_pos)
+-- static
+function dialogue_manager.draw_bubble_with_text(text, bubble_tail_pos)
   local wrapped_text = wwrap(text, visual_data.bubble_line_max_chars)
   local bubble_left, bubble_top, bubble_right, bubble_bottom = dialogue_manager.compute_bubble_bounds(wrapped_text, bubble_tail_pos)
-  self:draw_bubble(bubble_left, bubble_top, bubble_right, bubble_bottom, bubble_tail_pos)
-  self:draw_text(wrapped_text, bubble_left, bubble_top)
+  dialogue_manager.draw_bubble(bubble_left, bubble_top, bubble_right, bubble_bottom, bubble_tail_pos)
+  dialogue_manager.draw_text(wrapped_text, bubble_left, bubble_top)
 end
 
 -- static
@@ -130,23 +155,20 @@ function dialogue_manager.compute_bubble_bounds(text, bubble_tail_pos)
   return bubble_left, bubble_top, bubble_right, bubble_bottom
 end
 
-function dialogue_manager:draw_bubble(bubble_left, bubble_top, bubble_right, bubble_bottom, bubble_tail_pos)
+-- static
+function dialogue_manager.draw_bubble(bubble_left, bubble_top, bubble_right, bubble_bottom, bubble_tail_pos)
   ui.draw_rounded_box(bubble_left, bubble_top, bubble_right, bubble_bottom, colors.black, colors.white)
   visual_data.sprites.bubble_tail:render(bubble_tail_pos)
 end
 
-function dialogue_manager:draw_text(wrapped_text, bubble_left, bubble_top)
+-- static
+function dialogue_manager.draw_text(wrapped_text, bubble_left, bubble_top)
   api.print(wrapped_text, bubble_left + 2, bubble_top + 2, colors.black)
 end
 
-function dialogue_manager:draw_bottom_box()
+-- static
+function dialogue_manager.draw_bottom_box()
   ui.draw_rounded_box(0, 89, 127, 127, colors.dark_blue, colors.indigo)
-end
-
--- draw text in bottom box for narration/notification/instruction
-function dialogue_manager:draw_bottom_text()
-  local top_left = visual_data.bottom_box_text_topleft
-  api.print(wwrap(self.current_bottom_text, visual_data.bottom_box_max_chars), top_left.x, top_left.y, colors.black)
 end
 
 return dialogue_manager
