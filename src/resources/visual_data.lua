@@ -12,8 +12,10 @@ local sprites = {
   upper_stairs_step2 = sprite_data(sprite_id_location(1, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
   lower_stairs_step  = sprite_data(sprite_id_location(2, 1), tile_vector(1, 2), vector(0, 0), colors.pink),
   -- characters
-  pc                 = sprite_data(sprite_id_location(0, 6), tile_vector(2, 5), vector(6, 39), colors.pink),
-  npc = {
+  character = {
+    -- pc
+    [0] = sprite_data(sprite_id_location(0, 6), tile_vector(2, 5), vector(6, 39), colors.pink),
+    -- npcs
     [1] = sprite_data(sprite_id_location(2, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
     [2] = sprite_data(sprite_id_location(4, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
     [3] = sprite_data(sprite_id_location(6, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
@@ -51,8 +53,10 @@ local visual_data = {
   bubble_line_max_chars = 29,   -- maximum chars per line in bubble text
   bubble_min_width = 32,
   bubble_tail_height = 4,
-  rel_bubble_tail_pos_pc = vector(2, -40),
-  rel_bubble_tail_pos_npc = vector(-2, -40),
+  rel_bubble_tail_pos_by_horizontal_dir = {
+    vector(-2, -40),  -- horizontal_dirs.left  = 1
+    vector( 2, -40),  -- horizontal_dirs.right = 2
+  },
 
   -- bottom box
   bottom_box_text_topleft = vector(2, 91),

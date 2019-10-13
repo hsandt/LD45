@@ -1,5 +1,6 @@
+local character_info = require("content/character_info")
+local fighter_info = require("content/fighter_info")
 local floor_info = require("content/floor_info")
-local npc_info = require("content/npc_info")
 local quote_info = require("content/quote_info")
 local quote_match_info = require("content/quote_match_info")
 
@@ -62,28 +63,55 @@ local floors = {
   floor_info(10,  6,  6),
 }
 
--- name npc_info_s (like sequence) to distinguish from a dynamic npc in game session
+-- character story and visual info
+local pc_info = character_info(0, "you", 0)
 local npc_info_s = {
-  npc_info(1, "intern designer",      1, {1, 2}),
-  npc_info(2, "intern programmer",    1, {2, 3}),
-  npc_info(3, "intern qa",            1, {1, 3}),
-  npc_info(4, "intern marketing",     1, {1, 2, 3}),
-  npc_info(5, "placement designer",   2, {1, 4}),
-  npc_info(6, "placement programmer", 2, {2, 5}),
-  npc_info(7, "placement qa",         2, {3, 4}),
-  npc_info(8, "placement marketing",  2, {4, 5}),
-  npc_info(9, "junior designer",      3, {3, 6}),
-  npc_info(10, "junior programmer",    3, {4, 7}),
-  npc_info(11, "junior qa",            3, {5, 8}),
-  npc_info(12, "junior marketing",     3, {4, 5, 8}),
-  npc_info(13, "designer",             4, {7, 10}),
-  npc_info(14, "programmer",           4, {1}),
-  npc_info(15, "manager",              4, {1}),
-  npc_info(16, "legal advisor",        4, {1}),
-  npc_info(17, "senior designer",      5, {1}),
-  npc_info(18, "senior programmer",    5, {1}),
-  npc_info(19, "senior qa",            5, {1}),
-  npc_info(20, "senior marketing",     5, {1}),
+  character_info(1, "intern designer", ),
+  character_info(2, "intern programmer", ),
+  character_info(3, "intern qa", ),
+  character_info(4, "intern marketing", ),
+  character_info(5, "placement designer", ),
+  character_info(6, "placement programmer", ),
+  character_info(7, "placement qa", ),
+  character_info(8, "placement marketing", ),
+  character_info(9, "junior designer", ),
+  character_info(10, "junior programmer", ),
+  character_info(11, "junior qa", ),
+  character_info(12, "junior marketing", ),
+  character_info(13, "designer", ),
+  character_info(14, "programmer", ),
+  character_info(15, "manager", ),
+  character_info(16, "legal advisor", ),
+  character_info(17, "senior designer", ),
+  character_info(18, "senior programmer", ),
+  character_info(19, "senior qa", ),
+  character_info(20, "senior marketing", ),
+}
+
+-- fighters are mostly mapped to characters 1:1, but storing characters separately is useful
+--   in case we have a non-fighting npc
+local pc_fighter_info = fighter_info(0, 0, 1, 3, {1, 2})
+local npc_fighter_info_s = {
+  fighter_info( 1,  1, 1, 3, {1, 2}. {}, {}),
+  fighter_info( 2,  2, 1, 3, {2, 3}, {}, {}),
+  fighter_info( 3,  3, 1, 3, {1, 3}, {}, {}),
+  fighter_info( 4,  4, 1, 3, {1, 2, 3}, {}, {}),
+  fighter_info( 5,  5, 2, 3, {1, 4}, {}, {}),
+  fighter_info( 6,  6, 2, 3, {2, 5}, {}, {}),
+  fighter_info( 7,  7, 2, 3, {3, 4}, {}, {}),
+  fighter_info( 8,  8, 2, 3, {4, 5}, {}, {}),
+  fighter_info( 9,  9, 3, 3, {3, 6}, {}, {}),
+  fighter_info(10, 10, 3, 3, {4, 7}, {}, {}),
+  fighter_info(11, 11, 3, 3, {5, 8}, {}, {}),
+  fighter_info(12, 12, 3, 3, {4, 5, 8}, {}, {}),
+  fighter_info(13, 13, 4, 3, {7, 10}, {}, {}),
+  fighter_info(14, 14, 4, 3, {1}, {}, {}),
+  fighter_info(15, 15, 4, 3, {1}, {}, {}),
+  fighter_info(16, 16, 4, 3, {1}, {}, {}),
+  fighter_info(17, 17, 5, 3, {1}, {}, {}),
+  fighter_info(18, 18, 5, 3, {1}, {}, {}),
+  fighter_info(19, 19, 5, 3, {1}, {}, {}),
+  fighter_info(20, 20, 5, 3, {1}, {}, {}),
 }
 
 local gameplay_data = {
@@ -91,7 +119,10 @@ local gameplay_data = {
   replies = replies,
   quote_matches = quote_matches,
   floors = floors,
+  pc_info = pc_info,
   npc_info_s = npc_info_s,
+  pc_fighter_info = pc_fighter_info,
+  npc_fighter_info_s = npc_fighter_info_s,
 
   -- misc gameplay parameters
   fighter_max_hp = 3
@@ -109,9 +140,9 @@ function gameplay_data:get_floor_info(floor_number)
   return self.floors[floor_number]
 end
 
-function gameplay_data:get_npc_info_table_with_level(level)
-  return filter(self.npc_info_s, function (npc_info)
-    return npc_info.level == level
+function gameplay_data:get_fighter_info_table_with_level(level)
+  return filter(self.fighter_info_s, function (fighter_info)
+    return fighter_info.level == level
   end)
 end
 

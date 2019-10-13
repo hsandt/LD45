@@ -2,25 +2,33 @@ require("engine/test/bustedhelper")
 local character = require("story/character")
 
 require("engine/core/math")
-local sprite_data = require("engine/render/sprite_data")
 
+local character_info = require("content/character_info")
 local speaker_component = require("dialogue/speaker_component")
+local visual_data = require("resources/visual_data")
 
 describe('character', function ()
 
-  local mock_sprite = sprite_data(sprite_id_location(1, 3))
+  -- sprites character [8] must exist in visual_data
+  local mock_character_info = character_info(2, "employee", 5)
   local pos = vector(20, 60)
-  local rel_bubble_tail_pos = vector(2, -20)
 
   local c
 
   before_each(function ()
-    c = character(mock_sprite, pos, rel_bubble_tail_pos)
+    c = character(mock_character_info, horizontal_dirs.right, pos)
   end)
 
   describe('_init', function ()
     it('should init a character', function ()
-      assert.are_same({speaker_component(pos + rel_bubble_tail_pos), mock_sprite, pos}, {c.speaker, c.sprite, c.pos})
+      assert.are_equal(mock_character_info, c.character_info)
+      assert.are_equal(visual_data.sprites.character[5], c.sprite)
+      local rel_bubble_tail_pos = visual_data.rel_bubble_tail_pos_by_horizontal_dir[horizontal_dirs.right]
+      assert.are_same({
+          speaker_component(pos + rel_bubble_tail_pos),
+          pos
+        },
+        {c.speaker, c.pos})
     end)
   end)
 
