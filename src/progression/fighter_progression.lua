@@ -10,12 +10,12 @@ character_types = enum {
 
 local fighter_progression = new_class()
 
--- character_type: character_types
--- fighter_info: fighter_info
--- level: int (only useful for npc)
--- known_attack_ids: {int}
--- known_reply_ids: {int}
--- known_quote_match_ids: {int} (only useful for npc)
+-- character_type: character_types    is the fighter controlled by the player or some ai?
+-- fighter_info: fighter_info         fighter info this was created with
+-- level: int                         current level (only useful for npc)
+-- known_attack_ids: {int}            known attack ids
+-- known_reply_ids: {int}             known reply ids
+-- known_quote_match_ids: {int}       known quote matches (only useful for npc)
 function fighter_progression:_init(character_type, some_fighter_info)
   -- parameters
   self.character_type = character_type

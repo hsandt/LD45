@@ -21,12 +21,12 @@ State
   is_attacker: bool             true iff fighter attacks this turn
   last_quote: (quote_info|nil)  last quote said, if any
 --]]
-function fighter:_init(char, fighter_progression)
+function fighter:_init(char, fighter_prog)
   self.character = char
-  self.fighter_progression = fighter_progression
+  self.fighter_progression = fighter_prog
 
   -- fighter status
-  self.hp = fighter_progression.max_hp
+  self.hp = fighter_prog.max_hp
   self.last_quote = nil
 end
 
@@ -37,6 +37,16 @@ end
 --#endif
 
 -- logic
+
+function fighter:get_available_attack_ids()
+  -- for now, ignore attacks already used and just return all known attack ids
+  return self.fighter_progression.known_attack_ids
+end
+
+function fighter:get_available_reply_ids()
+  -- for now, ignore replies already used and just return all known reply ids 
+  return self.fighter_progression.known_reply_ids
+end
 
 function fighter:auto_pick_quote()
   assert(self.character_type == character_types.ai)

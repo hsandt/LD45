@@ -13,11 +13,14 @@ describe('fighter', function ()
   local mock_character = character(mock_character_info, horizontal_dirs.right, pos)
 
   local mock_fighter_info = fighter_info(8, "employee", 4, 5, {11, 27}, {12, 28}, {2, 4})
-  local mock_fighter_progression = fighter_progression(character_types.ai, mock_fighter_info)
 
+  local mock_fighter_progression
   local f
 
   before_each(function ()
+    mock_fighter_progression = fighter_progression(character_types.ai, mock_fighter_info)
+    add(mock_fighter_progression.known_attack_ids, 35)
+    add(mock_fighter_progression.known_reply_ids, 37)
     f = fighter(mock_character, mock_fighter_progression)
   end)
 
@@ -42,6 +45,18 @@ describe('fighter', function ()
   end)
 
   -- logic
+
+  describe('get_available_attack_ids', function ()
+    it('should return sequence of all known attack ids (for now)', function ()
+      assert.are_same({11, 27, 35}, f:get_available_attack_ids())
+    end)
+  end)
+
+  describe('get_available_reply_ids', function ()
+    it('should return sequence of all known reply ids (for now)', function ()
+      assert.are_same({12, 28, 37}, f:get_available_reply_ids())
+    end)
+  end)
 
   describe('take_damage', function ()
 
