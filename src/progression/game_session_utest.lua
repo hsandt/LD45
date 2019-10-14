@@ -3,35 +3,61 @@ local game_session = require("progression/game_session")
 
 describe('game_session', function ()
 
+  -- no need to have actual fighter_progression instances
+  local fake_npc_fighter_prog1 = {level = 1}
+  local fake_npc_fighter_prog2 = {level = 2}
+  local fake_npc_fighter_prog3 = {level = 3}
+
   describe('_init', function ()
 
-    -- no need to have actual npc instances
-    local fake_npc1 = {}
-    local fake_npc2 = {}
-
     setup(function ()
-      stub(game_session, "generate_npcs", function ()
-        return {fake_npc1, fake_npc2}
+      stub(game_session, "generate_npc_fighter_progressions", function ()
+        return {fake_npc_fighter_prog1, fake_npc_fighter_prog2}
       end)
     end)
 
     teardown(function ()
-      game_session.generate_npcs:revert()
+      game_session.generate_npc_fighter_progressions:revert()
     end)
 
     it('should init a game_session', function ()
-      local s = game_session()
-      assert.are_same({1, {}}, {s.floor_number, s.pc_known_quotes})
-      assert.are_equal(fake_npc1, s.npcs[1])
-      assert.are_equal(fake_npc2, s.npcs[2])
+      local gs = game_session()
+      assert.are_same({1, {}}, {gs.floor_number, gs.pc_known_quotes})
+      assert.are_equal(fake_npc_fighter_prog1, gs.npc_fighter_progressions[1])
+      assert.are_equal(fake_npc_fighter_prog2, gs.npc_fighter_progressions[2])
     end)
   end)
 
-  describe('generate_npcs', function ()
+  describe('get_all_npc_fighter_progressions_with_level', function ()
+
+    setup(function ()
+      stub(game_session, "generate_npc_fighter_progressions", function ()
+        return {fake_npc_fighter_prog1, fake_npc_fighter_prog2, fake_npc_fighter_prog3}
+      end)
+    end)
+
+    teardown(function ()
+      game_session.generate_npc_fighter_progressions:revert()
+    end)
+
+    it('should return progression of all npc fighters of a given level', function ()
+      local gs = game_session()
+
+      local npc_fighter_progs_level3 = gs:get_all_npc_fighter_progressions_with_level(3)
+      
+      assert.are_equal(1, #npc_fighter_progs_level3)
+      assert.are_equal(fake_npc_fighter_prog3, npc_fighter_progs_level3[1])
+    end)
+
+  end)
+
+  describe('generate_npc_fighter_progressions', function ()
     it('should return 20 npcs, one per archetype', function ()
-      local npcs = game_session.generate_npcs()
-      assert.are_equal(20, #npcs)
-      assert.are_same({1, 20}, {npcs[1].info.id, npcs[20].info.id})
+      local npc_fighter_progs = game_session.generate_npc_fighter_progressions()
+
+      -- Relies on generate_npc_fighter_progressions working.
+      assert.are_equal(20, #npc_fighter_progs)
+      assert.are_same({1, 20}, {npc_fighter_progs[1].fighter_info.id, npc_fighter_progs[20].fighter_info.id})
     end)
   end)
 

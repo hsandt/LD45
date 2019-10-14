@@ -21,12 +21,12 @@ State
   is_attacker: bool             true iff fighter attacks this turn
   last_quote: (quote_info|nil)  last quote said, if any
 --]]
-function fighter:_init(character, fighter_progression)
-  self.character = character
+function fighter:_init(char, fighter_progression)
+  self.character = char
   self.fighter_progression = fighter_progression
 
   -- fighter status
-  self.hp = fighter_progression. max_hp
+  self.hp = fighter_progression.max_hp
   self.last_quote = nil
 end
 

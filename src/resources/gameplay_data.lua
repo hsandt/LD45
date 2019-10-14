@@ -66,33 +66,35 @@ local floors = {
 -- character story and visual info
 local pc_info = character_info(0, "you", 0)
 local npc_info_s = {
-  character_info(1, "intern designer", ),
-  character_info(2, "intern programmer", ),
-  character_info(3, "intern qa", ),
-  character_info(4, "intern marketing", ),
-  character_info(5, "placement designer", ),
-  character_info(6, "placement programmer", ),
-  character_info(7, "placement qa", ),
-  character_info(8, "placement marketing", ),
-  character_info(9, "junior designer", ),
-  character_info(10, "junior programmer", ),
-  character_info(11, "junior qa", ),
-  character_info(12, "junior marketing", ),
-  character_info(13, "designer", ),
-  character_info(14, "programmer", ),
-  character_info(15, "manager", ),
-  character_info(16, "legal advisor", ),
-  character_info(17, "senior designer", ),
-  character_info(18, "senior programmer", ),
-  character_info(19, "senior qa", ),
-  character_info(20, "senior marketing", ),
+  character_info(1, "intern designer"),
+  character_info(2, "intern programmer"),
+  character_info(3, "intern qa"),
+  character_info(4, "intern marketing"),
+  character_info(5, "placement designer"),
+  character_info(6, "placement programmer"),
+  character_info(7, "placement qa"),
+  character_info(8, "placement marketing"),
+  character_info(9, "junior designer"),
+  character_info(10, "junior programmer"),
+  character_info(11, "junior qa"),
+  character_info(12, "junior marketing"),
+  character_info(13, "designer"),
+  character_info(14, "programmer"),
+  character_info(15, "manager"),
+  character_info(16, "legal advisor"),
+  character_info(17, "senior designer"),
+  character_info(18, "senior programmer"),
+  character_info(19, "senior qa"),
+  character_info(20, "senior marketing"),
 }
+
+-- "start with nothing" -> no known quotes to start with
+local pc_fighter_info = fighter_info(0, 0, 1, 3, {}, {}, {})
 
 -- fighters are mostly mapped to characters 1:1, but storing characters separately is useful
 --   in case we have a non-fighting npc
-local pc_fighter_info = fighter_info(0, 0, 1, 3, {1, 2})
 local npc_fighter_info_s = {
-  fighter_info( 1,  1, 1, 3, {1, 2}. {}, {}),
+  fighter_info( 1,  1, 1, 3, {1, 2}, {}, {}),
   fighter_info( 2,  2, 1, 3, {2, 3}, {}, {}),
   fighter_info( 3,  3, 1, 3, {1, 3}, {}, {}),
   fighter_info( 4,  4, 1, 3, {1, 2, 3}, {}, {}),
@@ -140,9 +142,9 @@ function gameplay_data:get_floor_info(floor_number)
   return self.floors[floor_number]
 end
 
-function gameplay_data:get_fighter_info_table_with_level(level)
-  return filter(self.fighter_info_s, function (fighter_info)
-    return fighter_info.level == level
+function gameplay_data:get_all_npc_fighter_info_with_initial_level(level)
+  return filter(self.npc_fighter_info_s, function (some_fighter_info)
+    return some_fighter_info.initial_level == level
   end)
 end
 
