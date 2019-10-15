@@ -38,14 +38,13 @@ end
 
 -- logic
 
-function fighter:get_available_attack_ids()
-  -- for now, ignore attacks already used and just return all known attack ids
-  return self.fighter_progression.known_attack_ids
-end
-
-function fighter:get_available_reply_ids()
-  -- for now, ignore replies already used and just return all known reply ids 
-  return self.fighter_progression.known_reply_ids
+function fighter:get_available_quote_ids(quote_type)
+  if quote_type == quote_types.attack then
+    -- for now, ignore attacks already used and just return all known attack ids
+    return self.fighter_progression.known_attack_ids
+  else  -- quote_type == quote_types.reply
+    return self.fighter_progression.known_reply_ids
+  end
 end
 
 function fighter:auto_pick_quote()
@@ -69,6 +68,7 @@ end
 function fighter:draw()
   self.character:draw(self.pos)
   self:draw_health_bar()
+  self:draw_name_label()
 end
 
 function fighter:draw_health_bar()
@@ -85,6 +85,17 @@ function fighter:draw_health_bar()
   local top = self.character.pos.y + visual_data.health_bar_top_from_char
   local bottom = self.character.pos.y + visual_data.health_bar_bottom_from_char
   ui.draw_box(left, top, right, bottom, colors.dark_blue, colors.blue)
+end
+
+function fighter:draw_name_label()
+  local center_x = self.character.pos.x
+  local center_y = self.character.pos.y + visual_data.fighter_name_label_offset_y
+  local box_left = center_x - visual_data.fighter_name_label_half_width
+  local box_right = center_x + visual_data.fighter_name_label_half_width
+  local box_top = center_y - character_height - 1  -- some margin
+  local box_bottom = center_y + character_height + 1  -- some margin
+  ui.draw_rounded_box(box_left, box_top, box_right, box_bottom, colors.indigo, colors.white)
+  ui.print_centered(self.character.character_info.name, center_x, center_y, colors.black)
 end
 
 return fighter

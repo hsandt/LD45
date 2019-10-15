@@ -14,8 +14,8 @@ local quote_info = new_struct()
 -- text: string
 function quote_info:_init(id, quote_type, level, text)
   self.id = id
-  self.level = level
   self.quote_type = quote_type
+  self.level = level
   self.text = text
 end
 

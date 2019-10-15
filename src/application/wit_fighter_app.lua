@@ -26,29 +26,29 @@ local vlogger = require("engine/debug/visual_logger")
 local ui = require("engine/ui/ui")
 --#endif
 
-local game_session = require("application/game_session")
+local game_session = require("progression/game_session")
 local main_menu = require("menu/main_menu")
-local wit_fight = require("fight/wit_fight")
+local fight_state = require("fight/fight_state")
 local visual_data = require("resources/visual_data")
-local adventure = require("story/adventure")
+local adventure_state = require("story/adventure_state")
 
-local wit_fight_app = derived_class(gameapp)
+local wit_fighter_app = derived_class(gameapp)
 
-function wit_fight_app:_init()
+function wit_fighter_app:_init()
   gameapp._init(self, fps30)
 
-  -- start new game session
+  -- component
   self.game_session = game_session()
 end
 
-function wit_fight_app:instantiate_gamestates() -- override
-  return {main_menu(self), adventure(self), wit_fight(self)}
+function wit_fighter_app:instantiate_gamestates() -- override
+  return {main_menu(self), adventure_state(self), fight_state(self)}
 end
 
-function wit_fight_app:on_pre_start() -- override
+function wit_fighter_app:on_pre_start() -- override
 end
 
-function wit_fight_app:on_post_start() -- override
+function wit_fighter_app:on_post_start() -- override
 --#if mouse
   -- enable mouse devkit
   input:toggle_mouse(true)
@@ -56,7 +56,7 @@ function wit_fight_app:on_post_start() -- override
 --#endif
 end
 
-function wit_fight_app:on_reset() -- override
+function wit_fighter_app:on_reset() -- override
   -- create new game session (let the old one be GC-ed)
   self.game_session = game_session()
 
@@ -65,7 +65,7 @@ function wit_fight_app:on_reset() -- override
 --#endif
 end
 
-function wit_fight_app:on_update() -- override
+function wit_fighter_app:on_update() -- override
 --#if profiler
   profiler.window:update()
 --#endif
@@ -79,7 +79,7 @@ function wit_fight_app:on_update() -- override
 --#endif
 end
 
-function wit_fight_app:on_render() -- override
+function wit_fighter_app:on_render() -- override
 --#if profiler
   profiler.window:render()
 --#endif
@@ -98,4 +98,4 @@ function wit_fight_app:on_render() -- override
 --#endif
 end
 
-return wit_fight_app
+return wit_fighter_app

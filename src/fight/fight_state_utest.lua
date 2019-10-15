@@ -1,23 +1,23 @@
 require("engine/test/bustedhelper")
-local adventure = require("story/adventure")
+local fight_state = require("story/fight_state")
 
 require("engine/application/constants")
 
 local wit_fight_app = require("application/wit_fight_app")
 local dialogue_manager = require("dialogue/dialogue_manager")
 
-describe('adventure', function ()
+describe('fight_state', function ()
 
   local state
 
   before_each(function ()
     local app = wit_fight_app()
     app:register_managers(dialogue_manager())
-    state = adventure(app)
+    state = fight_state(app)
   end)
 
   describe('_init', function ()
-    it('should init a adventure', function ()
+    it('should init an adventure state', function ()
       assert.is_not_nil(state)
     end)
   end)

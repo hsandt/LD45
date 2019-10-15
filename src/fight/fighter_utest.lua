@@ -3,6 +3,7 @@ local fighter = require("fight/fighter")
 
 local character_info = require("content/character_info")
 local fighter_info = require("content/fighter_info")
+local quote_info = require("content/quote_info")  -- for quote_types
 local fighter_progression = require("progression/fighter_progression")
 local character = require("story/character")
 
@@ -11,7 +12,6 @@ describe('fighter', function ()
   local mock_character_info = character_info(2, "employee", 5)
   local pos = vector(20, 60)
   local mock_character = character(mock_character_info, horizontal_dirs.right, pos)
-
   local mock_fighter_info = fighter_info(8, "employee", 4, 5, {11, 27}, {12, 28}, {2, 4})
 
   local mock_fighter_progression
@@ -46,15 +46,12 @@ describe('fighter', function ()
 
   -- logic
 
-  describe('get_available_attack_ids', function ()
-    it('should return sequence of all known attack ids (for now)', function ()
-      assert.are_same({11, 27, 35}, f:get_available_attack_ids())
+  describe('get_available_quote_ids', function ()
+    it('should return sequence of all known attack ids with quote_types.attack (for now)', function ()
+      assert.are_same({11, 27, 35}, f:get_available_quote_ids(quote_types.attack))
     end)
-  end)
-
-  describe('get_available_reply_ids', function ()
-    it('should return sequence of all known reply ids (for now)', function ()
-      assert.are_same({12, 28, 37}, f:get_available_reply_ids())
+    it('should return sequence of all known reply ids with quote_types.reply (for now)', function ()
+      assert.are_same({12, 28, 37}, f:get_available_quote_ids(quote_types.reply))
     end)
   end)
 
