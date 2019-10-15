@@ -132,6 +132,14 @@ local gameplay_data = {
 
 -- data access helpers
 
+function gameplay_data:get_quote(quote_type, id)
+  if quote_type == quote_types.attack then
+    return self.attacks[id]
+  else  -- quote_type == quote_types.reply
+    return self.replies[id]
+  end
+end
+
 function gameplay_data:are_quote_matching(attack_info, reply_info)
   -- quote_match is a struct, so == is equality member, so we can check
   --  if the wanted match exists directly with contain

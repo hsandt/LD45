@@ -7,6 +7,20 @@ local gameplay_data = require("resources/gameplay_data")
 
 describe('gameplay_data', function ()
 
+  describe('get_quote', function ()
+
+    it('should quote info by type (attack) and id', function ()
+      -- relies on having at least 3 attacks
+      assert.are_equal(gameplay_data.attacks[3], gameplay_data:get_quote(quote_types.attack, 3))
+    end)
+
+    it('should quote info by type (reply) and id', function ()
+      -- relies on having at least 3 replies
+      assert.are_equal(gameplay_data.replies[3], gameplay_data:get_quote(quote_types.reply, 3))
+    end)
+
+  end)
+
   describe('are_quote_matching', function ()
 
     it('should return false if quotes are not matching', function ()
@@ -25,10 +39,8 @@ describe('gameplay_data', function ()
 
   describe('get_floor_info', function ()
     it('should return info for floor by index', function ()
-      local f = gameplay_data:get_floor_info(3)
-
-      -- very simple and incomplete test, but enough for this case
-      assert.are_equal(3, f.number)
+      -- relies on having at least 3 floors
+      assert.are_equal(gameplay_data.floors[3], gameplay_data:get_floor_info(3))
     end)
   end)
 
