@@ -5,6 +5,9 @@ local quote_info = require("content/quote_info")
 local quote_match_info = require("content/quote_match_info")
 
 local attacks = {
+  -- first is dummy attack, to fill menu when there are no known attacks
+  --   or no attacks left to say
+  [0] = quote_info(0, quote_types.attack, 0, "..."),
   quote_info( 1, quote_types.attack, 1, "attack 1!"),
   quote_info( 2, quote_types.attack, 1, "attack 2!"),
   quote_info( 3, quote_types.attack, 1, "attack 3!"),
@@ -23,6 +26,9 @@ local attacks = {
 }
 
 local replies = {
+  -- first is dummy reply, to fill menu when there are no known replies
+  --   or no replies left to say
+  [0] = quote_info(0, quote_types.reply, 0, "..."),
   quote_info( 1, quote_types.reply,  1, "reply 1!"),
   quote_info( 2, quote_types.reply,  1, "reply 2!"),
   quote_info( 3, quote_types.reply,  1, "reply 3!"),

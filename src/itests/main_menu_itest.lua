@@ -29,7 +29,7 @@ itest_manager:register_itest('player starts game',
     input.simulated_buttons_down[0][button_ids.o] = false
   end)
 
-  -- check that we entered the credits state
+  -- check that we entered the adventure state
   final_assert(function ()
     return flow.curr_state.type == ':adventure', "current game state is not ':adventure', has instead type: '"..flow.curr_state.type.."'"
   end)

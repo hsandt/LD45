@@ -446,7 +446,7 @@ describe('fight_manager', function ()
       end)
 
       it('should request action for human fighter if fighter is human', function ()
-        local fake_human_fighter = {character_type = character_types.human}
+        local fake_human_fighter = {fighter_progression = {character_type = character_types.human}}
         fm:request_fighter_action(fake_human_fighter)
 
         local s = assert.spy(fight_manager.request_human_fighter_action)
@@ -455,7 +455,7 @@ describe('fight_manager', function ()
       end)
 
       it('should request action for ai fighter if fighter is ai', function ()
-        local fake_ai_fighter = {character_type = character_types.ai}
+        local fake_ai_fighter = {fighter_progression = {character_type = character_types.ai}}
         fm:request_fighter_action(fake_ai_fighter)
 
         local s = assert.spy(fight_manager.request_ai_fighter_action)
@@ -468,7 +468,7 @@ describe('fight_manager', function ()
     describe('request_human_fighter_action', function ()
 
         -- set character_type just to pass the assertions
-      local fake_fighter = {character_type = character_types.human}
+      local fake_human_fighter = {fighter_progression = {character_type = character_types.human}}
       local fake_attack_items = {"attack"}
       local fake_reply_items = {"reply"}
 
@@ -483,25 +483,25 @@ describe('fight_manager', function ()
             return fake_reply_items
           end
         end)
-        stub(fight_manager, "prompt_items")
+        stub(dialogue_manager, "prompt_items")
       end)
 
       teardown(function ()
         fight_manager.is_active_fighter_attacking:revert()
         fight_manager.generate_quote_menu_items:revert()
-        fight_manager.prompt_items:revert()
+        dialogue_manager.prompt_items:revert()
       end)
 
       before_each(function ()
         -- just to pass the assertions
         fm.active_fighter_index = 1
-        fm.fighters = {fake_fighter}
+        fm.fighters = {fake_human_fighter}
       end)
 
       after_each(function ()
         fight_manager.is_active_fighter_attacking:clear()
         fight_manager.generate_quote_menu_items:clear()
-        fight_manager.prompt_items:clear()
+        dialogue_manager.prompt_items:clear()
       end)
 
       describe('(when active fighter is attacking)', function ()
@@ -517,11 +517,11 @@ describe('fight_manager', function ()
         end)
 
         it('should prompt generated attack items', function ()
-          fm:request_human_fighter_action(fake_fighter)
+          fm:request_human_fighter_action(fake_human_fighter)
 
-          local s = assert.spy(fight_manager.prompt_items)
+          local s = assert.spy(dialogue_manager.prompt_items)
           s.was_called(1)
-          s.was_called_with(match.ref(fm), match.ref(fake_attack_items))
+          s.was_called_with(match.ref(dm), match.ref(fake_attack_items))
         end)
 
       end)
@@ -539,11 +539,11 @@ describe('fight_manager', function ()
         end)
 
         it('should prompt generated attack items', function ()
-          fm:request_human_fighter_action(fake_fighter)
+          fm:request_human_fighter_action(fake_human_fighter)
 
-          local s = assert.spy(fight_manager.prompt_items)
+          local s = assert.spy(dialogue_manager.prompt_items)
           s.was_called(1)
-          s.was_called_with(match.ref(fm), match.ref(fake_reply_items))
+          s.was_called_with(match.ref(dm), match.ref(fake_reply_items))
         end)
 
       end)

@@ -122,7 +122,7 @@ function fight_manager:request_active_fighter_action()
 end
 
 function fight_manager:request_fighter_action(active_fighter)
-  if active_fighter.character_type == character_types.human then
+  if active_fighter.fighter_progression.character_type == character_types.human then
     self:request_human_fighter_action(active_fighter)
   else
     self:request_ai_fighter_action(active_fighter)
@@ -132,36 +132,40 @@ end
 function fight_manager:request_human_fighter_action(human_fighter)
 --#if assert
   assert(self.fighters[self.active_fighter_index] == human_fighter)
-  assert(human_fighter.character_type == character_types.human)
+  assert(human_fighter.fighter_progression.character_type == character_types.human)
 --#endif
 
   local quote_type = self:is_active_fighter_attacking() and quote_types.attack or quote_types.reply
   local items = self:generate_quote_menu_items(human_fighter, quote_type)
-  self:prompt_items(items)
+  self.app.managers[':dialogue']:prompt_items(items)
 end
 
 function fight_manager:generate_quote_menu_items(human_fighter, quote_type)
   local available_quote_ids = human_fighter:get_available_quote_ids(quote_type)
+  if #available_quote_ids == 0 then
+    add(available_quote_ids, 0)
+  end
+
   return transform(available_quote_ids, function (quote_id)
     local quote = gameplay_data:get_quote(quote_type, quote_id)
     local say_quote_callback = function ()
       self:say_quote(human_fighter, quote)
     end
-    return menu_item(attack.text, say_quote_callback)
+    return menu_item(quote.text, say_quote_callback)
   end)
 end
 
 function fight_manager:request_ai_fighter_action(ai_fighter)
 --#if assert
   assert(self.fighters[self.active_fighter_index] == ai_fighter)
-  assert(ai_fighter.character_type == character_types.ai)
+  assert(ai_fighter.fighter_progression.character_type == character_types.ai)
 --#endif
 
   local quote_type = self:is_active_fighter_attacking() and quote_types.attack or quote_types.reply
   local available_quote_ids = ai_fighter:get_available_quote_ids(quote_type)
   local random_quote_id = pick_random(available_quote_ids)
   local random_quote = gameplay_data:get_quote(quote_type, random_quote_id)
-  self:start_wait_and_say_quote(ai_fighter, random_attack)
+  self:start_wait_and_say_quote(ai_fighter, random_quote)
 end
 
 function fight_manager:start_wait_and_say_quote(active_fighter, quote)
