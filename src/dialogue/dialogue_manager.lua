@@ -73,6 +73,10 @@ function dialogue_manager:add_speaker(speaker)
   add(self.speakers, speaker)
 end
 
+function dialogue_manager:remove_speaker(speaker)
+  del(self.speakers, speaker)
+end
+
 -- prompt items: {menu_item}
 function dialogue_manager:prompt_items(items)
   self.text_menu:show_items(items)

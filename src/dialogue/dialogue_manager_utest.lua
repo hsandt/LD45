@@ -182,6 +182,22 @@ describe('dialogue_manager', function ()
 
     end)
 
+    describe('remove_speaker', function ()
+
+      it('should remove a speaker component to the speakers', function ()
+
+        local s1 = speaker_component(vector(1, 0))
+        local s2 = speaker_component(vector(2, 0))
+        d.speakers = {s1, s2}
+
+        d:remove_speaker(s1)
+        d:remove_speaker(s2)
+
+        assert.are_same({}, d.speakers)
+      end)
+
+    end)
+
     describe('prompt_items', function ()
 
       setup(function ()

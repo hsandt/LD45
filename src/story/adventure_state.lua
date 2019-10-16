@@ -28,6 +28,7 @@ function adventure_state:on_enter()
 end
 
 function adventure_state:on_exit()
+  self.app.managers[':dialogue']:remove_speaker(self.pc.speaker)
   self.app.managers[':dialogue'].should_show_bottom_box = false
 end
 
@@ -40,8 +41,6 @@ function adventure_state:render()
 end
 
 function adventure_state:play_intro()
-  printh("play intro begin")
-
   local dm = self.app.managers[':dialogue']
   local pc_speaker = self.pc.speaker
 
@@ -60,7 +59,6 @@ function adventure_state:play_intro()
   self.app.managers[':dialogue'].current_bottom_text = 'debug: starting fight!'
   self.app.managers[':fight'].next_opponent = self.app.game_session.npc_fighter_progressions[1]
   flow:query_gamestate_type(':fight')
-  log("end of last line", "itest")
 end
 
 function adventure_state:pick_matching_random_npc_info()
