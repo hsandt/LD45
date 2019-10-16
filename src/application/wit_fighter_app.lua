@@ -44,7 +44,6 @@ function wit_fighter_app:_init()
 end
 
 function wit_fighter_app:instantiate_managers() -- override
-  printh("here")
   return {dialogue_manager(), fight_manager()}
 end
 

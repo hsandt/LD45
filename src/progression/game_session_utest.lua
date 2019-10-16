@@ -1,6 +1,9 @@
 require("engine/test/bustedhelper")
 local game_session = require("progression/game_session")
 
+local fighter_progression = require("progression/fighter_progression")
+local gameplay_data = require("resources/gameplay_data")
+
 describe('game_session', function ()
 
   -- no need to have actual fighter_progression instances
@@ -22,7 +25,8 @@ describe('game_session', function ()
 
     it('should init a game_session', function ()
       local gs = game_session()
-      assert.are_same({1, {}}, {gs.floor_number, gs.pc_known_quotes})
+      assert.are_equal(1, gs.floor_number)
+      assert.are_same(fighter_progression(character_types.human, gameplay_data.pc_fighter_info), gs.pc_fighter_progression)
       assert.are_equal(fake_npc_fighter_prog1, gs.npc_fighter_progressions[1])
       assert.are_equal(fake_npc_fighter_prog2, gs.npc_fighter_progressions[2])
     end)
@@ -44,7 +48,7 @@ describe('game_session', function ()
       local gs = game_session()
 
       local npc_fighter_progs_level3 = gs:get_all_npc_fighter_progressions_with_level(3)
-      
+
       assert.are_equal(1, #npc_fighter_progs_level3)
       assert.are_equal(fake_npc_fighter_prog3, npc_fighter_progs_level3[1])
     end)
