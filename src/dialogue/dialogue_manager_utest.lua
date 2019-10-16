@@ -2,6 +2,7 @@ require("engine/test/bustedhelper")
 local dialogue_manager = require("dialogue/dialogue_manager")
 
 require("engine/application/constants")
+local manager = require("engine/application/manager")
 local input = require("engine/input/input")
 
 local speaker_component = require("dialogue/speaker_component")
@@ -10,18 +11,51 @@ local visual_data = require("resources/visual_data")
 
 describe('dialogue_manager', function ()
 
+  describe('static members', function ()
+
+    it('type is :dialogue', function ()
+      assert.are_equal(':dialogue', dialogue_manager.type)
+    end)
+
+  end)
+
+  describe('_init', function ()
+
+    setup(function ()
+      spy.on(manager, "_init")
+    end)
+
+    teardown(function ()
+      manager._init:revert()
+    end)
+
+    after_each(function ()
+      manager._init:clear()
+    end)
+
+    it('should call base constructor', function ()
+      local d = dialogue_manager()
+
+      local s = assert.spy(manager._init)
+      s.was_called(1)
+      s.was_called_with(match.ref(d))
+    end)
+
+    it('should init a dialogue_manager', function ()
+      local d = dialogue_manager()
+
+      assert.are_same({text_menu({}, alignments.left, colors.dark_blue), {}, false, nil},
+        {d.text_menu, d.speakers, d.should_show_bottom_box, d.current_bottom_text})
+    end)
+
+  end)
+
   describe('(with instance d)', function ()
 
     local d
 
     before_each(function ()
       d = dialogue_manager()
-    end)
-
-    describe('_init', function ()
-      it('should init a dialogue_manager', function ()
-        assert.is_not_nil(d)
-      end)
     end)
 
     describe('start', function ()

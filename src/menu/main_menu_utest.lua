@@ -1,6 +1,7 @@
 require("engine/test/bustedhelper")
 local main_menu = require("menu/main_menu")
 
+local gamestate = require("engine/application/gamestate")
 local input = require("engine/input/input")
 require("engine/render/color")
 local ui = require("engine/ui/ui")
@@ -12,11 +13,26 @@ describe('main_menu', function ()
   describe('init', function ()
 
     setup(function ()
+      spy.on(gamestate, "_init")
       stub(text_menu, "show_items")
     end)
 
     teardown(function ()
+      gamestate._init:revert()
       text_menu.show_items:revert()
+    end)
+
+    after_each(function ()
+      gamestate._init:clear()
+      text_menu.show_items:clear()
+    end)
+
+    it('should call base constructor', function ()
+      local state = main_menu()
+
+      local s = assert.spy(gamestate._init)
+      s.was_called(1)
+      s.was_called_with(match.ref(state))
     end)
 
     it('should set text menu to a new text menu with given items', function ()
@@ -30,6 +46,7 @@ describe('main_menu', function ()
       s.was_called(1)
       s.was_called_with(match.ref(menu.text_menu), match.ref(main_menu._items))
     end)
+
   end)
 
   describe('(with instance)', function ()
@@ -38,7 +55,8 @@ describe('main_menu', function ()
     local menu
 
     before_each(function ()
-      menu = main_menu(dummy_app)
+      menu = main_menu()
+      menu.app = dummy_app
     end)
 
     describe('update', function ()

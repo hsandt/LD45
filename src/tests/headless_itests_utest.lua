@@ -10,7 +10,6 @@ local fight_manager = require("fight/fight_manager")
 
 local app = wit_fighter_app()
 app.initial_gamestate = ':main_menu'
-app:register_managers(dialogue_manager(), fight_manager())
 
 logging.logger:register_stream(logging.console_log_stream)
 logging.logger:register_stream(logging.file_log_stream)

@@ -26,9 +26,11 @@ local vlogger = require("engine/debug/visual_logger")
 local ui = require("engine/ui/ui")
 --#endif
 
+local dialogue_manager = require("dialogue/dialogue_manager")
 local game_session = require("progression/game_session")
 local main_menu = require("menu/main_menu")
 local fight_state = require("fight/fight_state")
+local fight_manager = require("fight/fight_manager")
 local visual_data = require("resources/visual_data")
 local adventure_state = require("story/adventure_state")
 
@@ -41,8 +43,13 @@ function wit_fighter_app:_init()
   self.game_session = game_session()
 end
 
+function wit_fighter_app:instantiate_managers() -- override
+  printh("here")
+  return {dialogue_manager(), fight_manager()}
+end
+
 function wit_fighter_app:instantiate_gamestates() -- override
-  return {main_menu(self), adventure_state(self), fight_state(self)}
+  return {main_menu(), adventure_state(), fight_state()}
 end
 
 function wit_fighter_app:on_pre_start() -- override

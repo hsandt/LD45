@@ -16,6 +16,7 @@ local character = require("story/character")
 local fight_manager = derived_class(manager)
 
 fight_manager.type = ':fight'
+fight_manager.initially_active = false
 
 --[[
 Parameters
@@ -26,7 +27,7 @@ State
   active_fighter_index  int                        index of fighter currently selecting action / acting
 --]]
 function fight_manager:_init()
-  manager._init(self, false)
+  manager._init(self)
 
   self.next_opponent = nil
   self.fighters = {}

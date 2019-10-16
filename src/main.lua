@@ -37,7 +37,6 @@ function _init()
 --#endif
 
   app.initial_gamestate = ':main_menu'
-  app:register_managers(dialogue_manager(), fight_manager())
   app:start()
 end
 

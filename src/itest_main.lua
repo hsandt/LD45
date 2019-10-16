@@ -36,7 +36,6 @@ function _init()
 
 
   app.initial_gamestate = ':main_menu'
-  app:register_managers(dialogue_manager(), fight_manager())
 
   -- start first itest
   init_game_and_start_next_itest()

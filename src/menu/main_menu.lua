@@ -19,8 +19,8 @@ main_menu._items = transform({
   }, unpacking(menu_item))
 
 -- text_menu: text_menu    component handling menu display and selection
-function main_menu:_init(app)
-  gamestate._init(self, app)
+function main_menu:_init()
+  gamestate._init(self)
 
   self.text_menu = text_menu(alignments.center, colors.white)
   self.text_menu:show_items(main_menu._items)

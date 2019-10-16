@@ -11,8 +11,8 @@ local adventure_state = derived_class(gamestate)
 
 adventure_state.type = ':adventure'
 
-function adventure_state:_init(app)
-  gamestate._init(self, app)
+function adventure_state:_init()
+  gamestate._init(self)
 
   self.pc = character(gameplay_data.pc_info, horizontal_dirs.right, visual_data.pc_sprite_pos)
 end
@@ -40,6 +40,8 @@ function adventure_state:render()
 end
 
 function adventure_state:play_intro()
+  printh("play intro begin")
+
   local dm = self.app.managers[':dialogue']
   local pc_speaker = self.pc.speaker
 
@@ -56,9 +58,9 @@ function adventure_state:play_intro()
   pc_speaker:say_and_wait_for_input("seems good so far. what could go wrong?")
 
   self.app.managers[':dialogue'].current_bottom_text = 'debug: starting fight!'
-  log("end of last line", "itest")
   self.app.managers[':fight'].next_opponent = self.app.game_session.npc_fighter_progressions[1]
   flow:query_gamestate_type(':fight')
+  log("end of last line", "itest")
 end
 
 function adventure_state:pick_matching_random_npc_info()
