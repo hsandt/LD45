@@ -87,7 +87,6 @@ describe('fighter', function ()
 
   describe('draw', function ()
     it('should not error', function ()
-        f:draw()
       assert.has_no_errors(function ()
         f:draw()
       end)

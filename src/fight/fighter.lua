@@ -84,7 +84,8 @@ function fighter:draw_health_bar()
   local right = center_x + visual_data.health_bar_half_width
   local top = self.character.pos.y + visual_data.health_bar_top_from_char
   local bottom = self.character.pos.y + visual_data.health_bar_bottom_from_char
-  ui.draw_box(left, top, right, bottom, colors.dark_blue, colors.blue)
+  local hp_ratio = self.hp / self.fighter_progression.max_hp
+  ui.draw_gauge(left, top, right, bottom, hp_ratio, directions.up, colors.dark_blue, colors.white, colors.blue)
 end
 
 function fighter:draw_name_label()
