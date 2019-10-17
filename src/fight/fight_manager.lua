@@ -251,28 +251,11 @@ end
 
 function fight_manager:draw_hud()
   self:draw_floor_number()
-  self:draw_health_bars()
-  self:draw_npc_label()
 end
 
 function fight_manager:draw_floor_number()
   ui.draw_box(43, 1, 84, 9, colors.black, colors.orange)
-  ui.print_centered("floor "..tostr(self.floor_number), 64, 6, colors.black)
-end
-
-function fight_manager:draw_health_bars()
-  -- player character health
-  ui.draw_box(5, 42, 9, 78, colors.dark_blue, colors.blue)
-
-  -- npc health
-  ui.draw_box(96, 42, 100, 78, colors.dark_blue, colors.blue)
-end
-
-function fight_manager:draw_npc_label()
-  if self.npc_info then
-    ui.draw_rounded_box(51, 79, 121, 87, colors.indigo, colors.white)
-    ui.print_centered(self.npc_info.name, 86, 84, colors.black)
-  end
+  ui.print_centered("floor "..tostr(self.app.game_session.floor_number), 64, 6, colors.black)
 end
 
 return fight_manager

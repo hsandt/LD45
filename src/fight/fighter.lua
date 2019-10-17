@@ -92,8 +92,8 @@ function fighter:draw_name_label()
   local center_y = self.character.pos.y + visual_data.fighter_name_label_offset_y
   local box_left = center_x - visual_data.fighter_name_label_half_width
   local box_right = center_x + visual_data.fighter_name_label_half_width
-  local box_top = center_y - character_height - 1  -- some margin
-  local box_bottom = center_y + character_height + 1  -- some margin
+  local box_top = center_y - character_height / 2 - 1  -- some margin
+  local box_bottom = center_y + character_height / 2 + 1  -- some margin
   ui.draw_rounded_box(box_left, box_top, box_right, box_bottom, colors.indigo, colors.white)
   ui.print_centered(self.character.character_info.name, center_x, center_y, colors.black)
 end

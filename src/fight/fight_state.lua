@@ -14,10 +14,14 @@ end
 function fight_state:on_enter()
   self.app.managers[':fight'].active = true
   self.app.managers[':fight']:start_fight_with_next_opponent()
+
+  self.app.managers[':dialogue'].should_show_bottom_box = true
 end
 
 function fight_state:on_exit()
   self.app.managers[':fight'].active = false
+  
+  self.app.managers[':dialogue'].should_show_bottom_box = false
 end
 
 function fight_state:update()

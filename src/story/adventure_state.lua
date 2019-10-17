@@ -56,7 +56,6 @@ function adventure_state:play_intro()
   pc_speaker:say_and_wait_for_input("4. i don't want be to seen, so i'm avoiding the elevator, but those stairs seem endless")
   pc_speaker:say_and_wait_for_input("seems good so far. what could go wrong?")
 
-  self.app.managers[':dialogue'].current_bottom_text = 'debug: starting fight!'
   self.app.managers[':fight'].next_opponent = self.app.game_session.npc_fighter_progressions[1]
   flow:query_gamestate_type(':fight')
 end
