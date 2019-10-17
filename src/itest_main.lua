@@ -60,6 +60,10 @@ function init_game_and_start_itest_by_relative_index(delta)
   -- check that an effective idnex change occurs
   if new_index ~= current_itest_index then
     current_itest_index = new_index
+    -- cleanup any previous running itest
+    if itest_runner.current_test then
+      itest_runner:stop_and_reset_game()
+    end
     itest_manager:init_game_and_start_by_index(new_index)
   end
 end
