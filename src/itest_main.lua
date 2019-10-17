@@ -9,13 +9,13 @@ require("engine/test/integrationtest")
 local logging = require("engine/debug/logging")
 --#endif
 
-local wit_fight_app = require("application/wit_fight_app")
+local wit_fighter_app = require("application/wit_fighter_app")
 local dialogue_manager = require("dialogue/dialogue_manager")
 local fight_manager = require("fight/fight_manager")
 
 -- set app immediately so during itest registration by require,
 --   time_trigger can access app fps
-local app = wit_fight_app()
+local app = wit_fighter_app()
 itest_runner.app = app
 
 -- tag to add require for itest files here
