@@ -18,7 +18,7 @@ title="wit fighter itests (all)"
 cartridge_stem="wit_fighter_itest_all"
 version="0.1"
 config='debug'
-symbols='assert,log,visual_logger,tuner,profiler,mouse,itest'
+symbols='assert,log,itest'
 
 # Build from itest main for all itests
 "$picoboots_scripts_path/build_cartridge.sh"          \
