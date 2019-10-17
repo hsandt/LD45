@@ -66,7 +66,7 @@ function dialogue_manager:render()  -- override
 
   if self.text_menu.active then
     local top_left = visual_data.bottom_box_topleft + vector(2, 2)  -- padding 2px
-    self.text_menu:draw()
+    self.text_menu:draw(top_left.x, top_left.y)
   elseif self.current_bottom_text then
     self:draw_bottom_text()
   end
@@ -176,7 +176,7 @@ end
 
 -- static
 function dialogue_manager.draw_bottom_box()
-  ui.draw_rounded_box(bottom_box_topleft.x, bottom_box_topleft.y, 127, 127, colors.dark_blue, colors.indigo)
+  ui.draw_rounded_box(visual_data.bottom_box_topleft.x, visual_data.bottom_box_topleft.y, 127, 127, colors.dark_blue, colors.indigo)
 end
 
 return dialogue_manager
