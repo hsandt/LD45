@@ -55,8 +55,8 @@ before_script:
   - ln -s "$(pwd)/tool/picotool-master/p8tool" "$HOME/.local/bin/p8tool"
 
 script:
-  # test
-  - ./test.sh -m all
+  # test (including rendered headless itests)
+  - ./test.sh -m all -- --render
   # coverage
   - bash <(curl -s https://codecov.io/bash)
   # build game and itest to make sure everything works fine
