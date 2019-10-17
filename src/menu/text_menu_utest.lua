@@ -10,11 +10,14 @@ local menu_item = require("menu/menu_item")
 
 describe('text_menu', function ()
 
+  local fake_app = {}
+
   describe('init', function ()
 
     it('should set passed items, alignment and color, and set selection index to 0', function ()
-      local menu = text_menu(alignments.left, colors.red)
+      local menu = text_menu(fake_app, alignments.left, colors.red)
 
+      assert.are_equal(fake_app, menu.app)
       assert.are_same({alignments.left, colors.red, {}, false, 0},
         {menu.alignment, menu.text_color, menu.items, menu.active, menu.selection_index})
     end)
@@ -34,14 +37,12 @@ describe('text_menu', function ()
     local menu
 
     before_each(function ()
-      menu = text_menu(alignments.left, colors.red)
+      menu = text_menu(fake_app, alignments.left, colors.red)
     end)
 
     describe('show_items', function ()
 
       it('should error with empty items', function ()
-        local menu = text_menu(alignments.left, colors.red)
-
         assert.has_errors(function ()
             menu.show_items({})
         end)

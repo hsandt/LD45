@@ -44,7 +44,7 @@ describe('dialogue_manager', function ()
     it('should init a dialogue_manager', function ()
       local d = dialogue_manager()
 
-      assert.are_same({text_menu({}, alignments.left, colors.dark_blue), {}, false, nil},
+      assert.are_same({nil, {}, false, nil},
         {d.text_menu, d.speakers, d.should_show_bottom_box, d.current_bottom_text})
     end)
 
@@ -52,176 +52,188 @@ describe('dialogue_manager', function ()
 
   describe('(with instance d)', function ()
 
+    local fake_app = {}
+
     local d
 
     before_each(function ()
       d = dialogue_manager()
+      d.app = fake_app
     end)
 
     describe('start', function ()
-      it('should not error', function ()
-        assert.has_no_errors(function ()
-          d:start()
+      it('should create text menu with app', function ()
+        d:start()
+
+        assert.are_equal(fake_app, d.text_menu.app)
+        assert.are_same({alignments.left, colors.dark_blue}, {d.text_menu.alignment, d.text_menu.text_color})
+      end)
+    end)
+
+    describe('(with d started)', function ()
+
+      before_each(function ()
+        d:start()
+      end)
+
+      describe('update', function ()
+
+        setup(function ()
+          stub(dialogue_manager, "update_speaker")
         end)
-      end)
-    end)
 
-    describe('update', function ()
+        teardown(function ()
+          dialogue_manager.update_speaker:revert()
+        end)
 
-      setup(function ()
-        stub(dialogue_manager, "update_speaker")
-      end)
+        after_each(function ()
+          input:init()
 
-      teardown(function ()
-        dialogue_manager.update_speaker:revert()
-      end)
+          dialogue_manager.update_speaker:clear()
+        end)
 
-      after_each(function ()
-        input:init()
+        it('(no speakers) should do nothing', function ()
+          d:update()
 
-        dialogue_manager.update_speaker:clear()
-      end)
+          local s = assert.spy(dialogue_manager.update_speaker)
+          s.was_not_called()
+        end)
 
-      it('(no speakers) should do nothing', function ()
-        d:update()
+        it('(2 speakers) should update speakers', function ()
+          local s1 = speaker_component(vector(1, 0))
+          local s2 = speaker_component(vector(2, 0))
+          d.speakers = {s1, s2}
 
-        local s = assert.spy(dialogue_manager.update_speaker)
-        s.was_not_called()
-      end)
+          d:update()
 
-      it('(2 speakers) should update speakers', function ()
-        local s1 = speaker_component(vector(1, 0))
-        local s2 = speaker_component(vector(2, 0))
-        d.speakers = {s1, s2}
+          local s = assert.spy(dialogue_manager.update_speaker)
+          s.was_called(2)
+          s.was_called_with(match.ref(s1))
+          s.was_called_with(match.ref(s2))
+        end)
 
-        d:update()
-
-        local s = assert.spy(dialogue_manager.update_speaker)
-        s.was_called(2)
-        s.was_called_with(match.ref(s1))
-        s.was_called_with(match.ref(s2))
       end)
 
-    end)
+      describe('render', function ()
 
-    describe('render', function ()
+        setup(function ()
+          stub(dialogue_manager, "render_speaker")
+        end)
 
-      setup(function ()
-        stub(dialogue_manager, "render_speaker")
-      end)
+        teardown(function ()
+          dialogue_manager.render_speaker:revert()
+        end)
 
-      teardown(function ()
-        dialogue_manager.render_speaker:revert()
-      end)
+        after_each(function ()
+          input:init()
 
-      after_each(function ()
-        input:init()
+          dialogue_manager.render_speaker:clear()
+        end)
 
-        dialogue_manager.render_speaker:clear()
-      end)
+        it('(no speakers) should do nothing', function ()
+          d:update()
 
-      it('(no speakers) should do nothing', function ()
-        d:update()
+          local s = assert.spy(dialogue_manager.render_speaker)
+          s.was_not_called()
+        end)
 
-        local s = assert.spy(dialogue_manager.render_speaker)
-        s.was_not_called()
-      end)
+        it('(2 speakers) should update speakers', function ()
+          local s1 = speaker_component(vector(1, 0))
+          local s2 = speaker_component(vector(2, 0))
+          d.speakers = {s1, s2}
 
-      it('(2 speakers) should update speakers', function ()
-        local s1 = speaker_component(vector(1, 0))
-        local s2 = speaker_component(vector(2, 0))
-        d.speakers = {s1, s2}
-
-        d:render()
-
-        local s = assert.spy(dialogue_manager.render_speaker)
-        s.was_called(2)
-        s.was_called_with(match.ref(s1))
-        s.was_called_with(match.ref(s2))
-      end)
-
-      it('(should show bottom box) should not error', function ()
-        d.should_show_bottom_box = true
-        assert.has_no_errors(function ()
           d:render()
+
+          local s = assert.spy(dialogue_manager.render_speaker)
+          s.was_called(2)
+          s.was_called_with(match.ref(s1))
+          s.was_called_with(match.ref(s2))
         end)
-      end)
 
-      it('(some active speaker) should not error', function ()
-
-        local s = speaker_component(vector(1, 0))
-        s.current_text = "hello"
-        d.speakers = {s}
-
-        assert.has_no_errors(function ()
-          d:render()
+        it('(should show bottom box) should not error', function ()
+          d.should_show_bottom_box = true
+          assert.has_no_errors(function ()
+            d:render()
+          end)
         end)
-      end)
 
-      it('(current bottom text set) should not error', function ()
-        d.current_bottom_text = "hello"
+        it('(some active speaker) should not error', function ()
 
-        assert.has_no_errors(function ()
-          d:render()
+          local s = speaker_component(vector(1, 0))
+          s.current_text = "hello"
+          d.speakers = {s}
+
+          assert.has_no_errors(function ()
+            d:render()
+          end)
         end)
+
+        it('(current bottom text set) should not error', function ()
+          d.current_bottom_text = "hello"
+
+          assert.has_no_errors(function ()
+            d:render()
+          end)
+        end)
+
       end)
 
-    end)
+      describe('add_speaker', function ()
 
-    describe('add_speaker', function ()
+        it('should add a speaker component to the speakers', function ()
 
-      it('should add a speaker component to the speakers', function ()
+          local s1 = speaker_component(vector(1, 0))
+          local s2 = speaker_component(vector(2, 0))
+          d:add_speaker(s1)
+          d:add_speaker(s2)
 
-        local s1 = speaker_component(vector(1, 0))
-        local s2 = speaker_component(vector(2, 0))
-        d:add_speaker(s1)
-        d:add_speaker(s2)
+          assert.are_same({s1, s2}, d.speakers)
+        end)
 
-        assert.are_same({s1, s2}, d.speakers)
       end)
 
-    end)
+      describe('remove_speaker', function ()
 
-    describe('remove_speaker', function ()
+        it('should remove a speaker component to the speakers', function ()
 
-      it('should remove a speaker component to the speakers', function ()
+          local s1 = speaker_component(vector(1, 0))
+          local s2 = speaker_component(vector(2, 0))
+          d.speakers = {s1, s2}
 
-        local s1 = speaker_component(vector(1, 0))
-        local s2 = speaker_component(vector(2, 0))
-        d.speakers = {s1, s2}
+          d:remove_speaker(s1)
+          d:remove_speaker(s2)
 
-        d:remove_speaker(s1)
-        d:remove_speaker(s2)
+          assert.are_same({}, d.speakers)
+        end)
 
-        assert.are_same({}, d.speakers)
       end)
 
-    end)
+      describe('prompt_items', function ()
 
-    describe('prompt_items', function ()
+        setup(function ()
+          stub(text_menu, "show_items")
+        end)
 
-      setup(function ()
-        stub(text_menu, "show_items")
+        teardown(function ()
+          text_menu.show_items:revert()
+        end)
+
+        after_each(function ()
+          text_menu.show_items:clear()
+        end)
+
+        it('should show items in text menu component', function ()
+          local fake_items = {}  -- dummy menu item sequence
+          d:prompt_items(fake_items)
+
+          local s = assert.spy(text_menu.show_items)
+          s.was_called(1)
+          s.was_called_with(match.ref(d.text_menu), match.ref(fake_items))
+        end)
+
       end)
 
-      teardown(function ()
-        text_menu.show_items:revert()
-      end)
-
-      after_each(function ()
-        text_menu.show_items:clear()
-      end)
-
-      it('should show items in text menu component', function ()
-        local fake_items = {}  -- dummy menu item sequence
-        d:prompt_items(fake_items)
-
-        local s = assert.spy(text_menu.show_items)
-        s.was_called(1)
-        s.was_called_with(match.ref(d.text_menu), match.ref(fake_items))
-      end)
-
-    end)
+    end)  -- (with d started)
 
   end)  -- (with instance d)
 

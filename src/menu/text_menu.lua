@@ -8,6 +8,9 @@ local ui = require("engine/ui/ui")
 --[[
 Class representing a menu with labels and arrow-based navigation
 
+External references
+  app               gameapp       game app, provided to ease object access in item callbacks
+
 Instance parameters
   alignment         alignments    text alignment to use for item display
   text_color        colors        item text color
@@ -21,7 +24,10 @@ Instance state
 --]]
 
 local text_menu = new_class()
-function text_menu:_init(alignment, text_color)
+function text_menu:_init(app, alignment, text_color)
+  -- external references
+  self.app = app
+
   -- parameters
   self.alignment = alignment
   self.text_color = text_color

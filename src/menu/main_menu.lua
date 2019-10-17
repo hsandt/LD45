@@ -15,29 +15,24 @@ main_menu.type = ':main_menu'
 
 -- sequence of menu items to display, with their target states
 main_menu._items = transform({
-    {"start", function() flow:query_gamestate_type(':adventure') end},
+    {"start", function(app) flow:query_gamestate_type(':adventure') end},
+    {"debug fight", function(app)
+      app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[1]
+      flow:query_gamestate_type(':fight')
+    end}
   }, unpacking(menu_item))
 
 -- text_menu: text_menu    component handling menu display and selection
 function main_menu:_init()
   gamestate._init(self)
 
-  self.text_menu = text_menu(alignments.center, colors.white)
-
-  local items = copy_seq(main_menu._items)
-
-  -- debug
-  debug_fight_item = menu_item("debug fight", function()
-    self.app.managers[':fight'].next_opponent = self.app.game_session.npc_fighter_progressions[1]
-    flow:query_gamestate_type(':fight')
-  end)
-  add(items, debug_fight_item)
-
-  self.text_menu:show_items(items)
+  -- component (wait for start to create text_menu so app has been registered)
+  self.text_menu = nil
 end
 
 function main_menu:on_enter()
-  -- do not reset previous selection to retain last user choice
+  self.text_menu = text_menu(self.app, alignments.center, colors.white)
+  self.text_menu:show_items(main_menu._items)
 end
 
 function main_menu:on_exit()

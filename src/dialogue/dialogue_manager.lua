@@ -32,8 +32,8 @@ dialogue_manager.type = ':dialogue'
 function dialogue_manager:_init()
   manager._init(self)
 
-  -- component
-  self.text_menu = text_menu({}, alignments.left, colors.dark_blue)
+  -- component (wait for start to create text_menu so app has been registered)
+  self.text_menu = nil
 
   -- sequence of speaker_component instances
   self.speakers = {}
@@ -44,6 +44,7 @@ function dialogue_manager:_init()
 end
 
 function dialogue_manager:start()  -- override
+  self.text_menu = text_menu(self.app, alignments.left, colors.dark_blue)
 end
 
 function dialogue_manager:update()  -- override
