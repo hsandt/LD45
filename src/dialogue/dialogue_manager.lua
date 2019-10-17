@@ -64,7 +64,10 @@ function dialogue_manager:render()  -- override
     self:draw_bottom_box()
   end
 
-  if self.current_bottom_text then
+  if self.text_menu.active then
+    local top_left = visual_data.bottom_box_topleft + vector(2, 2)  -- padding 2px
+    self.text_menu:draw()
+  elseif self.current_bottom_text then
     self:draw_bottom_text()
   end
 end
@@ -86,7 +89,7 @@ end
 
 -- draw text in bottom box for narration/notification/instruction
 function dialogue_manager:draw_bottom_text()
-  local top_left = visual_data.bottom_box_text_topleft
+  local top_left = visual_data.bottom_box_topleft + vector(2, 2)  -- padding 2px
   api.print(wwrap(self.current_bottom_text, visual_data.bottom_box_max_chars), top_left.x, top_left.y, colors.black)
 end
 
@@ -173,7 +176,7 @@ end
 
 -- static
 function dialogue_manager.draw_bottom_box()
-  ui.draw_rounded_box(0, 89, 127, 127, colors.dark_blue, colors.indigo)
+  ui.draw_rounded_box(bottom_box_topleft.x, bottom_box_topleft.y, 127, 127, colors.dark_blue, colors.indigo)
 end
 
 return dialogue_manager

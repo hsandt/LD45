@@ -118,16 +118,25 @@ describe('dialogue_manager', function ()
 
         setup(function ()
           stub(dialogue_manager, "render_speaker")
+          stub(dialogue_manager, "draw_bottom_box")
+          stub(text_menu, "draw")
+          stub(dialogue_manager, "draw_bottom_text")
         end)
 
         teardown(function ()
           dialogue_manager.render_speaker:revert()
+          dialogue_manager.draw_bottom_box:revert()
+          text_menu.draw:revert()
+          dialogue_manager.draw_bottom_text:revert()
         end)
 
         after_each(function ()
           input:init()
 
           dialogue_manager.render_speaker:clear()
+          dialogue_manager.draw_bottom_box:clear()
+          text_menu.draw:clear()
+          dialogue_manager.draw_bottom_text:clear()
         end)
 
         it('(no speakers) should do nothing', function ()
@@ -150,30 +159,53 @@ describe('dialogue_manager', function ()
           s.was_called_with(match.ref(s2))
         end)
 
-        it('(should show bottom box) should not error', function ()
+        it('(should show bottom box) should draw bottom box', function ()
           d.should_show_bottom_box = true
-          assert.has_no_errors(function ()
-            d:render()
-          end)
+
+          d:render()
+
+          local s = assert.spy(dialogue_manager.draw_bottom_box)
+          s.was_called(1)
+          s.was_called_with(match.ref(d))
         end)
 
-        it('(some active speaker) should not error', function ()
+        it('(text menu active) draw text menu', function ()
+          d.text_menu.active = true
+          d.current_bottom_text = "hello"
 
-          local s = speaker_component(vector(1, 0))
-          s.current_text = "hello"
-          d.speakers = {s}
+          d:render()
 
-          assert.has_no_errors(function ()
-            d:render()
-          end)
+          local s = assert.spy(text_menu.draw)
+          s.was_called(1)
+          s.was_called_with(match.ref(d.text_menu))
+        end)
+
+        it('(text menu active and current bottom text set) draw text menu in priority', function ()
+          d.text_menu.active = true
+          d.current_bottom_text = "hello"
+
+          d:render()
+
+          local s = assert.spy(text_menu.draw)
+          s.was_called(1)
+          s.was_called_with(match.ref(d.text_menu))
         end)
 
         it('(current bottom text set) should not error', function ()
           d.current_bottom_text = "hello"
 
-          assert.has_no_errors(function ()
-            d:render()
-          end)
+          d:render()
+
+          local s = assert.spy(dialogue_manager.draw_bottom_text)
+          s.was_called(1)
+          s.was_called_with(match.ref(d))
+        end)
+
+        it('(text menu inactive and current bottom text not set) should not draw any', function ()
+          d:render()
+
+          assert.spy(text_menu.draw).was_not_called()
+          assert.spy(dialogue_manager.draw_bottom_text).was_not_called()
         end)
 
       end)

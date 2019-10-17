@@ -59,7 +59,7 @@ local visual_data = {
   },
 
   -- bottom box
-  bottom_box_text_topleft = vector(2, 91),
+  bottom_box_topleft = vector(0, 89),
   bottom_box_max_chars = 31,
 
   -- health bar
