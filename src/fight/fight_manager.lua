@@ -225,6 +225,7 @@ function fight_manager:resolve_exchange(attacker, replier)
 end
 
 function fight_manager:hit_fighter(some_fighter, damage)
+  printh("hit_fighter: "..some_fighter.character.character_info.name.." with "..tostr(damage))
   some_fighter:take_damage(damage)
 
   -- todo: fx and sfx
@@ -232,9 +233,9 @@ end
 
 function fight_manager:start_victory(some_fighter)
   if some_fighter.fighter_progression.character_type == character_types.human then
-    log("player wins")
+    printh("player wins")
   else  -- some_fighter.fighter_progression.character_type == character_types.ai
-    log("ai wins")
+    printh("ai wins")
   end
 end
 
