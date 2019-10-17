@@ -69,7 +69,7 @@ local visual_data = {
   health_bar_bottom_from_char = 0,
 
   -- fighter name label
-  fighter_name_label_offset_y = 6,  -- y offset from character pos
+  fighter_name_label_offset_y = 5,  -- y offset from character pos
   fighter_name_label_half_width = 35,    -- box width
 }
 
