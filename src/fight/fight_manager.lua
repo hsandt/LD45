@@ -211,8 +211,8 @@ function fight_manager:resolve_exchange(attacker, replier)
   attacker.last_quote = nil
   replier.last_quote = nil
 
-  local is_attacker_alive = attacker.is_alive()
-  local is_replier_alive = replier.is_alive()
+  local is_attacker_alive = attacker:is_alive()
+  local is_replier_alive = replier:is_alive()
   if is_attacker_alive and is_replier_alive then
     -- in our rules, replying fighter keeps control whatever the result of the exchange,
     --   but becomes attacker, so just continue to next action

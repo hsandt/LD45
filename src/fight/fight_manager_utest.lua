@@ -580,6 +580,24 @@ describe('fight_manager', function ()
 
     end)
 
+    describe('resolve_exchange', function ()
+
+      -- todo
+
+    end)
+
+    describe('hit_fighter', function ()
+
+      -- todo
+
+    end)
+
+    describe('start_victory', function ()
+
+      -- todo
+
+    end)
+
     -- local mock_character_info = character_info(2, "employee", 5)
     -- local pos = vector(20, 60)
     -- local mock_character = character(mock_character_info, horizontal_dirs.right, pos)
