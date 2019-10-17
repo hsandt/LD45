@@ -9,7 +9,7 @@ itest_manager:register_itest('player starts game',
     {':main_menu'}, function ()
 
   -- enter title menu
-  setup_callback(function ()
+  setup_callback(function (app)
     flow:change_gamestate_by_type(':main_menu')
   end)
 

@@ -14,35 +14,33 @@ local function short_press(button_id)
   wait(1, true)
 end
 
-itest_manager:register_itest('play intro -> 1st fight',
+itest_manager:register_itest('1st fight',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
     -- but without gamestate_proxy, not used
-    {':adventure'}, function ()
+    {':fight'}, function ()
 
-  -- enter adventure state
+  -- enter fight state
   setup_callback(function (app)
-    flow:change_gamestate_by_type(':adventure')
+    -- a trick to access the managers via app via gamestate
+    app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[1]
+    flow:change_gamestate_by_type(':fight')
   end)
 
-  -- play intro coroutine starts
+  -- fight start
 
-  wait(8.0)
+  wait(2.0)
 
-  -- pc monologue starts
+  -- opponent should auto-attack
 
-  -- skip 6 dialogue texts waiting for input
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
+  -- reply with first reply
   short_press(button_ids.o)
 
-  wait(8.0)
+  wait(2.0)
 
-  -- check that we entered the fight state
+  -- quote match resolution
+
   final_assert(function ()
-    return flow.curr_state.type == ':fight', "current game state is not ':fight', has instead type: '"..flow.curr_state.type.."'"
+    return true, "impossible"
   end)
 
 end)
