@@ -115,9 +115,10 @@ end
 -- static
 function dialogue_manager.compute_bubble_bounds(text, bubble_tail_pos)
   -- compute bubble size to wrap around text, while respecting minimum for this character
-  local max_nb_chars, nb_lines = compute_char_size(text)
-  local bubble_width = max_nb_chars * character_width + 2  -- 1 px margin-x around text, and 1px border
-  local bubble_height = nb_lines * character_height + 2  -- 1 px margin-y around text, and 1px border
+  local text_width, text_height = compute_size(text)
+  -- add border of 1px for the bubble (actually 2px with left+right, top+bottom,
+  --   but since we compute right = left + width, bottom = top + height, we exclude the initial pixel)
+  local bubble_width, bubble_height = text_width + 1, text_height + 1
   bubble_width = max(visual_data.bubble_min_width, bubble_width)
 
   local bubble_bottom = bubble_tail_pos.y - visual_data.bubble_tail_height
