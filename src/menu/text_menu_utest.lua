@@ -251,6 +251,7 @@ describe('text_menu', function ()
 
             local s = assert.spy(callback2)
             s.was_called(1)
+            s.was_called_with(match.ref(fake_app))
           end)
 
         end)

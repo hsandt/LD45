@@ -94,7 +94,7 @@ end
 function text_menu:confirm_selection()
   -- currently, text menu is only used to navigate to other gamestates,
   -- but later, it may support generic on_confirm callbacks
-  self.items[self.selection_index].confirm_callback()
+  self.items[self.selection_index].confirm_callback(self.app)
 
   -- just deactivate menu, so we can reuse the items later if menu is static
   -- (by setting self.active = true), else next time show_items to refill the items
