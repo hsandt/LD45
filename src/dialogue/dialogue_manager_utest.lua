@@ -177,7 +177,7 @@ describe('dialogue_manager', function ()
 
           local s = assert.spy(text_menu.draw)
           s.was_called(1)
-          s.was_called_with(match.ref(d.text_menu))
+          s.was_called_with(match.ref(d.text_menu), 2, 91)
         end)
 
         it('(text menu active and current bottom text set) draw text menu in priority', function ()
@@ -188,7 +188,7 @@ describe('dialogue_manager', function ()
 
           local s = assert.spy(text_menu.draw)
           s.was_called(1)
-          s.was_called_with(match.ref(d.text_menu))
+          s.was_called_with(match.ref(d.text_menu), 2, 91)
         end)
 
         it('(current bottom text set) should not error', function ()
