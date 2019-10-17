@@ -653,36 +653,6 @@ describe('fight_manager', function ()
 
     end)
 
-    describe('draw_health_bars', function ()
-
-      it('should not error', function ()
-        assert.has_no_errors(function ()
-          fm:draw_health_bars()
-        end)
-      end)
-
-    end)
-
-    describe('draw_npc_label', function ()
-
-      local mock_fighter_info = fighter_info(7, "employee", 4, {11, 27})
-
-      it('should not error', function ()
-        assert.has_no_errors(function ()
-          fm:draw_npc_label()
-        end)
-      end)
-
-      it('should not error with npc info set', function ()
-        fm.fighter_info = mock_fighter_info
-
-        assert.has_no_errors(function ()
-          fm:draw_npc_label()
-        end)
-      end)
-
-    end)
-
   end)  -- (with instance)
 
 end)

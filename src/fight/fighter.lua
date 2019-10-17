@@ -88,14 +88,18 @@ function fighter:draw_health_bar()
 end
 
 function fighter:draw_name_label()
+  local text = self.character.character_info.name
+  local text_width, text_height = compute_size(text)
+  local label_width, label_height = text_width + 1, text_height + 1
+
   local center_x = self.character.pos.x
   local center_y = self.character.pos.y + visual_data.fighter_name_label_offset_y
-  local box_left = center_x - visual_data.fighter_name_label_half_width
-  local box_right = center_x + visual_data.fighter_name_label_half_width
-  local box_top = center_y - character_height / 2 - 1  -- some margin
-  local box_bottom = center_y + character_height / 2 + 1  -- some margin
+  local box_left = flr(center_x - label_width / 2)
+  local box_right = ceil(center_x + label_width / 2)
+  local box_top = flr(center_y - label_height / 2)
+  local box_bottom = ceil(center_y + label_height / 2)
   ui.draw_rounded_box(box_left, box_top, box_right, box_bottom, colors.indigo, colors.white)
-  ui.print_centered(self.character.character_info.name, center_x, center_y, colors.black)
+  ui.print_centered(text, center_x, center_y, colors.black)
 end
 
 return fighter

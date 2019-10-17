@@ -255,7 +255,7 @@ end
 
 function fight_manager:draw_floor_number()
   ui.draw_box(43, 1, 84, 9, colors.black, colors.orange)
-  ui.print_centered("floor "..tostr(self.app.game_session.floor_number), 64, 6, colors.black)
+  ui.print_centered("floor "..tostr(self.app.game_session.floor_number), 64, 5, colors.black)
 end
 
 return fight_manager
