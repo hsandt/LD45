@@ -51,7 +51,7 @@ local visual_data = {
   -- bubble text
   bubble_screen_margin_x = 4,   -- margin-x from the screen edges
   bubble_line_max_chars = 29,   -- maximum chars per line in bubble text
-  bubble_min_width = 32,
+  bubble_min_width = 12,
   bubble_tail_height = 4,
   rel_bubble_tail_pos_by_horizontal_dir = {
     vector(-2, -40),  -- horizontal_dirs.left  = 1
