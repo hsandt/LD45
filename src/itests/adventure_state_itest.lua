@@ -14,7 +14,7 @@ local function short_press(button_id)
   wait(1, true)
 end
 
-itest_manager:register_itest('player starts game',
+itest_manager:register_itest('play intro -> 1st fight',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
     -- but without gamestate_proxy, not used
     {':adventure'}, function ()
