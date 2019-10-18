@@ -3,6 +3,7 @@ require("engine/core/math")
 require("engine/render/color")
 local ui = require("engine/ui/ui")
 
+local flow = require("engine/application/flow")
 local manager = require("engine/application/manager")
 
 local quote_info = require("content/quote_info")
@@ -65,6 +66,30 @@ function fight_manager:is_active_fighter_attacking()
 end
 
 -- flow
+
+function fight_manager:set_next_opponent_to_matching_random_npc()
+  self.next_opponent = self:pick_matching_random_npc_fighter_prog()
+end
+
+function fight_manager:pick_matching_random_npc_fighter_prog()
+  local candidate_npc_fighter_prog_s = self:get_all_candidate_npc_fighter_prog(self.app.game_session.floor_number)
+  printh("candidate_npc_fighter_prog_s: "..dump(candidate_npc_fighter_prog_s))
+  return pick_random(candidate_npc_fighter_prog_s)
+end
+
+function fight_manager:get_all_candidate_npc_fighter_prog(floor_number)
+  local floor_info = gameplay_data:get_floor_info(floor_number)
+
+  local candidate_npc_fighter_prog_s = {}
+  for level = floor_info.npc_level_min, floor_info.npc_level_max do
+    local npc_info_s = self.app.game_session:get_all_npc_fighter_progressions_with_level(level)
+    for npc_info in all(npc_info_s) do
+      add(candidate_npc_fighter_prog_s, npc_info)
+    end
+  end
+
+  return candidate_npc_fighter_prog_s
+end
 
 function fight_manager:start_fight_with_next_opponent()
   assert(self.next_opponent, "fight_manager:start_fight_with_next_opponent: next opponent not set")
@@ -266,8 +291,13 @@ end
 function fight_manager:start_victory(some_fighter)
   if some_fighter.fighter_progression.character_type == character_types.human then
     printh("player wins")
+    -- flow allows re-entering the same state, it will call on_exit and on_enter
+    self.next_opponent = self:pick_matching_random_npc_fighter_prog()
+    flow:query_gamestate_type(':fight')
   else  -- some_fighter.fighter_progression.character_type == character_types.ai
     printh("ai wins")
+    self.next_opponent = self:pick_matching_random_npc_fighter_prog()
+    flow:query_gamestate_type(':fight')
   end
 end
 

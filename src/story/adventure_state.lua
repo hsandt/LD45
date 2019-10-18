@@ -56,27 +56,8 @@ function adventure_state:play_intro()
   pc_speaker:say_and_wait_for_input("4. i don't want be to seen, so i'm avoiding the elevator, but those stairs seem endless")
   pc_speaker:say_and_wait_for_input("seems good so far. what could go wrong?")
 
-  self.app.managers[':fight'].next_opponent = self.app.game_session.npc_fighter_progressions[1]
+  self.app.managers[':fight']:set_next_opponent_to_matching_random_npc()
   flow:query_gamestate_type(':fight')
-end
-
-function adventure_state:pick_matching_random_npc_info()
-  local candidate_npc_info_s = self:get_all_candidate_npc_info()
-  return pick_random(candidate_npc_info_s)
-end
-
-function adventure_state:get_all_candidate_npc_info()
-  local floor_info = gameplay_data:get_floor_info(self.app.game_session.floor_number)
-
-  local candidate_npc_info_s = {}
-  for level = floor_info.npc_level_min, floor_info.npc_level_max do
-    local npc_info_s = self.app.game_session:get_all_npc_fighter_progressions_with_level(level)
-    for npc_info in all(npc_info_s) do
-      add(candidate_npc_info_s, npc_info)
-    end
-  end
-
-  return candidate_npc_info_s
 end
 
 return adventure_state

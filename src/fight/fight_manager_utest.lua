@@ -5,9 +5,11 @@ local manager = require("engine/application/manager")
 
 local wit_fighter_app = require("application/wit_fighter_app")
 local fighter_info = require("content/fighter_info")
+local floor_info = require("content/floor_info")
 local quote_info = require("content/quote_info")
 local dialogue_manager = require("dialogue/dialogue_manager")
 local fighter_progression = require("progression/fighter_progression")
+local game_session = require("progression/game_session")
 local gameplay_data = require("resources/gameplay_data")
 local visual_data = require("resources/visual_data")
 local character = require("story/character")
@@ -195,6 +197,86 @@ describe('fight_manager', function ()
           assert.is_false(fm:is_active_fighter_attacking())
         end)
 
+      end)
+
+    end)
+
+    describe('set_next_opponent_to_matching_random_npc', function ()
+
+      local mock_npc_fighter_prog = {}
+
+      setup(function ()
+        stub(fight_manager, "pick_matching_random_npc_fighter_prog", function (self)
+          return mock_npc_fighter_prog
+        end)
+      end)
+
+      teardown(function ()
+        fight_manager.pick_matching_random_npc_fighter_prog:revert()
+      end)
+
+      it('should pick a random npc info among the possible npc levels at the current floor', function ()
+        fm:set_next_opponent_to_matching_random_npc()
+        assert.are_equal(mock_npc_fighter_prog, fm.next_opponent)
+      end)
+
+    end)
+
+    describe('pick_matching_random_npc_fighter_prog', function ()
+
+      local mock_npc_fighter_prog = {}
+
+      setup(function ()
+        stub(fight_manager, "get_all_candidate_npc_fighter_prog", function (self, floor_number)
+          if floor_number == 3 then
+            return {{}, {}, mock_npc_fighter_prog}
+          else
+            return {{}}
+          end
+        end)
+        stub(_G, "random_int_range_exc", function (range)
+          return range - 1
+        end)
+      end)
+
+      teardown(function ()
+        fm.get_all_candidate_npc_fighter_prog:revert()
+        random_int_range_exc:revert()
+      end)
+
+      it('should pick a random npc info among the possible npc levels at the current floor', function ()
+        app.game_session.floor_number = 3
+        assert.are_equal(mock_npc_fighter_prog, fm:pick_matching_random_npc_fighter_prog())
+      end)
+
+    end)
+
+    describe('get_all_candidate_npc_fighter_prog', function ()
+
+      setup(function ()
+        stub(gameplay_data, "get_floor_info", function (self, floor_number)
+          -- hypothetical npc levels related to floor number
+          return floor_info(floor_number, floor_number - 1, floor_number + 1)
+        end)
+        stub(game_session, "get_all_npc_fighter_progressions_with_level", function (self, level)
+          -- we are going to return different npcs with the same ids, but we don't care about ids in this test anyway
+          local fake_npc_fighter_prog1 = {level = level}
+          local fake_npc_fighter_prog2 = {level = level}
+          local fake_npc_fighter_prog3 = {level = level}
+          return {fake_npc_fighter_prog1, fake_npc_fighter_prog2, fake_npc_fighter_prog3}
+        end)
+      end)
+
+      teardown(function ()
+        gameplay_data.get_floor_info:revert()
+        game_session.get_all_npc_fighter_progressions_with_level:revert()
+      end)
+
+      it('should pick a random npc info among the possible npc levels at the current floor', function ()
+        -- we pass floor number of 3, so npc levels should be 2 to 4
+        -- we don't go into details but we should have 3 * 3 mock npc infos now, spread on 3 levels
+        -- we just check that we have 9 of them
+        assert.are_equal(9, #fm:get_all_candidate_npc_fighter_prog(3))
       end)
 
     end)

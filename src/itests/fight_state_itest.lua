@@ -45,6 +45,13 @@ itest_manager:register_itest('1st fight',
 
   -- quote match resolution
 
+  -- continue until someone dies
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+
   final_assert(function ()
     return true, "impossible"
   end)
