@@ -95,7 +95,7 @@ end
 
 -- static
 function dialogue_manager.update_speaker(speaker)
-  if speaker.current_text and speaker.wait_for_input and input:is_just_pressed(button_ids.o) then
+  if speaker.wait_for_input and input:is_just_pressed(button_ids.o) then
     speaker:stop()
   end
 end

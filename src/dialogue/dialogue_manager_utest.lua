@@ -289,7 +289,6 @@ describe('dialogue_manager', function ()
 
     it('(some speaker waiting for input, but no confirm) should not stop speaker', function ()
       local speaker = speaker_component(vector(1, 0))
-      speaker.current_text = "hello"
       speaker.wait_for_input = true
 
       dialogue_manager.update_speaker(speaker)
@@ -298,9 +297,8 @@ describe('dialogue_manager', function ()
       s.was_not_called()
     end)
 
-    it('(some speaker waiting for input  and confirm input) should stop speaker', function ()
+    it('(some speaker waiting for input and confirm input) should stop speaker', function ()
       local speaker = speaker_component(vector(1, 0))
-      speaker.current_text = "hello"
       speaker.wait_for_input = true
       input.players_btn_states[0][button_ids.o] = btn_states.just_pressed
 
