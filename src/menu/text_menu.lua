@@ -92,17 +92,18 @@ function text_menu:select_next()
 end
 
 function text_menu:confirm_selection()
-  -- currently, text menu is only used to navigate to other gamestates,
-  -- but later, it may support generic on_confirm callbacks
-  self.items[self.selection_index].confirm_callback(self.app)
-
   -- just deactivate menu, so we can reuse the items later if menu is static
   -- (by setting self.active = true), else next time show_items to refill the items
   self.active = false
+
+  -- we must call the callback *after* deactivating the text_menu, in case it immediately
+  -- shows new choices itself, so it is not hidden after filling the items
+  self.items[self.selection_index].confirm_callback(self.app)
 end
 
 -- render menu, starting at top y, with text centered on x
 function text_menu:draw(x, top)
+  printh("text_menu:draw")
   local y = top
 
   for i = 1, #self.items do
