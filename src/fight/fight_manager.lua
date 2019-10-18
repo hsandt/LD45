@@ -173,36 +173,44 @@ function fight_manager:request_ai_fighter_action(ai_fighter)
 
   local random_quote_id = pick_random(available_quote_ids)
   local random_quote = gameplay_data:get_quote(quote_type, random_quote_id)
-  self:start_wait_and_say_quote(ai_fighter, random_quote)
-end
-
-function fight_manager:start_wait_and_say_quote(active_fighter, quote)
-  self.app:start_coroutine(self.wait_and_say_quote, self, active_fighter, quote)
-end
-
-function fight_manager:wait_and_say_quote(active_fighter, quote)
-  self.app:yield_delay_s(2)
-  self:say_quote(active_fighter, quote)
+  self.app:wait_and_do(1, self.say_quote, self, ai_fighter, random_quote)
 end
 
 function fight_manager:say_quote(active_fighter, quote)
+  printh("say_quote")
   -- don't wait for input, since either the quote menu (pc replying), the auto play (npc replying),
   --   or the quote match resolution (if saying a reply) will hide that text eventually
   active_fighter.character.speaker:say(quote.text)
   active_fighter.last_quote = quote
 
   if quote.quote_type == quote_types.attack then
-    self:give_control_to_next_fighter()
-    self:request_active_fighter_action()
+    self.app:wait_and_do(1, self.request_next_fighter_action, self)
   else  -- quote.quote_type == quote_types.reply
     -- last quote of opponent should be attack
-    self:resolve_exchange(self:get_active_fighter_opponent(), active_fighter)
+    self.app:wait_and_do(1, self.resolve_exchange, self, self:get_active_fighter_opponent(), active_fighter)
   end
 end
+
+function fight_manager:request_next_fighter_action()
+  self:give_control_to_next_fighter()
+  self:request_active_fighter_action()
+end
+
+-- next TODO: coroutines are nice, but the way we do it is recursive:
+-- start coroutine containing a method that calls start coroutine, etc.
+-- however, it flattens after 1 call as it will just add a coroutine
+-- to the coroutine_runner's list. It will continue updating the mother coroutine,
+-- but in general we do nothing else after the tail call, so the mother coroutine
+-- will die immediatel, so no parallel execution conflict.
+-- Another possibility is to sequence like DOTweens, but we need special objects.
+-- It's also hard to sequence calls as each function must know about what's going afterward
+-- Ex: clear exchange in any case, but apply victory after... we lost the context.
 
 -- attacker: fighter
 -- replier: fighter
 function fight_manager:resolve_exchange(attacker, replier)
+  printh("resolve_exchange")
+
 --#if assert
   assert(attacker.last_quote.quote_type == quote_types.attack)
   assert(replier.last_quote.quote_type == quote_types.reply)
@@ -215,21 +223,33 @@ function fight_manager:resolve_exchange(attacker, replier)
     self:hit_fighter(replier, 1)
   end
 
-  -- consume quotes to avoid replying again next turn
-  attacker.last_quote = nil
-  replier.last_quote = nil
+  printh("wait_and_do: check_exchange_result")
+  self.app:wait_and_do(1, self.check_exchange_result, self, attacker, replier)
+end
 
+function fight_manager:check_exchange_result(attacker, replier)
+  printh("check_exchange_result")
   local is_attacker_alive = attacker:is_alive()
   local is_replier_alive = replier:is_alive()
   if is_attacker_alive and is_replier_alive then
     printh("both fighters still alive, request active fighter action")
     -- in our rules, replying fighter keeps control whatever the result of the exchange,
     --   but becomes attacker, so just continue to next action
-    self:request_active_fighter_action()
+    self:clear_exchange()
+    self.app:wait_and_do(1, self.request_active_fighter_action, self)
   elseif is_attacker_alive then
     self:start_victory(attacker)
   else
     self:start_victory(replier)
+  end
+end
+
+function fight_manager:clear_exchange()
+  for fighter in all(self.fighters) do
+    -- consume quotes to avoid replying again next turn
+    fighter.last_quote = nil
+    -- clear quote bubbles
+    fighter.character.speaker:stop()
   end
 end
 

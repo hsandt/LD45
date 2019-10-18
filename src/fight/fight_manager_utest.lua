@@ -568,13 +568,13 @@ describe('fight_manager', function ()
 
     end)
 
-    describe('wait_and_say_quote', function ()
+    describe('say_quote', function ()
 
-      -- todo, but rather as itest since async function
+      -- todo
 
     end)
 
-    describe('say_quote', function ()
+    describe('request_next_fighter_action', function ()
 
       -- todo
 
