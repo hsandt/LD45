@@ -103,7 +103,6 @@ end
 
 -- render menu, starting at top y, with text centered on x
 function text_menu:draw(x, top)
-  printh("text_menu:draw")
   local y = top
 
   for i = 1, #self.items do
