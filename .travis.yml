@@ -8,6 +8,7 @@ sudo: false      # Use container-based infrastructure.
 
 env:
   - LUA_VERSION=5.3
+  - ENABLE_RENDER=1  # to enable rendered headless itests with test.sh
 
 cache:
   apt: true  # private repositories only
@@ -56,7 +57,7 @@ before_script:
 
 script:
   # test (including rendered headless itests)
-  - ./test.sh -m all -- --render
+  - ./test.sh -m all
   # coverage
   - bash <(curl -s https://codecov.io/bash)
   # build game and itest to make sure everything works fine

@@ -124,7 +124,10 @@
 				},
 				{
 					"name": "headless_itests (render)",
-					"cmd": ["./test.sh -f headless_itests -- --render"],
+					"cmd": ["./test.sh -f headless_itests"],
+					"env": {
+						"ENABLE_RENDER": "1"
+					}
 				},
 				{
 					"name": "headless_itests - solo",
@@ -132,7 +135,10 @@
 				},
 				{
 					"name": "headless_itests - solo (render)",
-					"cmd": ["./test.sh -f headless_itests -m solo -- --render"],
+					"cmd": ["./test.sh -f headless_itests -m solo"],
+					"env": {
+						"ENABLE_RENDER": "1"
+					}
 				}
 			]
 		},
@@ -182,7 +188,10 @@
 				{
 					// if you aim for 100% coverage including render methods
 					"name": "(render)",
-					"cmd": ["./test.sh -- --render && echo '' && pico-boots/test.sh"]
+					"cmd": ["./test.sh && echo '' && pico-boots/test.sh"],
+					"env": {
+						"ENABLE_RENDER": "1"
+					}
 				}
 			]
 		},

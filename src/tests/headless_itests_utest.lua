@@ -23,8 +23,12 @@ itest_runner.app = app
 -- require *_itest.lua files to automatically register them in the integration test manager
 require_all_scripts_in('src', 'itests')
 
--- check options
-if contains(arg, "--render") then
+-- check env variables
+local enable_render_value = tonumber(os.getenv('ENABLE_RENDER'))
+-- ENABLE_RENDER must be set to a positive value
+-- (safety check to avoid nil/number comparison error if not set)
+local enable_render = enable_render_value and enable_render_value > 0
+if enable_render then
   print("[headless itest] enabling rendering")
   should_render = true
 end
