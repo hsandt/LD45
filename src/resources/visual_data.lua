@@ -71,6 +71,13 @@ local visual_data = {
   -- fighter name label
   fighter_name_label_offset_y = 5,  -- y offset from character pos
   fighter_name_label_half_width = 35,    -- box width
+
+  -- timing (s)
+  ai_say_quote_delay = 1,
+  request_reply_delay = 1,
+  resolve_exchange_delay = 1,
+  check_exchange_result_delay = 1,
+  request_active_fighter_action_delay = 1,
 }
 
 return visual_data

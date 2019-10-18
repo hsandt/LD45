@@ -173,7 +173,7 @@ function fight_manager:request_ai_fighter_action(ai_fighter)
 
   local random_quote_id = pick_random(available_quote_ids)
   local random_quote = gameplay_data:get_quote(quote_type, random_quote_id)
-  self.app:wait_and_do(1, self.say_quote, self, ai_fighter, random_quote)
+  self.app:wait_and_do(visual_data.ai_say_quote_delay, self.say_quote, self, ai_fighter, random_quote)
 end
 
 function fight_manager:say_quote(active_fighter, quote)
@@ -184,10 +184,10 @@ function fight_manager:say_quote(active_fighter, quote)
   active_fighter.last_quote = quote
 
   if quote.quote_type == quote_types.attack then
-    self.app:wait_and_do(1, self.request_next_fighter_action, self)
+    self.app:wait_and_do(visual_data.request_reply_delay, self.request_next_fighter_action, self)
   else  -- quote.quote_type == quote_types.reply
-    -- last quote of opponent should be attack
-    self.app:wait_and_do(1, self.resolve_exchange, self, self:get_active_fighter_opponent(), active_fighter)
+    -- last quote of opponent should be attack, and active fighter has replied
+    self.app:wait_and_do(visual_data.resolve_exchange_delay, self.resolve_exchange, self, self:get_active_fighter_opponent(), active_fighter)
   end
 end
 
@@ -224,7 +224,8 @@ function fight_manager:resolve_exchange(attacker, replier)
   end
 
   printh("wait_and_do: check_exchange_result")
-  self.app:wait_and_do(1, self.check_exchange_result, self, attacker, replier)
+  self.app:wait_and_do(visual_data.check_exchange_result_delay,
+    self.check_exchange_result, self, attacker, replier)
 end
 
 function fight_manager:check_exchange_result(attacker, replier)
@@ -236,7 +237,8 @@ function fight_manager:check_exchange_result(attacker, replier)
     -- in our rules, replying fighter keeps control whatever the result of the exchange,
     --   but becomes attacker, so just continue to next action
     self:clear_exchange()
-    self.app:wait_and_do(1, self.request_active_fighter_action, self)
+    self.app:wait_and_do(visual_data.request_active_fighter_action_delay,
+      self.request_active_fighter_action, self)
   elseif is_attacker_alive then
     self:start_victory(attacker)
   else
