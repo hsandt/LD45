@@ -69,6 +69,7 @@ end
 function fight_manager:start_fight_with_next_opponent()
   assert(self.next_opponent, "fight_manager:start_fight_with_next_opponent: next opponent not set")
   self:start_fight_with(self.next_opponent)
+  self.next_opponent = nil
 end
 
 function fight_manager:start_fight_with(opponent_fighter_prog)

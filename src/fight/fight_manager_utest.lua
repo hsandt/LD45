@@ -211,13 +211,24 @@ describe('fight_manager', function ()
         fight_manager.start_fight_with:revert()
       end)
 
+      after_each(function ()
+        fight_manager.start_fight_with:clear()
+      end)
+
       it('should call start_fight_with with the next opponent', function ()
-        fight_manager.next_opponent = fake_fighter_prog
+        fm.next_opponent = fake_fighter_prog
         fm:start_fight_with_next_opponent()
 
         local s = assert.spy(fight_manager.start_fight_with)
         s.was_called(1)
         s.was_called_with(match.ref(fm), match.ref(fake_fighter_prog))
+      end)
+
+      it('should clear next opponent (consumption)', function ()
+        fm.next_opponent = fake_fighter_prog
+        fm:start_fight_with_next_opponent()
+
+        assert.is_nil(fm.next_opponent)
       end)
 
     end)
