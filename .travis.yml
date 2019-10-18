@@ -7,8 +7,7 @@ python: "3.6"
 sudo: false      # Use container-based infrastructure.
 
 env:
-  - LUA_VERSION=5.3
-  - ENABLE_RENDER=1  # to enable rendered headless itests with test.sh
+  - LUA_VERSION=5.3 ENABLE_RENDER=1
 
 cache:
   apt: true  # private repositories only
