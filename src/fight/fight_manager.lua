@@ -142,6 +142,8 @@ end
 
 function fight_manager:generate_quote_menu_items(human_fighter, quote_type)
   local available_quote_ids = human_fighter:get_available_quote_ids(quote_type)
+
+  -- always give at least a dummy choice to the human
   if #available_quote_ids == 0 then
     add(available_quote_ids, 0)
   end
@@ -163,6 +165,12 @@ function fight_manager:request_ai_fighter_action(ai_fighter)
 
   local quote_type = self:is_active_fighter_attacking() and quote_types.attack or quote_types.reply
   local available_quote_ids = ai_fighter:get_available_quote_ids(quote_type)
+
+  -- always give at least a dummy choice to the ai
+  if #available_quote_ids == 0 then
+    add(available_quote_ids, 0)
+  end
+
   local random_quote_id = pick_random(available_quote_ids)
   local random_quote = gameplay_data:get_quote(quote_type, random_quote_id)
   self:start_wait_and_say_quote(ai_fighter, random_quote)
@@ -214,6 +222,7 @@ function fight_manager:resolve_exchange(attacker, replier)
   local is_attacker_alive = attacker:is_alive()
   local is_replier_alive = replier:is_alive()
   if is_attacker_alive and is_replier_alive then
+    printh("both fighters still alive, request active fighter action")
     -- in our rules, replying fighter keeps control whatever the result of the exchange,
     --   but becomes attacker, so just continue to next action
     self:request_active_fighter_action()

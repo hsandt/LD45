@@ -37,6 +37,12 @@ itest_manager:register_itest('1st fight',
 
   wait(2.0)
 
+  -- attack with first attack
+  short_press(button_ids.o)
+
+  -- opponent should auto-reply
+  wait(2.0)
+
   -- quote match resolution
 
   final_assert(function ()
