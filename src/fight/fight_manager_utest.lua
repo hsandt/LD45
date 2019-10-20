@@ -787,6 +787,12 @@ describe('fight_manager', function ()
 
     end)
 
+    describe('resolve_losing_attack', function ()
+
+      -- todo
+
+    end)
+
     describe('resolve_exchange', function ()
 
       -- todo

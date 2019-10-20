@@ -6,6 +6,11 @@ local quote_match_info = require("content/quote_match_info")
 
 -- see doc/quote_graph.dot A nodes
 local attacks = {
+  -- first is dummy attack, only used by ai when no quote left
+  -- human doesn't have it and prefer skipping one's turn, as it's too punishing to have to say
+  --   something dmmy and always lose
+  [-1] = quote_info(-1, quote_types.attack, 0, "Uh... I don't know what to say now."),
+  -- no [0] "cancel" entry for attacks
   quote_info( 1, quote_types.attack, 1, "Already exhausted? You should really avoid staircases."),
   quote_info( 2, quote_types.attack, 1, "I hope your personality is not as flat as your fashion sense."),
   quote_info( 3, quote_types.attack, 1, "It took me a single day to find my job."),
@@ -32,7 +37,7 @@ local attacks = {
 local replies = {
   -- first is dummy reply, to fill menu when there are no known replies
   --   or no replies left to say
-  [-1] = quote_info(-1, quote_types.reply, 0, "..."),
+  [-1] = quote_info(-1, quote_types.reply, 0, "Er..."),
   -- this is the cancel reply, that neutralizes any attack (should be available only once)
   [0] = quote_info(0, quote_types.reply, 0, "Sorry, I didn't catch this one."),
   quote_info( 1, quote_types.reply,  1, "At least, mine is working."),
@@ -153,26 +158,19 @@ local pc_fighter_info = fighter_info(0, 0, 1, 3, {}, {}, {})
 -- fighters are mostly mapped to characters 1:1, but storing characters separately is useful
 --   in case we have a non-fighting npc
 local npc_fighter_info_s = {
-  fighter_info( 1,  1, 1, 3, {1, 2}, {}, {}),
-  fighter_info( 2,  2, 1, 3, {2, 3}, {}, {}),
-  fighter_info( 3,  3, 1, 3, {1, 3}, {}, {}),
-  fighter_info( 4,  4, 1, 3, {1, 2, 3}, {}, {}),
-  fighter_info( 5,  5, 2, 3, {1, 4}, {}, {}),
-  fighter_info( 6,  6, 2, 3, {2, 5}, {}, {}),
-  fighter_info( 7,  7, 2, 3, {3, 4}, {}, {}),
-  fighter_info( 8,  8, 2, 3, {4, 5}, {}, {}),
-  fighter_info( 9,  9, 3, 3, {3, 6}, {}, {}),
-  fighter_info(10, 10, 3, 3, {4, 7}, {}, {}),
-  fighter_info(11, 11, 3, 3, {5, 8}, {}, {}),
-  fighter_info(12, 12, 3, 3, {4, 5, 8}, {}, {}),
-  fighter_info(13, 13, 4, 3, {7, 10}, {}, {}),
-  fighter_info(14, 14, 4, 3, {1}, {}, {}),
-  fighter_info(15, 15, 4, 3, {1}, {}, {}),
-  fighter_info(16, 16, 4, 3, {1}, {}, {}),
-  fighter_info(17, 17, 5, 3, {1}, {}, {}),
-  fighter_info(18, 18, 5, 3, {1}, {}, {}),
-  fighter_info(19, 19, 5, 3, {1}, {}, {}),
-  fighter_info(20, 20, 5, 3, {1}, {}, {}),
+  -- id, character_info_id, initial_level, initial_max_hp, initial_attack_ids, initial_reply_ids, initial_quote_match_ids
+  fighter_info( 1,  1, 1, 4, {1, 5}, {}, {}),     -- junior designer (good at attacks and wits in general)
+  fighter_info( 2,  2, 1, 3, {4, 6}, {}, {}),     -- junior programmer (good at replies and tech topics)
+  fighter_info( 3,  3, 1, 5, {3, 8}, {}, {}),     -- junior qa (tank character, good at planning topics)
+  fighter_info( 4,  4, 1, 3, {4, 5, 8}, {}, {}),  -- junior marketing (good at matching quotes)
+  fighter_info( 5,  5, 2, 5, {7, 10}, {}, {}),    -- designer
+  fighter_info( 6,  6, 2, 4, {1}, {}, {}),        -- programmer
+  fighter_info( 7,  7, 2, 6, {1}, {}, {}),        -- manager (tank and planning topics)
+  fighter_info( 8,  8, 2, 4, {1}, {}, {}),        -- legal advisor (good at matching quotes)
+  fighter_info( 9,  9, 3, 6, {1}, {}, {}),        -- senior designer
+  fighter_info(10, 10, 3, 5, {1}, {}, {}),        -- senior programmer
+  fighter_info(11, 11, 3, 7, {1}, {}, {}),        -- senior qa
+  fighter_info(12, 12, 3, 5, {1}, {}, {}),        -- senior marketing
 }
 
 local gameplay_data = {
@@ -186,7 +184,7 @@ local gameplay_data = {
   npc_fighter_info_s = npc_fighter_info_s,
 
   -- misc gameplay parameters
-  fighter_max_hp = 3
+  losing_attack_penalty = 1
 }
 
 -- data access helpers
@@ -206,8 +204,11 @@ end
 --   reply that would have a power of 0, just enough to avoid damage
 --   while not dealing damage back either.
 function gameplay_data:get_quote_match_power(attack_info, reply_info)
-  -- quote_match is a struct, so == is equality member, so we can check
-  --  if the wanted match exists directly with contain
+  if attack_info.id == -1 then
+    -- if code
+  end
+
+
   for quote_match in all(quote_matches) do
     if quote_match.attack_id == attack_info.id and quote_match.reply_id == reply_info.id then
       return quote_match.power

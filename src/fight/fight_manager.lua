@@ -180,7 +180,7 @@ function fight_manager:request_human_fighter_action(human_fighter)
       self:request_next_fighter_action()
       return
     else  -- quote_type == quote_types.reply
-      -- pc must still reply to close the exchange, give dummy quote that can never win
+      -- pc must still reply to close the exchange, give losing quote
       add(available_quote_ids, -1)
     end
   end
@@ -212,9 +212,9 @@ function fight_manager:request_ai_fighter_action(ai_fighter)
   local quote_type = self:is_active_fighter_attacking() and quote_types.attack or quote_types.reply
   local available_quote_ids = ai_fighter:get_available_quote_ids(quote_type)
 
-  -- always give at least a dummy choice to the ai
   if #available_quote_ids == 0 then
-    add(available_quote_ids, 0)
+    -- ai has nothing to say, whether attack or reply, add losing quote
+    add(available_quote_ids, -1)
   end
 
   local random_quote_id = pick_random(available_quote_ids)
@@ -230,10 +230,20 @@ function fight_manager:say_quote(active_fighter, quote)
   active_fighter.last_quote = quote
 
   if quote.quote_type == quote_types.attack then
-    self.app:wait_and_do(visual_data.request_reply_delay, self.request_next_fighter_action, self)
+    if quote.id == -1 then
+      -- active fighter said losing quote, no need to ask opponent for reply
+      -- immediately resolve with attacker's loss
+      self.app:wait_and_do(visual_data.resolve_losing_attack_delay,
+        self.resolve_losing_attack, self, active_fighter, self:get_active_fighter_opponent())
+    else
+      -- normal quote was said
+      self.app:wait_and_do(visual_data.request_reply_delay,
+        self.request_next_fighter_action, self)
+    end
   else  -- quote.quote_type == quote_types.reply
     -- last quote of opponent should be attack, and active fighter has replied
-    self.app:wait_and_do(visual_data.resolve_exchange_delay, self.resolve_exchange, self, self:get_active_fighter_opponent(), active_fighter)
+    self.app:wait_and_do(visual_data.resolve_exchange_delay,
+      self.resolve_exchange, self, self:get_active_fighter_opponent(), active_fighter)
   end
 end
 
@@ -242,15 +252,11 @@ function fight_manager:request_next_fighter_action()
   self:request_active_fighter_action()
 end
 
--- next TODO: coroutines are nice, but the way we do it is recursive:
--- start coroutine containing a method that calls start coroutine, etc.
--- however, it flattens after 1 call as it will just add a coroutine
--- to the coroutine_runner's list. It will continue updating the mother coroutine,
--- but in general we do nothing else after the tail call, so the mother coroutine
--- will die immediatel, so no parallel execution conflict.
--- Another possibility is to sequence like DOTweens, but we need special objects.
--- It's also hard to sequence calls as each function must know about what's going afterward
--- Ex: clear exchange in any case, but apply victory after... we lost the context.
+function fight_manager:resolve_losing_attack(losing_attacker, passive_replier)
+  self:hit_fighter(attacker, gameplay_data.losing_attack_penalty)
+  self.app:wait_and_do(visual_data.check_exchange_result_delay,
+    self.check_exchange_result, self, attacker, passive_replier)
+end
 
 -- attacker: fighter
 -- replier: fighter
