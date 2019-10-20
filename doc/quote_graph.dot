@@ -2,100 +2,100 @@ strict digraph {
 	layout="circo"
 	edge [penwidth=8, arrowhead=open, arrowsize=12]
 
-	A15 [label="(Lv1) exhausted\nstaircases", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A3 [label="(Lv1) flat\npersonality", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A7 [label="(Lv1) single day\njob", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A6 [label="(Lv1) 70 wpm", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A16 [label="(Lv1) sum\nExcel", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A23 [label="(Lv1) complete tasks", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A1 [label="(Lv1) exhausted\nstaircases", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A2 [label="(Lv1) flat\npersonality", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A3 [label="(Lv1) single day\njob", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A4 [label="(Lv1) 70 wpm", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A5 [label="(Lv1) sum\nExcel", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A6 [label="(Lv1) complete tasks", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
 	
-	A13 [label="(Lv2) neurons work\nafter 6pm", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A4 [label="(Lv2) 2x contacts", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A8 [label="(Lv2) raining\nlanded", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A1 [label="(Lv2) 30 mn\nportfolio", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A22 [label="(Lv2) setup.exe", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A21 [label="(Lv2) machine\n10 years", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A5 [label="(Lv2) 6 hours\non PC", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A7 [label="(Lv2) neurons work\nafter 6pm", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A8 [label="(Lv2) 2x contacts", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A9 [label="(Lv2) raining\nlanded", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A10 [label="(Lv2) 30 mn\nportfolio", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A11 [label="(Lv2) setup.exe", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A12 [label="(Lv2) machine\n10 years", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A13 [label="(Lv2) 6 hours\non PC", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
 
 	A14 [label="(Lv3) find book\neasily", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A12 [label="(Lv3) charisma just here", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A19 [label="(Lv3) lower\nthe bar", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A2 [label="(Lv3) your website\nhacked", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A9 [label="(Lv3) watch me\nspeak", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A10 [label="(Lv3) hands-on\nXP", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
-	A11 [label="(Lv3) not let\nme go", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A15 [label="(Lv3) charisma just here", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A16 [label="(Lv3) lower\nthe bar", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A17 [label="(Lv3) your website\nhacked", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A18 [label="(Lv3) watch me\nspeak", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A19 [label="(Lv3) hands-on\nXP", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A20 [label="(Lv3) not let\nme go", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
 
 	R0 [label="(Lv0) didn't\ncatch", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	
-	R23 [label="(Lv1) mine is\nworking", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R4 [label="(Lv1) blunder", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+
+	R1 [label="(Lv1) mine is\nworking", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R2 [label="(Lv1) blunder", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R3 [label="(Lv1) photocopies", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R11 [label="(Lv1) coffee\nmachine", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R4 [label="(Lv1) coffee\nmachine", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R5 [label="(Lv1) you\n contributed", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R12 [label="(Lv1) pretend\nelevator", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R6 [label="(Lv1) pretend\nelevator", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	
-	R6 [label="(Lv2) more\nexercise", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R10 [label="(Lv2) Discord", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R7 [label="(Lv2) plugin", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R24 [label="(Lv2) 56kbps", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R2 [label="(Lv2) leg-up", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R25 [label="(Lv2) not take\nfrom you", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R20 [label="(Lv2) carnival", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R7 [label="(Lv2) more\nexercise", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R8 [label="(Lv2) Discord", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R9 [label="(Lv2) plugin", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R10 [label="(Lv2) 56kbps", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R11 [label="(Lv2) leg-up", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R12 [label="(Lv2) not take\nfrom you", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R13 [label="(Lv2) carnival", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	
-	R15 [label="(Lv3) don't mean\nanything", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R1 [label="(Lv3) so little\ncontent", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R9 [label="(Lv3) only two\nof them", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R14 [label="(Lv3) don't mean\nanything", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R15 [label="(Lv3) so little\ncontent", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R16 [label="(Lv3) only two\nof them", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R17 [label="(Lv3) sound\ncompetent", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R18 [label="(Lv3) gardening\nleave", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R19 [label="(Lv3) Linux", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 
-	A1 -> R1 [penwidth=8]
-	A1 -> R7
-	A2 -> R1
-	A2 -> R23
-	A2 -> R24
-	A3 -> R1
-	A3 -> R20
-	A4 -> R9
-	A4 -> R10
-	A4 -> R15
-	A4 -> R20
-	A5 -> R6
-	A5 -> R10
-	A5 -> R23
-	A5 -> R24
-	A6 -> R6
-	A6 -> R15
-	A7 -> R2
-	A7 -> R24
-	A8 -> R2
-	A8 -> R12
-	A9 -> R17
-	A9 -> R25
-	A10 -> R3
-	A10 -> R4
-	A10 -> R17
-	A11 -> R4
-	A11 -> R18
-	A12 -> R6
-	A12 -> R11
-	A12 -> R18
-	A13 -> R9
-	A13 -> R11
-	A14 -> R6
-	A14 -> R9
-	A15 -> R6
-	A15 -> R12
-	A16 -> R7
-	A16 -> R19
+	A10 -> R15 [penwidth=8]
+	A10 -> R9
+	A17 -> R15
+	A17 -> R1
+	A17 -> R10
+	A2 -> R15
+	A2 -> R13
+	A8 -> R16
+	A8 -> R8
+	A8 -> R14
+	A8 -> R13
+	A13 -> R7
+	A13 -> R8
+	A13 -> R1
+	A13 -> R10
+	A4 -> R7
+	A4 -> R14
+	A3 -> R11
+	A3 -> R10
+	A9 -> R11
+	A9 -> R6
+	A18 -> R17
+	A18 -> R12
+	A19 -> R3
 	A19 -> R2
-	A19 -> R5
-	A19 -> R6
-	A21 -> R11
-	A21 -> R24
-	A22 -> R19
-	A22 -> R25
-	A23 -> R3
-	A23 -> R5
-	A23 -> R9
+	A19 -> R17
+	A20 -> R2
+	A20 -> R18
+	A15 -> R7
+	A15 -> R4
+	A15 -> R18
+	A7 -> R16
+	A7 -> R4
+	A14 -> R7
+	A14 -> R16
+	A1 -> R7
+	A1 -> R6
+	A5 -> R9
+	A5 -> R19
+	A16 -> R11
+	A16 -> R5
+	A16 -> R7
+	A12 -> R4
+	A12 -> R10
+	A11 -> R19
+	A11 -> R12
+	A6 -> R3
+	A6 -> R5
+	A6 -> R16
 }
