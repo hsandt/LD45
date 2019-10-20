@@ -98,6 +98,7 @@ end
 
 function fight_manager:start_fight_with(opponent_fighter_prog)
   self:load_fighters(self.app.game_session.pc_fighter_progression, opponent_fighter_prog)
+  log("start fight with: "..self.fighters[2]:get_name(), "itest")
 
   -- start battle flow (opponent starts)
   self.active_fighter_index = 2
@@ -223,9 +224,9 @@ function fight_manager:request_ai_fighter_action(ai_fighter)
 end
 
 function fight_manager:say_quote(active_fighter, quote)
-  printh("say_quote")
   -- don't wait for input, since either the quote menu (pc replying), the auto play (npc replying),
   --   or the quote match resolution (if saying a reply) will hide that text eventually
+  log('fighter: '..active_fighter:get_name()..' says: "'..quote.text..'"', "itest")
   active_fighter.character.speaker:say(quote.text)
   active_fighter.last_quote = quote
 
@@ -261,8 +262,6 @@ end
 -- attacker: fighter
 -- replier: fighter
 function fight_manager:resolve_exchange(attacker, replier)
-  printh("resolve_exchange")
-
   local attacker_quote = attacker.last_quote
   local replier_quote = replier.last_quote
 
@@ -282,19 +281,16 @@ function fight_manager:resolve_exchange(attacker, replier)
     self:hit_fighter(replier, attacker_quote.level)
   end
 
-  printh("wait_and_do: check_exchange_result")
   self.app:wait_and_do(visual_data.check_exchange_result_delay,
     self.check_exchange_result, self, attacker, replier)
 end
 
 function fight_manager:check_exchange_result(attacker, replier)
-  printh("check_exchange_result")
   self:clear_exchange()
 
   local is_attacker_alive = attacker:is_alive()
   local is_replier_alive = replier:is_alive()
   if is_attacker_alive and is_replier_alive then
-    printh("both fighters still alive, request active fighter action")
     -- in our rules, replying fighter keeps control whatever the result of the exchange,
     --   but becomes attacker, so just continue to next action
     self.app:wait_and_do(visual_data.request_active_fighter_action_delay,
@@ -316,7 +312,6 @@ function fight_manager:clear_exchange()
 end
 
 function fight_manager:hit_fighter(some_fighter, damage)
-  printh("hit_fighter: "..some_fighter.character.character_info.name.." with "..tostr(damage))
   some_fighter:take_damage(damage)
 
   -- todo: fx and sfx
@@ -324,13 +319,13 @@ end
 
 function fight_manager:start_victory(some_fighter)
   if some_fighter.fighter_progression.character_type == character_types.human then
-    printh("player wins")
+    log("player wins", "itest")
     -- flow allows re-entering the same state, it will call on_exit and on_enter
     self:stop_fight()
     self.next_opponent = self:pick_matching_random_npc_fighter_prog()
     flow:query_gamestate_type(':fight')
   else  -- some_fighter.fighter_progression.character_type == character_types.ai
-    printh("ai wins")
+    log("ai wins", "itest")
     self:stop_fight()
     self.next_opponent = self:pick_matching_random_npc_fighter_prog()
     flow:query_gamestate_type(':fight')

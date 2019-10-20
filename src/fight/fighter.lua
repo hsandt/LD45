@@ -36,6 +36,10 @@ function fighter:_tostring()
 end
 --#endif
 
+function fighter:get_name()
+  return self.character.character_info.name
+end
+
 -- logic
 
 function fighter:get_available_quote_ids(quote_type)
@@ -54,7 +58,9 @@ end
 
 function fighter:take_damage(damage)
   self.hp = self.hp - damage
+  log('fighter "'..self:get_name()..'" takes '..damage..' damage! => '..self.hp..' HP', "itest")
   if self.hp <= 0 then
+    log('fighter "'..self:get_name()..'" dies!', "itest")
     self.hp = 0
   end
 end
@@ -89,7 +95,7 @@ function fighter:draw_health_bar()
 end
 
 function fighter:draw_name_label()
-  local text = self.character.character_info.name
+  local text = self:get_name()
   local text_width, text_height = compute_size(text)
   local label_width, label_height = text_width + 1, text_height + 1
 

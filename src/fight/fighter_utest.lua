@@ -44,6 +44,12 @@ describe('fighter', function ()
     end)
   end)
 
+  describe('get_name', function ()
+    it('should return the name from the character info', function ()
+      assert.are_equal("employee", f:get_name())
+    end)
+  end)
+
   -- logic
 
   describe('get_available_quote_ids', function ()
