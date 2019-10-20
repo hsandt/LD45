@@ -13,7 +13,6 @@ end
 
 function fight_state:on_enter()
   self.app.managers[':fight'].active = true
-  printh("fight_state:on_enter with opponent: "..dump(self.app.managers[':fight'].next_opponent))
   self.app.managers[':fight']:start_fight_with_next_opponent()
 
   self.app.managers[':dialogue'].should_show_bottom_box = true

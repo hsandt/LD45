@@ -8,6 +8,7 @@ local fighter_info = require("content/fighter_info")
 local floor_info = require("content/floor_info")
 local quote_info = require("content/quote_info")
 local dialogue_manager = require("dialogue/dialogue_manager")
+local fighter = require("fight/fighter")
 local fighter_progression = require("progression/fighter_progression")
 local game_session = require("progression/game_session")
 local gameplay_data = require("resources/gameplay_data")
@@ -240,7 +241,7 @@ describe('fight_manager', function ()
       end)
 
       teardown(function ()
-        fm.get_all_candidate_npc_fighter_prog:revert()
+        fight_manager.get_all_candidate_npc_fighter_prog:revert()
         random_int_range_exc:revert()
       end)
 
@@ -560,21 +561,35 @@ describe('fight_manager', function ()
 
     describe('request_human_fighter_action', function ()
 
+      -- just put dummy info so we can get a proper fighter and stub fighter methods
+      -- it's not necessary to have a real fighter, we could also just make a table
+      --   but would have to stub in before_each (not setup) on the specific mock table
+      --   rather than the fighter class
+      local mock_human_fighter_info = fighter_info(0, 0, 1, 3, {}, {}, {})
+
+      local mock_human_fighter_progression
+      local mock_human_fighter
+
         -- set character_type just to pass the assertions
-      local fake_human_fighter = {fighter_progression = {character_type = character_types.human}}
-      local fake_attack_items = {"attack"}
-      local fake_reply_items = {"reply"}
+      local fake_attack_items = {"attack1", "attack2", "attack3"}
+      local fake_reply_items = {[-1] = "dummy reply", [0] = "cancel reply", "reply1"}
 
       setup(function ()
         stub(fight_manager, "is_active_fighter_attacking", function (self)
           return true
         end)
-        stub(fight_manager, "generate_quote_menu_items", function (self, fighter, quote_type)
+        stub(fight_manager, "generate_quote_menu_items", function (self, available_quote_ids, quote_type)
+          local fake_menu_items = {}
           if quote_type == quote_types.attack then
-            return fake_attack_items
+            for quote_id in all(available_quote_ids) do
+              add(fake_menu_items, fake_attack_items[quote_id])
+            end
           else
-            return fake_reply_items
+            for quote_id in all(available_quote_ids) do
+              add(fake_menu_items, fake_reply_items[quote_id])
+            end
           end
+          return fake_menu_items
         end)
         stub(dialogue_manager, "prompt_items")
       end)
@@ -586,9 +601,12 @@ describe('fight_manager', function ()
       end)
 
       before_each(function ()
+        mock_human_fighter_progression = fighter_progression(character_types.human, mock_human_fighter_info)
+        mock_human_fighter = fighter(mock_character, mock_human_fighter_progression)
+
         -- just to pass the assertions
         fm.active_fighter_index = 1
-        fm.fighters = {fake_human_fighter}
+        fm.fighters = {mock_human_fighter}
       end)
 
       after_each(function ()
@@ -603,18 +621,67 @@ describe('fight_manager', function ()
           stub(fight_manager, "is_active_fighter_attacking", function (self)
             return true
           end)
+          stub(fight_manager, "request_next_fighter_action")
         end)
 
         teardown(function ()
           fight_manager.is_active_fighter_attacking:revert()
+          fight_manager.request_next_fighter_action:revert()
         end)
 
-        it('should prompt generated attack items', function ()
-          fm:request_human_fighter_action(fake_human_fighter)
+        after_each(function ()
+          fight_manager.is_active_fighter_attacking:clear()
+          fight_manager.request_next_fighter_action:clear()
+        end)
 
-          local s = assert.spy(dialogue_manager.prompt_items)
-          s.was_called(1)
-          s.was_called_with(match.ref(dm), match.ref(fake_attack_items))
+        describe('(when no attacks left)', function ()
+
+          setup(function ()
+            stub(fighter, "get_available_quote_ids", function (self, quote_type)
+              -- we assume quote_type == quote_types.attack here
+              return {}
+            end)
+          end)
+
+          teardown(function ()
+            fighter.get_available_quote_ids:revert()
+          end)
+
+          it('should not prompt at all and skip to opponent\'s turn', function ()
+            fm:request_human_fighter_action(mock_human_fighter)
+
+            local s = assert.spy(fight_manager.request_next_fighter_action)
+            s.was_called(1)
+            s.was_called_with(match.ref(fm))
+
+            assert.spy(dialogue_manager.prompt_items).was_not_called()
+          end)
+
+        end)
+
+        describe('(when some attacks left)', function ()
+
+          setup(function ()
+            stub(fighter, "get_available_quote_ids", function (self, quote_type)
+              -- we assume quote_type == quote_types.attack here
+              return {1, 2}
+            end)
+          end)
+
+          teardown(function ()
+            fighter.get_available_quote_ids:revert()
+          end)
+
+          it('should prompt generated attack items', function ()
+            fm:request_human_fighter_action(mock_human_fighter)
+
+            assert.spy(fight_manager.request_next_fighter_action).was_not_called()
+
+            local s = assert.spy(dialogue_manager.prompt_items)
+            s.was_called(1)
+            s.was_called_with(match.ref(dm), {"attack1", "attack2"})
+          end)
+
         end)
 
       end)
@@ -631,12 +698,52 @@ describe('fight_manager', function ()
           fight_manager.is_active_fighter_attacking:revert()
         end)
 
-        it('should prompt generated attack items', function ()
-          fm:request_human_fighter_action(fake_human_fighter)
+        describe('(when no replies left)', function ()
 
-          local s = assert.spy(dialogue_manager.prompt_items)
-          s.was_called(1)
-          s.was_called_with(match.ref(dm), match.ref(fake_reply_items))
+          setup(function ()
+            stub(fighter, "get_available_quote_ids", function (self, quote_type)
+              -- we assume quote_type == quote_types.reply here
+              return {}
+            end)
+            stub(fight_manager, "request_next_fighter_action")
+          end)
+
+          teardown(function ()
+            fighter.get_available_quote_ids:revert()
+          end)
+
+          it('should still prompt with a dummy reply', function ()
+            fm:request_human_fighter_action(mock_human_fighter)
+
+            local s = assert.spy(dialogue_manager.prompt_items)
+            s.was_called(1)
+            s.was_called_with(match.ref(dm), {"dummy reply"})
+          end)
+
+        end)
+
+        describe('(when some replies left)', function ()
+
+          setup(function ()
+            stub(fighter, "get_available_quote_ids", function (self, quote_type)
+              -- we assume quote_type == quote_types.reply here
+              return {0, 1}
+            end)
+            stub(fight_manager, "request_next_fighter_action")
+          end)
+
+          teardown(function ()
+            fighter.get_available_quote_ids:revert()
+          end)
+
+          it('should still prompt with a dummy reply', function ()
+            fm:request_human_fighter_action(mock_human_fighter)
+
+            local s = assert.spy(dialogue_manager.prompt_items)
+            s.was_called(1)
+            s.was_called_with(match.ref(dm), {"cancel reply", "reply1"})
+          end)
+
         end)
 
       end)

@@ -6,9 +6,6 @@ local quote_match_info = require("content/quote_match_info")
 
 -- see doc/quote_graph.dot A nodes
 local attacks = {
-  -- first is dummy attack, to fill menu when there are no known attacks
-  --   or no attacks left to say
-  [0] = quote_info(0, quote_types.attack, 0, "..."),
   quote_info( 1, quote_types.attack, 1, "Already exhausted? You should really avoid staircases."),
   quote_info( 2, quote_types.attack, 1, "I hope your personality is not as flat as your fashion sense."),
   quote_info( 3, quote_types.attack, 1, "It took me a single day to find my job."),
@@ -35,6 +32,8 @@ local attacks = {
 local replies = {
   -- first is dummy reply, to fill menu when there are no known replies
   --   or no replies left to say
+  [-1] = quote_info(-1, quote_types.reply, 0, "..."),
+  -- this is the cancel reply, that neutralizes any attack (should be available only once)
   [0] = quote_info(0, quote_types.reply, 0, "Sorry, I didn't catch this one."),
   quote_info( 1, quote_types.reply,  1, "At least, mine is working."),
   quote_info( 2, quote_types.reply,  1, "By that you mean you made some big blunder, uh?"),

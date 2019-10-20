@@ -161,18 +161,26 @@ function fight_manager:request_human_fighter_action(human_fighter)
 --#endif
 
   local quote_type = self:is_active_fighter_attacking() and quote_types.attack or quote_types.reply
-  local items = self:generate_quote_menu_items(human_fighter, quote_type)
+  local available_quote_ids = human_fighter:get_available_quote_ids(quote_type)
+
+  if #available_quote_ids == 0 then
+    -- no quotes left
+    if quote_type == quote_types.attack then
+      -- pc has nothing to say to attack, just skip this turn and let opponent attack
+      -- (last quotes have already been cleared at this point)
+      self:request_next_fighter_action()
+      return
+    else  -- quote_type == quote_types.reply
+      -- pc must still reply to close the exchange, give dummy quote that can never win
+      add(available_quote_ids, -1)
+    end
+  end
+
+  local items = self:generate_quote_menu_items(available_quote_ids, quote_type)
   self.app.managers[':dialogue']:prompt_items(items)
 end
 
-function fight_manager:generate_quote_menu_items(human_fighter, quote_type)
-  local available_quote_ids = human_fighter:get_available_quote_ids(quote_type)
-
-  -- always give at least a dummy choice to the human
-  if #available_quote_ids == 0 then
-    add(available_quote_ids, 0)
-  end
-
+function fight_manager:generate_quote_menu_items(available_quote_ids, quote_type)
   return transform(available_quote_ids, function (quote_id)
     local quote = gameplay_data:get_quote(quote_type, quote_id)
     local say_quote_callback = function ()
