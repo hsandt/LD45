@@ -73,7 +73,6 @@ end
 
 function fight_manager:pick_matching_random_npc_fighter_prog()
   local candidate_npc_fighter_prog_s = self:get_all_candidate_npc_fighter_prog(self.app.game_session.floor_number)
-  printh("candidate_npc_fighter_prog_s: "..dump(candidate_npc_fighter_prog_s))
   return pick_random(candidate_npc_fighter_prog_s)
 end
 
@@ -237,16 +236,23 @@ end
 function fight_manager:resolve_exchange(attacker, replier)
   printh("resolve_exchange")
 
+  local attacker_quote = attacker.last_quote
+  local replier_quote = replier.last_quote
+
 --#if assert
-  assert(attacker.last_quote.quote_type == quote_types.attack)
-  assert(replier.last_quote.quote_type == quote_types.reply)
+  assert(attacker_quote.quote_type == quote_types.attack)
+  assert(replier_quote.quote_type == quote_types.reply)
 --#endif
 
-  local successful_reply = gameplay_data:are_quote_matching(attacker.last_quote, replier.last_quote)
-  if successful_reply then
-    self:hit_fighter(attacker, 1)
+  local match_power = gameplay_data:get_quote_match_power(attacker_quote, replier_quote)
+
+  -- A match power of 0 is accepted to cancel an attack. -1, however, means the reply failed completely.
+  if match_power >= 0 then
+    -- don't use the reply level, but the match power to determine how good the counter is
+    self:hit_fighter(attacker, match_power)
   else
-    self:hit_fighter(replier, 1)
+    -- reply failed, just use the attack level directly to deal damage
+    self:hit_fighter(replier, attacker_quote.level)
   end
 
   printh("wait_and_do: check_exchange_result")

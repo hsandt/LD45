@@ -21,18 +21,18 @@ describe('gameplay_data', function ()
 
   end)
 
-  describe('are_quote_matching', function ()
+  describe('get_quote_match_power', function ()
 
-    it('should return false if quotes are not matching', function ()
-      local attack = gameplay_data.attacks[6]
-      local reply = gameplay_data.replies[7]
-      assert.is_false(gameplay_data:are_quote_matching(attack, reply))
+    it('should return -1 if quotes are not matching', function ()
+      local attack = gameplay_data.attacks[8]
+      local reply = gameplay_data.replies[10]
+      assert.are_equal(-1, gameplay_data:get_quote_match_power(attack, reply))
     end)
 
-    it('should return true if quotes are matching', function ()
-      local attack = gameplay_data.attacks[7]
-      local reply = gameplay_data.replies[7]
-      assert.is_true(gameplay_data:are_quote_matching(attack, reply))
+    it('should return match power if quotes are matching', function ()
+      local attack = gameplay_data.attacks[8]
+      local reply = gameplay_data.replies[11]
+      assert.are_equal(2, gameplay_data:get_quote_match_power(attack, reply))
     end)
 
   end)
