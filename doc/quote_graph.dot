@@ -1,6 +1,6 @@
 strict digraph {
 	layout="circo"
-	edge [penwidth=8, arrowhead=open, arrowsize=12]
+	edge [penwidth=8, arrowhead=open, arrowsize=6]
 
 	A1 [label="(Lv1) exhausted\nstaircases", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
 	A2 [label="(Lv1) flat\npersonality", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
@@ -32,70 +32,69 @@ strict digraph {
 	R3 [label="(Lv1) photocopies", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R4 [label="(Lv1) coffee\nmachine", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R5 [label="(Lv1) you\n contributed", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R6 [label="(Lv1) pretend\nelevator", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R6 [label="(Lv2) more\nexercise", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	
-	R7 [label="(Lv2) more\nexercise", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R7 [label="(Lv1) pretend\nelevator", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R8 [label="(Lv2) Discord", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R9 [label="(Lv2) plugin", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R10 [label="(Lv2) 56kbps", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R11 [label="(Lv2) leg-up", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R11 [label="(Lv2) only two\nof them", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R12 [label="(Lv2) not take\nfrom you", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R13 [label="(Lv2) carnival", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	
 	R14 [label="(Lv3) don't mean\nanything", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R15 [label="(Lv3) so little\ncontent", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
-	R16 [label="(Lv3) only two\nof them", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R16 [label="(Lv3) leg-up", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R17 [label="(Lv3) sound\ncompetent", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R18 [label="(Lv3) gardening\nleave", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 	R19 [label="(Lv3) Linux", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 
-	A10 -> R15 [penwidth=8]
-	A10 -> R9
-	A17 -> R15
-	A17 -> R1
-	A17 -> R10
-	A2 -> R15
-	A2 -> R13
-	A8 -> R16
-	A8 -> R8
-	A8 -> R14
-	A8 -> R13
-	A13 -> R7
-	A13 -> R8
-	A13 -> R1
-	A13 -> R10
-	A4 -> R7
-	A4 -> R14
-	A3 -> R11
-	A3 -> R10
-	A9 -> R11
-	A9 -> R6
-	A18 -> R17
-	A18 -> R12
-	A19 -> R3
-	A19 -> R2
-	A19 -> R17
-	A20 -> R2
-	A20 -> R18
-	A15 -> R7
-	A15 -> R4
-	A15 -> R18
-	A7 -> R16
-	A7 -> R4
-	A14 -> R7
-	A14 -> R16
-	A1 -> R7
 	A1 -> R6
-	A5 -> R9
-	A5 -> R19
-	A16 -> R11
-	A16 -> R5
-	A16 -> R7
-	A12 -> R4
-	A12 -> R10
-	A11 -> R19
-	A11 -> R12
-	A6 -> R3
+	A1 -> R7 [penwidth=22, arrowsize=10]
+	A2 -> R13 [penwidth=22, arrowsize=10]
+	A2 -> R15 [penwidth=34, arrowsize=14]
+	A3 -> R10
+	A3 -> R16 [penwidth=34, arrowsize=14]
+	A4 -> R6
+	A4 -> R14 [penwidth=22, arrowsize=10]
+	A5 -> R9 [penwidth=22, arrowsize=10]
+	A5 -> R19 [penwidth=34, arrowsize=14]
+	A6 -> R3 [penwidth=34, arrowsize=14]
 	A6 -> R5
-	A6 -> R16
+	A6 -> R11 [penwidth=22, arrowsize=10]
+	A7 -> R4 [penwidth=34, arrowsize=14]
+	A7 -> R11 [penwidth=22, arrowsize=10]
+	A8 -> R11 [penwidth=22, arrowsize=10]
+	A8 -> R13
+	A8 -> R14 [penwidth=22, arrowsize=10]
+	A8 -> R8 [penwidth=22, arrowsize=10]
+	A9 -> R7 [penwidth=22, arrowsize=10]
+	A9 -> R16
+	A10 -> R9 [penwidth=22, arrowsize=10]
+	A10 -> R15
+	A11 -> R12
+	A11 -> R19 [penwidth=22, arrowsize=10]
+	A12 -> R4
+	A12 -> R10 [penwidth=22, arrowsize=10]
+	A13 -> R1
+	A13 -> R6 [penwidth=22, arrowsize=10]
+	A13 -> R8
+	A13 -> R10 [penwidth=34, arrowsize=14]
+	A14 -> R6 
+	A14 -> R11 [penwidth=34, arrowsize=14]
+	A15 -> R18 [penwidth=34, arrowsize=14]
+	A15 -> R4
+	A15 -> R6
+	A16 -> R5 [penwidth=34, arrowsize=14]
+	A16 -> R16
+	A16 -> R6 [penwidth=22, arrowsize=10]
+	A17 -> R1 [penwidth=22, arrowsize=10]
+	A17 -> R15 [penwidth=34, arrowsize=14]
+	A18 -> R12
+	A18 -> R17 [penwidth=34, arrowsize=14]
+	A19 -> R2 [penwidth=22, arrowsize=10]
+	A19 -> R3 [penwidth=34, arrowsize=14]
+	A19 -> R17
+	A20 -> R2 [penwidth=34, arrowsize=14]
+	A20 -> R18 [penwidth=22, arrowsize=10]
 }
