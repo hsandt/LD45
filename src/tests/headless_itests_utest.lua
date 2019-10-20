@@ -33,4 +33,10 @@ if enable_render then
   should_render = true
 end
 
+-- randomize seed (busted needs that to give different results each time,
+--   while PICO-8 will automatically randomize the seed on start)
+-- ! since itests won't give the same results every time, if you want a specific result,
+--   you need to force setup some variables (like the next opponent) in your specific itest
+srand(os.time())
+
 create_describe_headless_itests_callback(app, should_render, describe, setup, teardown, it, assert)
