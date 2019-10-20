@@ -1,58 +1,57 @@
 strict digraph {
 	layout="circo"
-	edge [penwidth=8, arrowhead=open, arrowsize=10]
+	edge [penwidth=8, arrowhead=open, arrowsize=12]
 
-	A1 [style="filled", fillcolor="pink", fontcolor="red", label="(Lv1) 30 mn\nportfolio2", height=5, width=10, fontsize=80]
-	A2 [style="filled", fillcolor="pink", fontcolor="red", label="(Lv2) your website\nhacked", height=5, width=10, fontsize=80]
-	A3 [style="filled", fillcolor="pink", fontcolor="red", label="flat\npersonality", height=5, width=10, fontsize=80]
-	A4 [style="filled", fillcolor="pink", fontcolor="red", label="2x contacts", height=5, width=10, fontsize=80]
-	A5 [style="filled", fillcolor="pink", fontcolor="red", label="6 hours\non PC", height=5, width=10, fontsize=80]
-	A6 [style="filled", fillcolor="pink", fontcolor="red", label="70 wpm", height=5, width=10, fontsize=80]
-	A7 [style="filled", fillcolor="pink", fontcolor="red", label="single day\njob", height=5, width=10, fontsize=80]
-	A8 [style="filled", fillcolor="pink", fontcolor="red", label="raining\nlanded", height=5, width=10, fontsize=80]
-	A9 [style="filled", fillcolor="pink", fontcolor="red", label="watch me\nspeak", height=5, width=10, fontsize=80]
-	A10 [style="filled", fillcolor="pink", fontcolor="red", label="hands-on\nXP", height=5, width=10, fontsize=80]
-	A11 [style="filled", fillcolor="pink", fontcolor="red", label="not let\nme go", height=5, width=10, fontsize=80]
-	A12 [style="filled", fillcolor="pink", fontcolor="red", label="charisma just here", height=5, width=10, fontsize=80]
-	A13 [style="filled", fillcolor="pink", fontcolor="red", label="neurons work\nafter 6pm", height=5, width=10, fontsize=80]
-	A14 [style="filled", fillcolor="pink", fontcolor="red", label="find book\neasily", height=5, width=10, fontsize=80]
-	A15 [style="filled", fillcolor="pink", fontcolor="red", label="exhausted\nstaircases", height=5, width=10, fontsize=80]
-	A16 [style="filled", fillcolor="pink", fontcolor="red", label="sum\nExcel", height=5, width=10, fontsize=80]
-	A17 [style="filled", fillcolor="pink", fontcolor="red", label="!FREE!", height=5, width=10, fontsize=80]
-	A18 [style="filled", fillcolor="pink", fontcolor="red", label="!FREE!", height=5, width=10, fontsize=80]
-	A19 [style="filled", fillcolor="pink", fontcolor="red", label="lower\nthe bar", height=5, width=10, fontsize=80]
-	A20 [style="filled", fillcolor="pink", fontcolor="red", label="Gantt\nchart", height=5, width=10, fontsize=80]
-	A21 [style="filled", fillcolor="pink", fontcolor="red", label="machine\n10 years", height=5, width=10, fontsize=80]
-	A22 [style="filled", fillcolor="pink", fontcolor="red", label="setup.exe", height=5, width=10, fontsize=80]
-	A23 [style="filled", fillcolor="pink", fontcolor="red", label="complete tasks", height=5, width=10, fontsize=80]
+	A1 [label="(Lv1) 30 mn\nportfolio", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A2 [label="(Lv2) your website\nhacked", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A3 [label="flat\npersonality", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A4 [label="2x contacts", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A5 [label="6 hours\non PC", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A6 [label="70 wpm", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A7 [label="single day\njob", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A8 [label="raining\nlanded", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A9 [label="watch me\nspeak", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A10 [label="hands-on\nXP", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A11 [label="not let\nme go", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A12 [label="charisma just here", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A13 [label="neurons work\nafter 6pm", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A14 [label="find book\neasily", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A15 [label="exhausted\nstaircases", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A16 [label="sum\nExcel", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A17 [label="!FREE1!", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A18 [label="!FREE2!", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A19 [label="lower\nthe bar", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A20 [label="!FREE3!", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A21 [label="machine\n10 years", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A22 [label="setup.exe", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
+	A23 [label="complete tasks", height=5, width=10, fontsize=80, style="filled", fillcolor="pink", fontcolor="red"]
 
-	R0 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="didn't\ncatch", height=5, width=10, fontsize=80]
-	R1 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="so little\ncontent", height=5, width=10, fontsize=80]
-	R2 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="leg-up", height=5, width=10, fontsize=80]
-	R3 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="photocopies", height=5, width=10, fontsize=80]
-	R4 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="blunder", height=5, width=10, fontsize=80]
-	R5 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="!FREE!", height=5, width=10, fontsize=80]
-	R6 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="more\nexercise", height=5, width=10, fontsize=80]
-	R7 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="plugin", height=5, width=10, fontsize=80]
-	R8 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="flat\nlove life", height=5, width=10, fontsize=80]
-	R9 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="only two\nof them", height=5, width=10, fontsize=80]
-	R10 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="Discord", height=5, width=10, fontsize=80]
-	R11 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="coffee\nmachine", height=5, width=10, fontsize=80]
-	R12 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="pretend\nelevator", height=5, width=10, fontsize=80]
-	R13 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="!FREE!", height=5, width=10, fontsize=80]
-	R14 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="!FREE!", height=5, width=10, fontsize=80]
-	R15 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="don't mean\nanything", height=5, width=10, fontsize=80]
-	R16 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="doesn't like\npeople", height=5, width=10, fontsize=80]
-	R17 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="sound\ncompetent", height=5, width=10, fontsize=80]
-	R18 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="gardening\nleave", height=5, width=10, fontsize=80]
-	R19 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="Linux", height=5, width=10, fontsize=80]
-	R20 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="carnival", height=5, width=10, fontsize=80]
-	R21 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="!FREE!", height=5, width=10, fontsize=80]
-	R22 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="have a\nchance", height=5, width=10, fontsize=80]
-	R23 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="mine is\nworking", height=5, width=10, fontsize=80]
-	R24 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="56kbps", height=5, width=10, fontsize=80]
-	R25 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="virus", height=5, width=10, fontsize=80]
-	R26 [shape="rect", style="filled", fillcolor="cyan", fontcolor="blue", label="focus\namateurs", height=5, width=10, fontsize=80]
+	R0 [label="didn't\ncatch", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R1 [label="so little\ncontent", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R2 [label="leg-up", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R3 [label="photocopies", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R4 [label="blunder", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R5 [label="you\n contributed", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R6 [label="more\nexercise", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R7 [label="plugin", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R8 [label="!FREE!", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R9 [label="only two\nof them", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R10 [label="Discord", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R11 [label="coffee\nmachine", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R12 [label="pretend\nelevator", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R13 [label="!FREE!", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R14 [label="!FREE!", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R15 [label="don't mean\nanything", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R16 [label="!FREE!", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R17 [label="sound\ncompetent", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R18 [label="gardening\nleave", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R19 [label="Linux", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R20 [label="carnival", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R21 [label="!FREE!", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R22 [label="!FREE!", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R23 [label="mine is\nworking", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R24 [label="56kbps", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
+	R25 [label="not take\nfrom you", height=5, width=10, fontsize=80, shape="rect", style="filled", fillcolor="cyan", fontcolor="blue"]
 
 	A1 -> R1
 	A1 -> R7
@@ -60,22 +59,20 @@ strict digraph {
 	A2 -> R23
 	A2 -> R24
 	A3 -> R1
-	A3 -> R8
 	A3 -> R20
 	A4 -> R9
 	A4 -> R10
 	A4 -> R15
+	A4 -> R20
+	A5 -> R6
 	A5 -> R10
-	A5 -> R16
 	A5 -> R23
 	A5 -> R24
 	A6 -> R6
 	A6 -> R15
 	A7 -> R2
-	A7 -> R23
 	A7 -> R24
 	A8 -> R2
-	A8 -> R3
 	A8 -> R12
 	A9 -> R17
 	A9 -> R25
@@ -84,33 +81,25 @@ strict digraph {
 	A10 -> R17
 	A11 -> R4
 	A11 -> R18
-	A12 -> R3
+	A12 -> R6
 	A12 -> R11
 	A12 -> R18
-	A13 -> R11
 	A13 -> R9
-	A13 -> R26
+	A13 -> R11
 	A14 -> R6
 	A14 -> R9
 	A15 -> R6
 	A15 -> R12
-	A15 -> R16
 	A16 -> R7
 	A16 -> R19
-	A16 -> R20
-	A16 -> R22
-	A16 -> R26
 	A19 -> R2
-	A19 -> R22
-	A20 -> R1
-	A20 -> R8
-	A20 -> R23
-	A21 -> R3
+	A19 -> R5
+	A19 -> R6
 	A21 -> R11
 	A21 -> R24
 	A22 -> R19
 	A22 -> R25
-	A22 -> R26
 	A23 -> R3
+	A23 -> R5
 	A23 -> R9
 }
