@@ -104,6 +104,11 @@ function fight_manager:start_fight_with(opponent_fighter_prog)
   self:request_active_fighter_action()
 end
 
+function fight_manager:stop_fight()
+  self.active_fighter_index = 0
+  self:unload_fighters()
+end
+
 function fight_manager:load_fighters(pc_fighter_prog, npc_fighter_prog)
   local pc_fighter = fight_manager.generate_pc_fighter(pc_fighter_prog)
   local npc_fighter = fight_manager.generate_npc_fighter(npc_fighter_prog)
@@ -128,6 +133,8 @@ function fight_manager.generate_pc_fighter(pc_fighter_prog)
   -- retrieve character info from pc fighter progression
   local char_info = gameplay_data.pc_info
   local char = character(char_info, horizontal_dirs.right, visual_data.pc_sprite_pos)
+  -- char reference is local, so pc_fighter effectively becomes its owner
+  -- (destroying fighter in unload_fighters will be enough to clear both via garbage collection)
   local pc_fighter = fighter(char, pc_fighter_prog)
   return pc_fighter
 end
@@ -138,6 +145,8 @@ function fight_manager.generate_npc_fighter(npc_fighter_prog)
   -- retrieve character info from npc fighter progression
   local char_info = gameplay_data.npc_info_s[npc_fighter_prog.fighter_info.character_info_id]
   local char = character(char_info, horizontal_dirs.left, visual_data.npc_sprite_pos)
+  -- char reference is local, so npc_fighter effectively becomes its owner
+  -- (destroying fighter in unload_fighters will be enough to clear both via garbage collection)
   local npc_fighter = fighter(char, npc_fighter_prog)
   return npc_fighter
 end
@@ -274,13 +283,14 @@ end
 
 function fight_manager:check_exchange_result(attacker, replier)
   printh("check_exchange_result")
+  self:clear_exchange()
+
   local is_attacker_alive = attacker:is_alive()
   local is_replier_alive = replier:is_alive()
   if is_attacker_alive and is_replier_alive then
     printh("both fighters still alive, request active fighter action")
     -- in our rules, replying fighter keeps control whatever the result of the exchange,
     --   but becomes attacker, so just continue to next action
-    self:clear_exchange()
     self.app:wait_and_do(visual_data.request_active_fighter_action_delay,
       self.request_active_fighter_action, self)
   elseif is_attacker_alive then
@@ -310,10 +320,12 @@ function fight_manager:start_victory(some_fighter)
   if some_fighter.fighter_progression.character_type == character_types.human then
     printh("player wins")
     -- flow allows re-entering the same state, it will call on_exit and on_enter
+    self:stop_fight()
     self.next_opponent = self:pick_matching_random_npc_fighter_prog()
     flow:query_gamestate_type(':fight')
   else  -- some_fighter.fighter_progression.character_type == character_types.ai
     printh("ai wins")
+    self:stop_fight()
     self.next_opponent = self:pick_matching_random_npc_fighter_prog()
     flow:query_gamestate_type(':fight')
   end

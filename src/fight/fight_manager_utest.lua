@@ -360,6 +360,12 @@ describe('fight_manager', function ()
 
     end)
 
+    describe('stop_fight', function ()
+
+      -- todo
+
+    end)
+
     describe('load_fighters', function ()
 
       local fake_pc_speaker = {"pc speaker"}
@@ -787,6 +793,18 @@ describe('fight_manager', function ()
 
     end)
 
+    describe('check_exchange_result', function ()
+
+      -- todo
+
+    end)
+
+    describe('clear_exchange', function ()
+
+      -- todo
+
+    end)
+
     describe('hit_fighter', function ()
 
       -- todo
@@ -798,21 +816,6 @@ describe('fight_manager', function ()
       -- todo
 
     end)
-
-    -- local mock_character_info = character_info(2, "employee", 5)
-    -- local pos = vector(20, 60)
-    -- local mock_character = character(mock_character_info, horizontal_dirs.right, pos)
-    -- local mock_fighter_info = fighter_info(8, "employee", 4, 5, {11, 27}, {12, 28}, {2, 4})
-
-    -- local mock_fighter_progression
-    -- local mock_fighter
-
-    -- before_each(function ()
-    --   mock_fighter_progression = fighter_progression(character_types.ai, mock_fighter_info)
-    --   add(mock_fighter_progression.known_attack_ids, 35)
-    --   add(mock_fighter_progression.known_reply_ids, 37)
-    --   mock_fighter = fighter(mock_character, mock_fighter_progression)
-    -- end)
 
     describe('draw_fighters', function ()
 
