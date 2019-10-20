@@ -176,11 +176,15 @@ function fight_manager:request_human_fighter_action(human_fighter)
     end
   end
 
-  local items = self:generate_quote_menu_items(available_quote_ids, quote_type)
+  local items = self:generate_quote_menu_items(human_fighter, quote_type, available_quote_ids)
   self.app.managers[':dialogue']:prompt_items(items)
 end
 
-function fight_manager:generate_quote_menu_items(available_quote_ids, quote_type)
+-- it's a bit weird to pass available_quote_ids whereas we could get them from human_fighter
+-- but we do it because we need to check if they are empty first in request_human_fighter_action,
+--   to either add a dummy reply or completely skip the active turn if no attack available
+--   (and returning is done before even calling this method)
+function fight_manager:generate_quote_menu_items(human_fighter, quote_type, available_quote_ids)
   return transform(available_quote_ids, function (quote_id)
     local quote = gameplay_data:get_quote(quote_type, quote_id)
     local say_quote_callback = function ()

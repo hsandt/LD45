@@ -578,7 +578,8 @@ describe('fight_manager', function ()
         stub(fight_manager, "is_active_fighter_attacking", function (self)
           return true
         end)
-        stub(fight_manager, "generate_quote_menu_items", function (self, available_quote_ids, quote_type)
+        stub(fight_manager, "generate_quote_menu_items", function (self, human_fighter, quote_type, available_quote_ids)
+          -- ignore human_fighter here, normally it's used to define the menu item callbacks
           local fake_menu_items = {}
           if quote_type == quote_types.attack then
             for quote_id in all(available_quote_ids) do
