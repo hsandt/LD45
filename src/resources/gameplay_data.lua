@@ -1,64 +1,69 @@
+require("engine/core/helper")
+
 local character_info = require("content/character_info")
 local fighter_info = require("content/fighter_info")
 local floor_info = require("content/floor_info")
 local quote_info = require("content/quote_info")
 local quote_match_info = require("content/quote_match_info")
 
+-- string note: we use to_big until we support big/small letters completely
+-- (in which case we will only show upper case characters as big chars)
+
 -- see doc/quote_graph.dot A nodes
 local attacks = {
   -- first is dummy attack, only used by ai when no quote left
   -- human doesn't have it and prefer skipping one's turn, as it's too punishing to have to say
   --   something dmmy and always lose
-  [-1] = quote_info(-1, quote_types.attack, 0, "Uh... I don't know what to say now."),
+  [-1] = quote_info(-1, quote_types.attack, 0, to_big("Uh... I don't know what to say now.")),
   -- no [0] "cancel" entry for attacks
-  quote_info( 1, quote_types.attack, 1, "Already exhausted? You should really avoid staircases."),
-  quote_info( 2, quote_types.attack, 1, "I hope your personality is not as flat as your fashion sense."),
-  quote_info( 3, quote_types.attack, 1, "It took me a single day to find my job."),
-  quote_info( 4, quote_types.attack, 1, "I can easily type 70 words per minute."),
-  quote_info( 5, quote_types.attack, 1, "You couldn't write a sum formula in Excel."),
-  quote_info( 6, quote_types.attack, 1, "Yesterday I completed all my tasks for the day under 3 hours."),
-  quote_info( 7, quote_types.attack, 2, "Unlike you, all my neurons still work after 6pm."),
-  quote_info( 8, quote_types.attack, 2, "I'm so good at networking that I doubled the number of my contacts in the course of a single event."),
-  quote_info( 9, quote_types.attack, 2, "It was raining, you saw some light... This is how you landed here, right?"),
-  quote_info(10, quote_types.attack, 2, "It took me only thirty minutes to build a website for my portfolio."),
-  quote_info(11, quote_types.attack, 2, "You couldn't install an app if I gave you a setup.exe."),
-  quote_info(12, quote_types.attack, 2, "Unlike you, I only buy reliable devices that last at least 20 years."),
-  quote_info(13, quote_types.attack, 2, "Yesterday, I stayed focused six hours straight on my computer."),
-  quote_info(14, quote_types.attack, 3, "My shelves are so well organized I can find any book, eyes closed/without lifting a finger."),
-  quote_info(15, quote_types.attack, 3, "I have so much charisma I'm getting paid just for being here."),
-  quote_info(16, quote_types.attack, 3, "People like you can also get here now? They really lowered the bar."),
-  quote_info(17, quote_types.attack, 3, "I'm sure your website is so unsafe it gets hacked every month!!"),
-  quote_info(18, quote_types.attack, 3, "No idea for your speech with the boss, uh? You should watch me and take some notes."),
-  quote_info(19, quote_types.attack, 3, "A rookie like you has no chance; leave it to a pro with hands-on experience."),
-  quote_info(20, quote_types.attack, 3, "I was so good at my previous job that they didn't want to let me go."),
+  quote_info( 1, quote_types.attack, 1, to_big("Already exhausted? You should really avoid staircases.")),
+  quote_info( 2, quote_types.attack, 1, to_big("I hope your personality is not as flat as your fashion sense.")),
+  quote_info( 3, quote_types.attack, 1, to_big("It took me a single day to find my job.")),
+  quote_info( 4, quote_types.attack, 1, to_big("I can easily type 70 words per minute.")),
+  quote_info( 5, quote_types.attack, 1, to_big("You couldn't write a sum formula in Excel.")),
+  quote_info( 6, quote_types.attack, 1, to_big("Yesterday I completed all my tasks for the day under 3 hours.")),
+  quote_info( 7, quote_types.attack, 2, to_big("Unlike you, all my neurons still work after 6pm.")),
+  quote_info( 8, quote_types.attack, 2, to_big("I'm so good at networking that I doubled the number of my contacts in the course of a single event.")),
+  quote_info( 9, quote_types.attack, 2, to_big("It was raining, you saw some light... This is how you landed here, right?")),
+  quote_info(10, quote_types.attack, 2, to_big("It took me only thirty minutes to build a website for my portfolio.")),
+  quote_info(11, quote_types.attack, 2, to_big("You couldn't install an app if I gave you a setup.exe.")),
+  quote_info(12, quote_types.attack, 2, to_big("Unlike you, I only buy reliable devices that last at least 20 years.")),
+  quote_info(13, quote_types.attack, 2, to_big("Yesterday, I stayed focused six hours straight on my computer.")),
+  quote_info(14, quote_types.attack, 3, to_big("My shelves are so well organized I can find any book, eyes closed/without lifting a finger.")),
+  quote_info(15, quote_types.attack, 3, to_big("I have so much charisma I'm getting paid just for being here.")),
+  quote_info(16, quote_types.attack, 3, to_big("People like you can also get here now? They really lowered the bar.")),
+  quote_info(17, quote_types.attack, 3, to_big("I'm sure your website is so unsafe it gets hacked every month!!")),
+  quote_info(18, quote_types.attack, 3, to_big("No idea for your speech with the boss, uh? You should watch me and take some notes.")),
+  quote_info(19, quote_types.attack, 3, to_big("A rookie like you has no chance; leave it to a pro with hands-on experience.")),
+  quote_info(20, quote_types.attack, 3, to_big("I was so good at my previous job that they didn't want to let me go.")),
 }
 
 -- see doc/quote_graph.dot R nodes
 local replies = {
   -- first is dummy reply, to fill menu when there are no known replies
   --   or no replies left to say
-  [-1] = quote_info(-1, quote_types.reply, 0, "Er..."),
+  [-1] = quote_info(-1, quote_types.reply, 0, to_big("Er...")),
   -- this is the cancel reply, that neutralizes any attack (should be available only once)
-  [0] = quote_info(0, quote_types.reply, 0, "Sorry, I didn't catch this one."),
-  quote_info( 1, quote_types.reply,  1, "At least, mine is working."),
-  quote_info( 2, quote_types.reply,  1, "By that you mean you made some big blunder, uh?"),
-  quote_info( 3, quote_types.reply,  1, "I knew we could count on you to make photocopies."),
-  quote_info( 4, quote_types.reply,  1, "I see you spent time with the coffee machine."),
-  quote_info( 5, quote_types.reply,  1, "Oh, I'm pretty sure you made some contributions toward this."),
-  quote_info( 6, quote_types.reply,  1, "Well, it's about time you went to the gym for some exercise."),
-  quote_info( 7, quote_types.reply,  2, "At least I don't pretend I came here by foot after taking the elevator through most of the floors."),
-  quote_info( 8, quote_types.reply,  2, "I see you enjoyed your time on Discord."),
-  quote_info( 9, quote_types.reply,  2, "So, do you use a plugin for that, too?"),
-  quote_info(10, quote_types.reply,  2, "Well, we don't all browse at 56kbps."),
-  quote_info(11, quote_types.reply,  2, "Sounds easy when you've only got two of them."),
-  quote_info(12, quote_types.reply,  2, "I'd rather no take anything from *you*."),
-  quote_info(13, quote_types.reply,  2, "Ah, have I missed a carnival? Too bad I didn't come disguised."),
-  quote_info(14, quote_types.reply,  3, "Too bad they don't mean anything to you."),
-  quote_info(15, quote_types.reply,  3, "Too bad yours has so little content nobody ever cared about it."),
-  quote_info(16, quote_types.reply,  3, "And I see your relatives gave you a leg-up, uh?"),
-  quote_info(17, quote_types.reply,  3, "Great idea. If I speak just after you I will sound competent."),
-  quote_info(18, quote_types.reply,  3, "I that's called gardening leave."),
-  quote_info(19, quote_types.reply,  3, "Probably. I'm working on Linux."),
+  [0] = quote_info(0, quote_types.reply, 0, to_big("Sorry, I didn't catch this one.")),
+  quote_info( 1, quote_types.reply,  1, to_big("At least, mine is working.")),
+  quote_info( 2, quote_types.reply,  1, to_big("By that you mean you made some big blunder, uh?")),
+  quote_info( 3, quote_types.reply,  1, to_big("I knew we could count on you to make photocopies.")),
+  quote_info( 4, quote_types.reply,  1, to_big("I see you spent time with the coffee machine.")),
+  quote_info( 5, quote_types.reply,  1, to_big("Oh, I'm pretty sure you made some contributions toward this.")),
+  quote_info( 6, quote_types.reply,  1, to_big("Well, it's about time you went to the gym for some exercise.")),
+  quote_info( 7, quote_types.reply,  2, to_big("At least I don't pretend I came here by foot after taking the elevator through most of the floors.")),
+  quote_info( 8, quote_types.reply,  2, to_big("I see you enjoyed your time on Discord.")),
+  quote_info( 9, quote_types.reply,  2, to_big("So, do you use a plugin for that, too?")),
+  quote_info(10, quote_types.reply,  2, to_big("Well, we don't all browse at 56kbps.")),
+  quote_info(11, quote_types.reply,  2, to_big("Sounds easy when you've only got two of them.")),
+  quote_info(12, quote_types.reply,  2, to_big("I'd rather no take anything from *you*.")),
+  quote_info(13, quote_types.reply,  2, to_big("Ah, have I missed a carnival? Too bad I didn't come disguised.")),
+  quote_info(14, quote_types.reply,  3, to_big("Too bad they don't mean anything to you.")),
+  quote_info(15, quote_types.reply,  3, to_big("Too bad yours has so little content nobody ever cared about it.")),
+  quote_info(16, quote_types.reply,  3, to_big("And I see your relatives gave you a leg-up, uh?")),
+  quote_info(17, quote_types.reply,  3, to_big("Great idea. If I speak just after you I will sound competent.")),
+  quote_info(18, quote_types.reply,  3, to_big("I that's called gardening leave.")),
+  quote_info(19, quote_types.reply,  3, to_big("Probably. I'm working on Linux.")),
 }
 
 -- see doc/quote_graph.dot edges
