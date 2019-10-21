@@ -129,6 +129,41 @@ describe('fighter', function ()
 
   end)
 
+  describe('update_learned_quotes', function ()
+
+    setup(function ()
+      stub(fighter_progression, "add_received_attack_id_count_map")
+      stub(fighter_progression, "add_received_reply_id_count_map")
+    end)
+
+    teardown(function ()
+      fighter_progression.add_received_attack_id_count_map:revert()
+      fighter_progression.add_received_reply_id_count_map:revert()
+    end)
+
+    after_each(function ()
+      fighter_progression.add_received_attack_id_count_map:clear()
+      fighter_progression.add_received_reply_id_count_map:clear()
+    end)
+
+    it('should call add_received_attack_id_count_map with self.received_attack_id_count_map', function ()
+      f:update_learned_quotes()
+
+      local s = assert.spy(fighter_progression.add_received_attack_id_count_map)
+      s.was_called(1)
+      s.was_called_with(match.ref(f.fighter_progression), match.ref(f.received_attack_id_count_map))
+    end)
+
+    it('should call add_received_reply_id_count_map with self.received_reply_id_count_map', function ()
+      f:update_learned_quotes()
+
+      local s = assert.spy(fighter_progression.add_received_reply_id_count_map)
+      s.was_called(1)
+      s.was_called_with(match.ref(f.fighter_progression), match.ref(f.received_reply_id_count_map))
+    end)
+
+  end)
+
   -- render
 
   describe('draw', function ()

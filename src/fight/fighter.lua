@@ -109,6 +109,14 @@ function fighter:on_receive_quote(quote)
   end
 end
 
+function fighter:update_learned_quotes()
+  -- Transfer quotes received during this fight to the progression count
+  -- This allows the fighter to learn a high-level quotes across multiple
+  --   fights, without forgetting the various occurrences between each.
+  self.fighter_progression:add_received_attack_id_count_map(self.received_attack_id_count_map)
+  self.fighter_progression:add_received_reply_id_count_map(self.received_reply_id_count_map)
+end
+
 -- render
 
 function fighter:draw()

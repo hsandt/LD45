@@ -105,6 +105,10 @@ function fight_manager:start_fight_with(opponent_fighter_prog)
 end
 
 function fight_manager:stop_fight()
+  for some_fighter in all(self.fighters) do
+    some_fighter:update_learned_quotes()
+  end
+
   self.active_fighter_index = 0
   self:unload_fighters()
 end
