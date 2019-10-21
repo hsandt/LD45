@@ -23,6 +23,12 @@ describe('gameplay_data', function ()
 
   describe('get_quote_match_power', function ()
 
+    it('should return 0 if using the cancel reply against anything', function ()
+      local attack = gameplay_data.attacks[8]
+      local reply = gameplay_data.replies[0]
+      assert.are_equal(0, gameplay_data:get_quote_match_power(attack, reply))
+    end)
+
     it('should return -1 if quotes are not matching', function ()
       local attack = gameplay_data.attacks[8]
       local reply = gameplay_data.replies[10]

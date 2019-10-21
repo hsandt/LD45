@@ -209,10 +209,12 @@ end
 --   reply that would have a power of 0, just enough to avoid damage
 --   while not dealing damage back either.
 function gameplay_data:get_quote_match_power(attack_info, reply_info)
-  if attack_info.id == -1 then
-    -- if code
-  end
+  assert(attack_info.id >= 0, "a losing attack should be resolved immediately with resolve_losing_attack")
 
+  if reply_info.id == 0 then
+    -- cancel reply cancels any damage
+    return 0
+  end
 
   for quote_match in all(quote_matches) do
     if quote_match.attack_id == attack_info.id and quote_match.reply_id == reply_info.id then
