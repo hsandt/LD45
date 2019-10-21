@@ -17,9 +17,13 @@ Parameters
   direction: horizontal_dirs       facing left or right?
 
 State
-  hp: int                       current hp
-  is_attacker: bool             true iff fighter attacks this turn
-  last_quote: (quote_info|nil)  last quote said, if any
+  hp: int                                  current hp
+  is_attacker: bool                        true iff fighter attacks this turn
+  last_quote: (quote_info|nil)             last quote said, if any
+  received_attack_id_count_map: {int: int} count of new attacks received during current fight,
+                                           indexed by attack id (to measure exposure)
+  received_reply_id_count_map: {int: int}  count of new replies received during current fight,
+                                           indexed by attack id (to measure exposure)
 --]]
 function fighter:_init(char, fighter_prog)
   self.character = char
@@ -28,6 +32,8 @@ function fighter:_init(char, fighter_prog)
   -- fighter status
   self.hp = fighter_prog.max_hp
   self.last_quote = nil
+  self.received_attack_id_count_map = {}
+  self.received_reply_id_count_map = {}
 end
 
 --#if log
@@ -67,6 +73,38 @@ end
 
 function fighter:is_alive()
   return self.hp > 0
+end
+
+-- learning
+
+function fighter:on_receive_quote(quote)
+  -- Upon receiving an attack or reply the fighter doesn't know,
+  --   he/she buffers it with a reception count.
+  -- When the count has reached the required learning level threshold,
+  --   the fighter automatically learns it at the end of the fight.
+  -- This applies even if the quote was deadly.
+  local known_quote_ids
+  local received_quote_id_count_map
+
+  if quote.type == quote_types.attack then
+    known_quote_ids = self.fighter_progression.known_attack_ids
+    received_quote_id_count_map = self.received_attack_id_count_map
+  else  -- quote.type == quote_types.reply
+    known_quote_ids = self.fighter_progression.known_reply_ids
+    received_quote_id_count_map = self.received_reply_id_count_map
+  end
+
+  -- check if quote is new
+  if not contains(known_quote_ids, quote.id) then
+    local reception_count = received_quote_id_count_map[quote.id]
+    -- reception count starts nil then immediately increments to 1,
+    --   so it's never 0 and we can check for nil directly
+    if reception_count then
+      received_quote_id_count_map[quote.id] = reception_count + 1
+    else
+      received_quote_id_count_map[quote.id] = 1
+    end
+  end
 end
 
 -- render

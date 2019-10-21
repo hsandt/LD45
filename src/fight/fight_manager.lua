@@ -234,11 +234,17 @@ function fight_manager:say_quote(active_fighter, quote)
       self.app:wait_and_do(visual_data.resolve_losing_attack_delay,
         self.resolve_losing_attack, self, active_fighter, self:get_active_fighter_opponent())
     else
+      -- replier receives quote and may remember it for later
+      self:get_active_fighter_opponent():on_receive_quote(quote)
+
       -- normal quote was said
       self.app:wait_and_do(visual_data.request_reply_delay,
         self.request_next_fighter_action, self)
     end
   else  -- quote.type == quote_types.reply
+    -- attacker receives quote and may remember it for later
+    self:get_active_fighter_opponent():on_receive_quote(quote)
+
     -- last quote of opponent should be attack, and active fighter has replied
     self.app:wait_and_do(visual_data.resolve_exchange_delay,
       self.resolve_exchange, self, self:get_active_fighter_opponent(), active_fighter)

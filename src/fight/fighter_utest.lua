@@ -32,7 +32,8 @@ describe('fighter', function ()
     end)
 
     it('should init a fighter', function ()
-      assert.are_same({5, nil}, {f.hp, f.last_quote})
+      assert.are_same({5, nil, {}, {}},
+        {f.hp, f.last_quote, f.received_attack_id_count_map, f.received_reply_id_count_map})
     end)
 
   end)
@@ -86,6 +87,33 @@ describe('fighter', function ()
       f.hp = 0
       assert.is_false(f:is_alive())
     end)
+
+  end)
+
+  describe('on_receive_quote', function ()
+
+    it('should initialize reception count of new attack to 1', function ()
+      f:on_receive_quote(quote_info(3, quote_types.attack, 1, "attack 3"))
+      assert.are_same({[3] = 1}, f.received_attack_id_count_map)
+    end)
+
+    it('should initialize reception count of new reply to 1', function ()
+      f:on_receive_quote(quote_info(3, quote_types.reply, 1, "reply 3"))
+      assert.are_same({[3] = 1}, f.received_reply_id_count_map)
+    end)
+
+    it('should increment reception count of received attack by 1', function ()
+      f.received_attack_id_count_map[3] = 10
+      f:on_receive_quote(quote_info(3, quote_types.attack, 1, "attack 3"))
+      assert.are_same({[3] = 11}, f.received_attack_id_count_map)
+    end)
+
+    it('should increment reception count of received reply by 1', function ()
+      f.received_reply_id_count_map[3] = 10
+      f:on_receive_quote(quote_info(3, quote_types.reply, 1, "reply 3"))
+      assert.are_same({[3] = 11}, f.received_reply_id_count_map)
+    end)
+
 
   end)
 
