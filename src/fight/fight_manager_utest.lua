@@ -4,6 +4,7 @@ local fight_manager = require("fight/fight_manager")
 local manager = require("engine/application/manager")
 
 local wit_fighter_app = require("application/wit_fighter_app")
+local character_info = require("content/character_info")
 local fighter_info = require("content/fighter_info")
 local floor_info = require("content/floor_info")
 local quote_info = require("content/quote_info")
@@ -204,11 +205,11 @@ describe('fight_manager', function ()
 
     describe('set_next_opponent_to_matching_random_npc', function ()
 
-      local mock_npc_fighter_prog = {}
+      local fake_npc_fighter_prog = {}
 
       setup(function ()
         stub(fight_manager, "pick_matching_random_npc_fighter_prog", function (self)
-          return mock_npc_fighter_prog
+          return fake_npc_fighter_prog
         end)
       end)
 
@@ -218,19 +219,19 @@ describe('fight_manager', function ()
 
       it('should pick a random npc info among the possible npc levels at the current floor', function ()
         fm:set_next_opponent_to_matching_random_npc()
-        assert.are_equal(mock_npc_fighter_prog, fm.next_opponent)
+        assert.are_equal(fake_npc_fighter_prog, fm.next_opponent)
       end)
 
     end)
 
     describe('pick_matching_random_npc_fighter_prog', function ()
 
-      local mock_npc_fighter_prog = {}
+      local fake_npc_fighter_prog = {}
 
       setup(function ()
         stub(fight_manager, "get_all_candidate_npc_fighter_prog", function (self, floor_number)
           if floor_number == 3 then
-            return {{}, {}, mock_npc_fighter_prog}
+            return {{}, {}, fake_npc_fighter_prog}
           else
             return {{}}
           end
@@ -247,7 +248,7 @@ describe('fight_manager', function ()
 
       it('should pick a random npc info among the possible npc levels at the current floor', function ()
         app.game_session.floor_number = 3
-        assert.are_equal(mock_npc_fighter_prog, fm:pick_matching_random_npc_fighter_prog())
+        assert.are_equal(fake_npc_fighter_prog, fm:pick_matching_random_npc_fighter_prog())
       end)
 
     end)
@@ -318,7 +319,7 @@ describe('fight_manager', function ()
 
     describe('start_fight_with', function ()
 
-      local fake_fighter_prog = {}
+      local mock_npc_fighter_prog = fighter_progression(character_types.ai, fighter_info(10, 2, 3, 3, {6, 7}, {}, {}))
 
       setup(function ()
         stub(fight_manager, "load_fighters")
@@ -336,22 +337,22 @@ describe('fight_manager', function ()
       end)
 
       it('should load fighters for pc and opponent', function ()
-        fm:start_fight_with(fake_fighter_prog)
+        fm:start_fight_with(mock_npc_fighter_prog)
 
         local s = assert.spy(fight_manager.load_fighters)
         s.was_called(1)
-        s.was_called_with(match.ref(fm), match.ref(app.game_session.pc_fighter_progression), match.ref(fake_fighter_prog))
+        s.was_called_with(match.ref(fm), match.ref(app.game_session.pc_fighter_progression), match.ref(mock_npc_fighter_prog))
       end)
 
       it('should set active fighter index to opponent (2)', function ()
-        fm:start_fight_with(fake_fighter_prog)
+        fm:start_fight_with(mock_npc_fighter_prog)
 
         assert.are_equal(2, fm.active_fighter_index)
       end)
 
 
       it('should request next fighter action', function ()
-        fm:start_fight_with(fake_fighter_prog)
+        fm:start_fight_with(mock_npc_fighter_prog)
 
         local s = assert.spy(fight_manager.request_active_fighter_action)
         s.was_called(1)
@@ -368,23 +369,29 @@ describe('fight_manager', function ()
 
     describe('load_fighters', function ()
 
+      local mock_pc_character_info = character_info(0, "pc", 0)
+      local mock_pc_fighter_info = fighter_info(99, 99, 12, 8, {}, {}, {})
+      local mock_pc_fighter_prog = fighter_progression(character_types.human, mock_pc_fighter_info)
       local fake_pc_speaker = {"pc speaker"}
+      local fake_pc_character = {character_info = mock_pc_character_info, speaker = fake_pc_speaker}
+
+      local mock_npc_character_info = character_info(7, "npc", 7)
+      local mock_npc_fighter_info = fighter_info(8, 8, 4, 5, {11, 27}, {12, 28}, {2, 4})
+      local mock_npc_fighter_prog = fighter_progression(character_types.ai, mock_npc_fighter_info)
       local fake_npc_speaker = {"npc speaker"}
-      local fake_pc_character = {speaker = fake_pc_speaker}
-      local fake_npc_character = {speaker = fake_npc_speaker}
-      local fake_pc_fighter_prog  = {level = 1}
-      local fake_npc_fighter_prog = {level = 2}
-      local fake_pc_fighter  = {character = fake_pc_character, fighter_progression = fake_pc_fighter_prog}
-      local fake_npc_fighter = {character = fake_npc_character, fighter_progression = fake_npc_fighter_prog}
+      local fake_npc_character = {character_info = mock_npc_character_info, speaker = fake_npc_speaker}
+
+      local mock_pc_fighter  = fighter(fake_pc_character, mock_pc_fighter_prog)
+      local mock_npc_fighter = fighter(fake_npc_character, mock_npc_fighter_prog)
 
       setup(function ()
         stub(fight_manager, "generate_pc_fighter", function (fighter_prog)
-          -- ignore fighter_prog but it should be fake_pc_fighter_prog
-          return fake_pc_fighter
+          -- ignore fighter_prog but it should be mock_pc_fighter_prog
+          return mock_pc_fighter
         end)
         stub(fight_manager, "generate_npc_fighter", function (fighter_prog)
-          -- ignore fighter_prog but it should be fake_npc_fighter_prog
-          return fake_npc_fighter
+          -- ignore fighter_prog but it should be mock_npc_fighter_prog
+          return mock_npc_fighter
         end)
         stub(dialogue_manager, "add_speaker")
       end)
@@ -402,14 +409,14 @@ describe('fight_manager', function ()
       end)
 
       it('should load fighters for pc and opponent', function ()
-        fm:load_fighters(fake_pc_fighter_prog, fake_npc_fighter_prog)
+        fm:load_fighters(mock_pc_fighter_prog, mock_npc_fighter_prog)
 
-        assert.are_equal(fake_pc_fighter, fm.fighters[1])
-        assert.are_equal(fake_npc_fighter, fm.fighters[2])
+        assert.are_equal(mock_pc_fighter, fm.fighters[1])
+        assert.are_equal(mock_npc_fighter, fm.fighters[2])
       end)
 
       it('should register speakers for pc and npc in dialogue manager', function ()
-        fm:load_fighters(fake_pc_fighter_prog, fake_npc_fighter_prog)
+        fm:load_fighters(mock_pc_fighter_prog, mock_npc_fighter_prog)
 
         local s = assert.spy(dialogue_manager.add_speaker)
         s.was_called(2)
@@ -465,10 +472,7 @@ describe('fight_manager', function ()
 
     describe('generate_pc_fighter', function ()
 
-      -- local mock_fighter_info = fighter_info(8, "employee", 4, 5, {11, 27}, {12, 28}, {2, 4})
-      -- local mock_fighter_progression = fighter_progression(character_types.ai, mock_fighter_info)
-      local mock_pc_fighter_prog  = fighter_progression(character_types.human, fighter_info(99, 99, 12, 8, {}, {}, {}))
-      -- local fake_npc_fighter_prog = {level = 2}
+      local mock_pc_fighter_prog = fighter_progression(character_types.human, fighter_info(99, 99, 12, 8, {}, {}, {}))
 
       it('should return a pc fighter with pc info', function ()
         local pc_fighter = fight_manager.generate_pc_fighter(mock_pc_fighter_prog)

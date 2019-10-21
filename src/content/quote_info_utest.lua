@@ -6,7 +6,7 @@ describe('quote_info', function ()
   describe('_init', function ()
     it('should init a quote_info with id, type, level, text', function ()
       local q = quote_info(7, quote_types.attack, 3, "aha!")
-      assert.are_same({7, quote_types.attack, 3, "aha!"}, {q.id, q.quote_type, q.level, q.text})
+      assert.are_same({7, quote_types.attack, 3, "aha!"}, {q.id, q.type, q.level, q.text})
     end)
   end)
 

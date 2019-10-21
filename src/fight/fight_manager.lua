@@ -98,7 +98,6 @@ end
 
 function fight_manager:start_fight_with(opponent_fighter_prog)
   self:load_fighters(self.app.game_session.pc_fighter_progression, opponent_fighter_prog)
-  log("start fight with: "..self.fighters[2]:get_name(), "itest")
 
   -- start battle flow (opponent starts)
   self.active_fighter_index = 2
@@ -114,6 +113,8 @@ function fight_manager:load_fighters(pc_fighter_prog, npc_fighter_prog)
   local pc_fighter = fight_manager.generate_pc_fighter(pc_fighter_prog)
   local npc_fighter = fight_manager.generate_npc_fighter(npc_fighter_prog)
   self.fighters = {pc_fighter, npc_fighter}
+
+  log("loaded fighters: "..pc_fighter:get_name().." vs "..npc_fighter:get_name(), "itest")
 
   -- register fighter character speaker components
   self.app.managers[':dialogue']:add_speaker(pc_fighter.character.speaker)
@@ -226,7 +227,7 @@ function fight_manager:say_quote(active_fighter, quote)
   active_fighter.character.speaker:say(quote.text)
   active_fighter.last_quote = quote
 
-  if quote.quote_type == quote_types.attack then
+  if quote.type == quote_types.attack then
     if quote.id == -1 then
       -- active fighter said losing quote, no need to ask opponent for reply
       -- immediately resolve with attacker's loss
@@ -237,7 +238,7 @@ function fight_manager:say_quote(active_fighter, quote)
       self.app:wait_and_do(visual_data.request_reply_delay,
         self.request_next_fighter_action, self)
     end
-  else  -- quote.quote_type == quote_types.reply
+  else  -- quote.type == quote_types.reply
     -- last quote of opponent should be attack, and active fighter has replied
     self.app:wait_and_do(visual_data.resolve_exchange_delay,
       self.resolve_exchange, self, self:get_active_fighter_opponent(), active_fighter)
@@ -261,8 +262,8 @@ function fight_manager:resolve_exchange(attacker, replier)
   local attacker_quote = attacker.last_quote
   local replier_quote = replier.last_quote
 
-  assert(attacker_quote.quote_type == quote_types.attack)
-  assert(replier_quote.quote_type == quote_types.reply)
+  assert(attacker_quote.type == quote_types.attack)
+  assert(replier_quote.type == quote_types.reply)
 
   local match_power = gameplay_data:get_quote_match_power(attacker_quote, replier_quote)
 
