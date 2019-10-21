@@ -165,10 +165,8 @@ function fight_manager:request_fighter_action(active_fighter)
 end
 
 function fight_manager:request_human_fighter_action(human_fighter)
---#if assert
   assert(self.fighters[self.active_fighter_index] == human_fighter)
   assert(human_fighter.fighter_progression.character_type == character_types.human)
---#endif
 
   local quote_type = self:is_active_fighter_attacking() and quote_types.attack or quote_types.reply
   local available_quote_ids = human_fighter:get_available_quote_ids(quote_type)
@@ -205,10 +203,8 @@ function fight_manager:generate_quote_menu_items(human_fighter, quote_type, avai
 end
 
 function fight_manager:request_ai_fighter_action(ai_fighter)
---#if assert
   assert(self.fighters[self.active_fighter_index] == ai_fighter)
   assert(ai_fighter.fighter_progression.character_type == character_types.ai)
---#endif
 
   local quote_type = self:is_active_fighter_attacking() and quote_types.attack or quote_types.reply
   local available_quote_ids = ai_fighter:get_available_quote_ids(quote_type)
@@ -265,10 +261,8 @@ function fight_manager:resolve_exchange(attacker, replier)
   local attacker_quote = attacker.last_quote
   local replier_quote = replier.last_quote
 
---#if assert
   assert(attacker_quote.quote_type == quote_types.attack)
   assert(replier_quote.quote_type == quote_types.reply)
---#endif
 
   local match_power = gameplay_data:get_quote_match_power(attacker_quote, replier_quote)
 
