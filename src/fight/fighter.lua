@@ -94,8 +94,10 @@ function fighter:on_receive_quote(quote)
     received_quote_id_count_map = self.received_reply_id_count_map
   end
 
-  -- check if quote is new
-  if not contains(known_quote_ids, quote.id) then
+  -- check if quote can be learned (must be new, and not losing quote;
+  --   cancel reply can be learned)
+  local can_learn = not contains(known_quote_ids, quote.id) and quote.id >= 0
+  if can_learn then
     local reception_count = received_quote_id_count_map[quote.id]
     -- reception count starts nil then immediately increments to 1,
     --   so it's never 0 and we can check for nil directly

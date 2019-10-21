@@ -92,6 +92,18 @@ describe('fighter', function ()
 
   describe('on_receive_quote', function ()
 
+    it('should not increment count for known quote', function ()
+      f.fighter_progression.known_attack_ids = {3}
+      f:on_receive_quote(quote_info(3, quote_types.attack, 1, "attack 3"))
+      assert.are_same({}, f.received_attack_id_count_map)
+    end)
+
+    it('should not increment count for losing quote', function ()
+      f.fighter_progression.known_attack_ids = {3}
+      f:on_receive_quote(quote_info(-1, quote_types.attack, 0, "losing attack"))
+      assert.are_same({}, f.received_attack_id_count_map)
+    end)
+
     it('should initialize reception count of new attack to 1', function ()
       f:on_receive_quote(quote_info(3, quote_types.attack, 1, "attack 3"))
       assert.are_same({[3] = 1}, f.received_attack_id_count_map)
