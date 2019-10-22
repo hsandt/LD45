@@ -16,6 +16,7 @@ local fighter_progression = new_class()
 Parameters
   character_type: character_types     is the fighter controlled by the player or some ai?
   fighter_info: fighter_info          fighter info this was created with
+  character_info: character_info      cached reference to character info (derived from fighter_info)
 
 State
   level: int                          current level (only useful for npc)
@@ -34,6 +35,13 @@ function fighter_progression:_init(character_type, some_fighter_info)
   self.character_type = character_type
   self.fighter_info = some_fighter_info
 
+  if character_type == character_types.human then
+    self.character_info = gameplay_data.pc_info
+  else
+    self.character_info = gameplay_data.npc_info_s[some_fighter_info.character_info_id]
+    assert(self.character_info, "no character_info found for id: "..some_fighter_info.character_info_id)
+  end
+
   -- State
   self.level = some_fighter_info.initial_level
   self.max_hp = some_fighter_info.initial_max_hp
@@ -44,6 +52,12 @@ function fighter_progression:_init(character_type, some_fighter_info)
   self.received_attack_id_count_persistent_map = {}
   self.received_reply_id_count_persistent_map = {}
 end
+
+--#if log
+function fighter_progression:get_name()
+  return self.character_info.name
+end
+--#endif
 
 function fighter_progression:transfer_received_attack_id_count_map(added_count_map)
   fighter_progression.add_received_quote_id_count_map(self.received_attack_id_count_persistent_map, added_count_map)
@@ -91,6 +105,7 @@ function fighter_progression:check_learn_quote(added_count_map, quote_type)
     --   added the counters properly.
     if received_quote_id_count_map[quote_id] >= learning_repetition_threshold then
       add(known_quote_ids, quote_id)
+      log("fighter '"..self:get_name().."' learns "..(quote_type == quote_types.attack and "attack" or "reply").." quote "..quote_id, "itest")
     end
   end
 end

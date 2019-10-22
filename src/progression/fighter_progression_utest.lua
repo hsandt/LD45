@@ -2,14 +2,16 @@ require("engine/test/bustedhelper")
 local fighter_progression = require("progression/fighter_progression")
 
 local fighter_info = require("content/fighter_info")
+local gameplay_data = require("resources/gameplay_data")
 
 require("engine/debug/logging")
 
 describe('fighter_progression', function ()
 
   describe('_init', function ()
-    it('should init a fighter_progression', function ()
-      local mock_fighter_info = fighter_info(8, "employee", 2, 5, {11, 27}, {12, 28}, {2, 4})
+
+    it('should init a fighter_progression for an npc', function ()
+      local mock_fighter_info = fighter_info(4, 4, 2, 5, {11, 27}, {12, 28}, {2, 4})
       local f_progression = fighter_progression(character_types.ai, mock_fighter_info)
       assert.are_same({
           character_types.ai,
@@ -32,16 +34,31 @@ describe('fighter_progression', function ()
           f_progression.received_reply_id_count_persistent_map
         })
       assert.are_equal(mock_fighter_info, f_progression.fighter_info)
+      assert.are_equal(gameplay_data.npc_info_s[4], f_progression.character_info)
     end)
+
+    it('should init a fighter_progression with pc_info for a pc', function ()
+      local mock_fighter_info = fighter_info(0, 0, 2, 5, {11, 27}, {12, 28}, {2, 4})
+      local f_progression = fighter_progression(character_types.human, mock_fighter_info)
+      assert.are_equal(gameplay_data.pc_info, f_progression.character_info)
+    end)
+
   end)
 
   describe('(with instance)', function ()
 
-    local mock_fighter_info = fighter_info(8, "employee", 2, 5, {11, 27}, {12, 28}, {2, 4})
+    local mock_fighter_info = fighter_info(4, 4, 2, 5, {11, 27}, {12, 28}, {2, 4})
     local f_progression
 
     before_each(function ()
       f_progression = fighter_progression(character_types.ai, mock_fighter_info)
+    end)
+
+    describe('get_name', function ()
+      it('should return the name from the character info', function ()
+        -- this test depends on gameplay_data
+        assert.are_equal("intern marketing", f_progression:get_name())
+      end)
     end)
 
     describe('(spying add_received_quote_id_count_map)', function ()
