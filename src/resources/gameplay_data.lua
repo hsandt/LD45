@@ -84,10 +84,10 @@ local quote_matches = {
   quote_match_info(6, 11, 2),
   quote_match_info(7, 4, 3),
   quote_match_info(7, 11, 2),
+  quote_match_info(8, 8, 2),
   quote_match_info(8, 11, 2),
   quote_match_info(8, 13, 1),
   quote_match_info(8, 14, 2),
-  quote_match_info(8, 8, 2),
   quote_match_info(9, 7, 2),
   quote_match_info(9, 16, 1),
   quote_match_info(10, 9, 2),
@@ -102,12 +102,12 @@ local quote_matches = {
   quote_match_info(13, 10, 3),
   quote_match_info(14, 6, 1),
   quote_match_info(14, 11, 3),
-  quote_match_info(15, 18, 3),
   quote_match_info(15, 4, 1),
-  quote_match_info(15, 6, 1),
   quote_match_info(16, 5, 3),
-  quote_match_info(16, 16, 1),
+  quote_match_info(15, 6, 1),
+  quote_match_info(15, 18, 3),
   quote_match_info(16, 6, 2),
+  quote_match_info(16, 16, 1),
   quote_match_info(17, 1, 2),
   quote_match_info(17, 15, 3),
   quote_match_info(18, 12, 1),
@@ -189,7 +189,12 @@ local gameplay_data = {
   npc_fighter_info_s = npc_fighter_info_s,
 
   -- misc gameplay parameters
-  losing_attack_penalty = 1
+
+  losing_attack_penalty = 1,
+  -- How many times ai fighter of level L must receive quote of level L
+  --   to learn it. Decrements with each fighter level above quote level,
+  --   but minimum is 1.
+  base_learning_repetition_threshold = 2
 }
 
 -- data access helpers
