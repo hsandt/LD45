@@ -96,7 +96,8 @@ function fighter:on_receive_quote(quote)
 
   -- check if quote can be learned (must be new, and not losing quote;
   --   cancel reply can be learned)
-  local can_learn = not contains(known_quote_ids, quote.id) and quote.id >= 0
+  local can_learn = not contains(known_quote_ids, quote.id) and quote.id >= 0 and
+    quote.level <= self.fighter_progression.level
   if can_learn then
     local reception_count = received_quote_id_count_map[quote.id]
     -- reception count starts nil then immediately increments to 1,

@@ -12,7 +12,7 @@ describe('fighter', function ()
   local mock_character_info = character_info(2, "employee", 5)
   local pos = vector(20, 60)
   local mock_character = character(mock_character_info, horizontal_dirs.right, pos)
-  local mock_fighter_info = fighter_info(8, "employee", 4, 5, {11, 27}, {12, 28}, {2, 4})
+  local mock_fighter_info = fighter_info(3, 3, 2, 5, {11, 27}, {12, 28}, {2, 4})
 
   local mock_fighter_progression
   local f
@@ -99,17 +99,25 @@ describe('fighter', function ()
     end)
 
     it('should not increment count for losing quote', function ()
-      f.fighter_progression.known_attack_ids = {3}
+      f.fighter_progression.known_attack_ids = {}
       f:on_receive_quote(quote_info(-1, quote_types.attack, 0, "losing attack"))
       assert.are_same({}, f.received_attack_id_count_map)
     end)
 
-    it('should initialize reception count of new attack to 1', function ()
-      f:on_receive_quote(quote_info(3, quote_types.attack, 1, "attack 3"))
-      assert.are_same({[3] = 1}, f.received_attack_id_count_map)
+    it('should not increment count for quotes at 1+ levels above fighter level', function ()
+      f.fighter_progression.known_attack_ids = {}
+      -- level 3 attack vs fighter level 2
+      f:on_receive_quote(quote_info(7, quote_types.attack, 3, "attack 7"))
+      assert.are_same({}, f.received_attack_id_count_map)
     end)
 
-    it('should initialize reception count of new reply to 1', function ()
+    it('should initialize reception count of new learnable attack to 1', function ()
+      -- level 2 quote can be learned
+      f:on_receive_quote(quote_info(5, quote_types.attack, 2, "attack 5"))
+      assert.are_same({[5] = 1}, f.received_attack_id_count_map)
+    end)
+
+    it('should initialize reception count of new learnable reply to 1', function ()
       f:on_receive_quote(quote_info(3, quote_types.reply, 1, "reply 3"))
       assert.are_same({[3] = 1}, f.received_reply_id_count_map)
     end)

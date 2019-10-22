@@ -158,7 +158,8 @@ local npc_info_s = {
 }
 
 -- "start with nothing" -> no known quotes to start with
-local pc_fighter_info = fighter_info(0, 0, 1, 3, {}, {}, {})
+-- pc has level 10 so he's able to learn any quote in one hearing
+local pc_fighter_info = fighter_info(0, 0, 10, 3, {}, {}, {})
 
 -- fighters are mostly mapped to characters 1:1, but storing characters separately is useful
 --   in case we have a non-fighting npc

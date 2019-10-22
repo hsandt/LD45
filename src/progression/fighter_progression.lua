@@ -105,7 +105,11 @@ function fighter_progression:check_learn_quote(added_count_map, quote_type)
     --   added the counters properly.
     if received_quote_id_count_map[quote_id] >= learning_repetition_threshold then
       add(known_quote_ids, quote_id)
-      log("fighter '"..self:get_name().."' learns "..(quote_type == quote_types.attack and "attack" or "reply").." quote "..quote_id, "itest")
+--#if log
+      local quote_type_name = quote_type == quote_types.attack and "attack" or "reply"
+      log('fighter "'..self:get_name()..'" learns '..quote_type_name..' quote '..quote_id..': "'..
+        gameplay_data:get_quote(quote_type, quote_id)..'"', "itest")
+--#endif
     end
   end
 end

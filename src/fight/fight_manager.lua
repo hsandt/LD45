@@ -227,7 +227,7 @@ end
 function fight_manager:say_quote(active_fighter, quote)
   -- don't wait for input, since either the quote menu (pc replying), the auto play (npc replying),
   --   or the quote match resolution (if saying a reply) will hide that text eventually
-  log('fighter: '..active_fighter:get_name()..' says: "'..quote.text..'"', "itest")
+  log('fighter "'..active_fighter:get_name()..'" says: "'..quote.text..'"', "itest")
   active_fighter.character.speaker:say(quote.text)
   active_fighter.last_quote = quote
 
