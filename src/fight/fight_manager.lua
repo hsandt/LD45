@@ -25,6 +25,7 @@ Parameters
 
 State
   active_fighter_index  int                        index of fighter currently selecting action / acting
+  won_last_fight        (bool|nil)                 true iff player won the last fight, if any
 --]]
 function fight_manager:_init()
   manager._init(self)
@@ -33,6 +34,7 @@ function fight_manager:_init()
   self.fighters = {}
 
   self.active_fighter_index = 0  -- invalid index
+  self.won_last_fight = nil
 end
 
 function fight_manager:start()
@@ -326,16 +328,14 @@ end
 function fight_manager:start_victory(some_fighter)
   if some_fighter.fighter_progression.character_type == character_types.human then
     log("player wins", "itest")
-    -- flow allows re-entering the same state, it will call on_exit and on_enter
-    self:stop_fight()
-    self.next_opponent = self:pick_matching_random_npc_fighter_prog()
-    flow:query_gamestate_type(':fight')
+    self.won_last_fight = true
   else  -- some_fighter.fighter_progression.character_type == character_types.ai
     log("ai wins", "itest")
-    self:stop_fight()
-    self.next_opponent = self:pick_matching_random_npc_fighter_prog()
-    flow:query_gamestate_type(':fight')
+    self.won_last_fight = false
   end
+
+  self:stop_fight()  -- characters remember quotes here
+  flow:query_gamestate_type(':adventure')
 end
 
 -- ui

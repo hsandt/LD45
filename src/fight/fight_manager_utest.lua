@@ -55,8 +55,8 @@ describe('fight_manager', function ()
     it('should initialize other members', function ()
       local fm = fight_manager()
 
-      assert.are_same({nil, {}, 0},
-        {fm.next_opponent, fm.fighters, fm.active_fighter_index})
+      assert.are_same({nil, {}, 0, nil},
+        {fm.next_opponent, fm.fighters, fm.active_fighter_index, fm.won_last_fight})
     end)
 
   end)
