@@ -34,6 +34,10 @@
 			"variants":
 			[
 				{
+					"name": "ultrafast",
+					"cmd": ["./build_game.sh ultrafast"]
+				},
+				{
 					"name": "release",
 					"cmd": ["./build_game.sh release"]
 				}
@@ -57,23 +61,35 @@
 			"variants":
 			[
 				{
-					"name": "release",
-					"cmd": ["./build_game.sh release && (./pico-boots/scripts/reload.sh || ./run_game_release.sh)"]
+					"name": "ultrafast",
+					"cmd": ["./build_game.sh ultrafast && (./pico-boots/scripts/reload.sh || ./run_game.sh ultrafast)"]
 				},
 				{
-					"name": "itests",
-					"cmd": ["./build_itest.sh && (./pico-boots/scripts/reload.sh || ./run_itest.sh)"],
+					"name": "release",
+					"cmd": ["./build_game.sh release && (./pico-boots/scripts/reload.sh || ./run_game_release.sh)"]
 				}
 			]
 		},
 		{
-			"name": "Game: run",
+			"name": "Game: build and reload or run itests",
+			"working_dir": "${project_path}",
+			"shell": true,
+			"cmd": ["./build_itest.sh && (./pico-boots/scripts/reload.sh || ./run_itest.sh)"],
+			"file_regex": "(.*\\.sh)(?:\\: line )([\\d]+)(?:\\:)([\\d]+)? (.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax"
+		},
+		{
+			"name": "Game: start",
 			"working_dir": "${project_path}",
 			"shell": true,
 			"cmd": ["./run_game_debug.sh"],
 			"syntax": "Packages/Python/Python.sublime-syntax",
 			"variants":
 			[
+				{
+					"name": "ultrafast",
+					"cmd": ["./run_game.sh ultrafast"]
+				},
 				{
 					"name": "release",
 					"cmd": ["./run_game_release.sh"]

@@ -73,6 +73,8 @@ if [[ $config == 'debug' ]]; then
   # symbols='assert,log,visual_logger,tuner,profiler,mouse'
   # lighter config
   symbols='assert,log'
+elif [[ $config == 'ultrafast' ]]; then
+  symbols='assert,log,ultrafast'
 fi
 
 # Build from main
@@ -81,7 +83,7 @@ fi
   -d "$data_path/data.p8" -M "$data_path/metadata.p8"    \
   -a "$author" -t "$title"                               \
   -p "$build_output_path"                                \
-  -o "${cartridge_stem}_v${version}"                  \
+  -o "${cartridge_stem}_v${version}"                     \
   -c "$config"                                           \
   -s "$symbols"                                          \
   --minify

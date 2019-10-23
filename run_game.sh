@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# Run release build with PICO-8 executable
+# Run build for passed config with PICO-8 executable
 # Pass any extra arguments to pico8
 
 # Configuration: cartridge
 cartridge_stem="wit_fighter"
 version="0.1"
+config="$1"; shift
 
-run_cmd="pico8 -run build/${cartridge_stem}_v${version}_release.p8 -screenshot_scale 4 -gif_scale 4 $@"
+run_cmd="pico8 -run build/${cartridge_stem}_v${version}_${config}.p8 -screenshot_scale 4 -gif_scale 4 $@"
 
 # Support UNIX platforms without gnome-terminal by checking if the command exists
 # If you `reload.sh` the game, the separate terminal allows you to keep watching the program output,

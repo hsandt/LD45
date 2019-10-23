@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Run game.p8 with PICO-8 executable
+# Run debug build with PICO-8 executable
 # Pass any extra arguments to pico8
 
 # Configuration: cartridge
