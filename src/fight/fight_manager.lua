@@ -19,7 +19,7 @@ fight_manager.type = ':fight'
 fight_manager.initially_active = false
 
 --[[
-Parameters
+Dynamic parameters (fixed for a given fight)
   next_opponent         (fighter_progression|nil)  next opponent to start fight with, if any
   fighters              {fighter}                  current fighters. [1] is player, [2] is npc
 
@@ -37,13 +37,13 @@ function fight_manager:_init()
   self.won_last_fight = nil
 end
 
-function fight_manager:start()
+function fight_manager:start()  -- override
 end
 
-function fight_manager:update()
+function fight_manager:update()  -- override
 end
 
-function fight_manager:render()
+function fight_manager:render()  -- override
   self:draw_fighters()
   self:draw_hud()
 end
