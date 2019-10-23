@@ -45,7 +45,7 @@ describe('adventure_manager', function ()
       local adv = adventure_manager()
 
       assert.are_same({""},
-        {adv.step})
+        {adv.next_step})
     end)
 
   end)

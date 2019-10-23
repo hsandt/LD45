@@ -31,12 +31,14 @@ itest_manager:register_itest('play intro -> 1st fight',
 
   -- pc monologue starts
 
-  -- skip 6 dialogue texts waiting for input
+  -- skip dialogue texts waiting for input
   short_press(button_ids.o)
   short_press(button_ids.o)
   short_press(button_ids.o)
   short_press(button_ids.o)
   short_press(button_ids.o)
+  short_press(button_ids.o)
+  wait(2)
   short_press(button_ids.o)
 
   wait(8.0)
@@ -67,6 +69,10 @@ itest_manager:register_itest('play floor loop after won -> random fight',
   -- pc monologue starts
 
   -- skip enough dialogues to start next fight
+  short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+  wait(2)
   short_press(button_ids.o)
   wait(2)
   short_press(button_ids.o)

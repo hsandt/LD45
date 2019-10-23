@@ -337,31 +337,31 @@ describe('dialogue_manager', function ()
 
     it('(anchor far from both edges enough) should return bubble bounds', function ()
       -- longest line has 12 characters
-      assert.are_same({30-(12*4+2)/2, 18, 30+(12*4+2)/2, 26},
+      assert.are_same({30-(12*4+2)/2, 19, 30+(12*4+2)/2, 27},
         {dialogue_manager.compute_bubble_bounds("hello world!", vector(30, 30))})
     end)
 
     it('(anchor close to left) should return bubble bounds clamped on left', function ()
       -- longest line has 19 characters
-      assert.are_same({4, 6, 4+(19*4+2), 26},
+      assert.are_same({4, 7, 4+(19*4+2), 27},
         {dialogue_manager.compute_bubble_bounds("hello world!\nmy name is girljpeg\nfourswords", vector(10, 30))})
     end)
 
     it('(anchor close to right) should return bubble bounds clamped on right', function ()
       -- longest line has 19 characters
-      assert.are_same({124-(19*4+2), 6, 124, 26},
+      assert.are_same({124-(19*4+2), 7, 124, 27},
         {dialogue_manager.compute_bubble_bounds("hello world!\nmy name is girljpeg\nfourswords", vector(100, 30))})
     end)
 
     it('(text is too long for anything, anchor on left side) should return bubble bounds clamped on both sides', function ()
       -- longest line has 30 characters... too many to fit, it's really just to cover the weird cases
-      assert.are_same({4, 18, 124, 26},
+      assert.are_same({4, 19, 124, 27},
         {dialogue_manager.compute_bubble_bounds("123456789012345678901234567890", vector(20, 30))})
     end)
 
     it('(text is too long for anything, anchor on right side) should return bubble bounds clamped on both sides', function ()
       -- longest line has 30 characters... too many to fit, it's really just to cover the weird cases
-      assert.are_same({4, 18, 124, 26},
+      assert.are_same({4, 19, 124, 27},
         {dialogue_manager.compute_bubble_bounds("123456789012345678901234567890", vector(100, 30))})
     end)
 

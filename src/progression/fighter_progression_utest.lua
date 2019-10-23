@@ -57,7 +57,7 @@ describe('fighter_progression', function ()
     describe('get_name', function ()
       it('should return the name from the character info', function ()
         -- this test depends on gameplay_data
-        assert.are_equal("intern marketing", f_progression:get_name())
+        assert.are_equal("junior marketing", f_progression:get_name())
       end)
     end)
 
