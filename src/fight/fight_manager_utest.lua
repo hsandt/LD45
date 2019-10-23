@@ -857,16 +857,6 @@ describe('fight_manager', function ()
 
     end)
 
-    describe('draw_floor_number', function ()
-
-      it('should not error', function ()
-        assert.has_no_errors(function ()
-          fm:draw_floor_number()
-        end)
-      end)
-
-    end)
-
   end)  -- (with instance)
 
 end)

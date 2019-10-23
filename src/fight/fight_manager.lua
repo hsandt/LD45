@@ -1,7 +1,6 @@
 require("engine/core/class")
 require("engine/core/math")
 require("engine/render/color")
-local ui = require("engine/ui/ui")
 
 local flow = require("engine/application/flow")
 local manager = require("engine/application/manager")
@@ -351,12 +350,7 @@ function fight_manager:draw_fighters()
 end
 
 function fight_manager:draw_hud()
-  self:draw_floor_number()
-end
-
-function fight_manager:draw_floor_number()
-  ui.draw_box(43, 1, 84, 9, colors.black, colors.orange)
-  ui.print_centered("floor "..tostr(self.app.game_session.floor_number), 64, 5, colors.black)
+  -- nothing for now, since health bars are part of fighters
 end
 
 return fight_manager
