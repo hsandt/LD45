@@ -225,13 +225,15 @@ function fight_manager:request_ai_fighter_action(ai_fighter)
 end
 
 function fight_manager:say_quote(active_fighter, quote)
+  local is_attacking = quote.type == quote_types.attack
+
   -- don't wait for input, since either the quote menu (pc replying), the auto play (npc replying),
   --   or the quote match resolution (if saying a reply) will hide that text eventually
   log('fighter "'..active_fighter:get_name()..'" says: "'..quote.text..'"', "itest")
-  active_fighter.character.speaker:say(quote.text)
+  active_fighter.character.speaker:say(quote.text, false, is_attacking)
   active_fighter.last_quote = quote
 
-  if quote.type == quote_types.attack then
+  if is_attacking then
     if quote.id == -1 then
       -- active fighter said losing quote, no need to ask opponent for reply
       -- immediately resolve with attacker's loss
@@ -245,7 +247,7 @@ function fight_manager:say_quote(active_fighter, quote)
       self.app:wait_and_do(visual_data.request_reply_delay,
         self.request_next_fighter_action, self)
     end
-  else  -- quote.type == quote_types.reply
+  else  -- not is_attacking
     -- attacker receives quote and may remember it for later
     self:get_active_fighter_opponent():on_receive_quote(quote)
 

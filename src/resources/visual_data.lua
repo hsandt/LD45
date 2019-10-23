@@ -59,10 +59,10 @@ local visual_data = {
   bubble_screen_margin_x = 4,
   bubble_line_max_chars = 24,   -- maximum chars per line in bubble text
   bubble_min_width = 12,
-  bubble_tail_height = 4,
+  bubble_tail_height = 3,
   rel_bubble_tail_pos_by_horizontal_dir = {
-    vector(-2, -36),  -- horizontal_dirs.left  = 1
-    vector( 2, -36),  -- horizontal_dirs.right = 2
+    vector(-2, -37),  -- horizontal_dirs.left  = 1
+    vector( 2, -37),  -- horizontal_dirs.right = 2
   },
   -- in fight, first speaker bubble is shown above second one to avoid overlapping
   first_speaker_tail_offset_y = -23,
