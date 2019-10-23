@@ -9,14 +9,14 @@ adventure_manager.initially_active = false
 
 --[[
 Dynamic parameters (fixed for a given adventure segment, i.e. until adventure state is exited)
-  step     string           name of the current adventure step ("intro", "floor loop", etc.)
+  next_step     string           name of the current adventure step ("intro", "floor loop", etc.)
 
 State
 --]]
 function adventure_manager:_init()
   manager._init(self)
 
-  self.step = ""
+  self.next_step = ""
 end
 
 function adventure_manager:start()  -- override

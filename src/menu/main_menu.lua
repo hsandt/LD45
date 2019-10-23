@@ -15,7 +15,10 @@ main_menu.type = ':main_menu'
 
 -- sequence of menu items to display, with their target states
 main_menu._items = transform({
-    {"start", function(app) flow:query_gamestate_type(':adventure') end},
+    {"start", function(app)
+      app.managers[':adventure'].next_step = 'intro'
+      flow:query_gamestate_type(':adventure')
+    end},
     {"debug fight", function(app)
       app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[1]
       flow:query_gamestate_type(':fight')

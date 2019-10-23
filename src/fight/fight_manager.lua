@@ -335,6 +335,7 @@ function fight_manager:start_victory(some_fighter)
   end
 
   self:stop_fight()  -- characters remember quotes here
+  self.app.managers[':adventure'].next_step = 'floor_loop'
   flow:query_gamestate_type(':adventure')
 end
 

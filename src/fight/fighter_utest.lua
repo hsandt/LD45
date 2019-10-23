@@ -6,7 +6,7 @@ local fighter_info = require("content/fighter_info")
 local quote_info = require("content/quote_info")  -- for quote_types
 local fighter_progression = require("progression/fighter_progression")
 local character = require("story/character")
-
+ 
 describe('fighter', function ()
 
   local mock_character_info = character_info(2, "employee", 5)

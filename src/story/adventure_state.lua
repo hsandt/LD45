@@ -18,16 +18,21 @@ function adventure_state:_init()
 end
 
 function adventure_state:on_enter()
+  self.app.managers[':adventure'].active = true
+
   -- register components
   self.app.managers[':dialogue']:add_speaker(self.pc.speaker)
 
   -- show bottom box immediately, otherwise we'll see that the lower stairs is not finished...
   self.app.managers[':dialogue'].should_show_bottom_box = true
 
-  self.app:start_coroutine(self.play_intro, self)
+  -- start next adventure step
+  self:start_step(self.app.managers[':adventure'].next_step)
 end
 
 function adventure_state:on_exit()
+  self.app.managers[':adventure'].active = false
+
   self.app.managers[':dialogue']:remove_speaker(self.pc.speaker)
   self.app.managers[':dialogue'].should_show_bottom_box = false
 end
@@ -40,8 +45,20 @@ function adventure_state:render()
   self.pc:draw()
 end
 
+function adventure_state:start_step(next_step)
+  local start_method_name = '_start_'..next_step
+  assert(self[start_method_name], "adventure_state has no method named: "..start_method_name)
+  self[start_method_name](self)
+end
+
+-- step methods: they all start with '_start_'
+--   and we add a suffix equal to a next_step name
+
+function adventure_state:_start_intro()
+  self.app:start_coroutine(self.play_intro, self)
+end
+
 function adventure_state:play_intro()
-  local dm = self.app.managers[':dialogue']
   local pc_speaker = self.pc.speaker
 
   self.app:yield_delay_s(2)
@@ -55,6 +72,44 @@ function adventure_state:play_intro()
   pc_speaker:say_and_wait_for_input("3. she's working at the 20th floor")
   pc_speaker:say_and_wait_for_input("4. i don't want be to seen, so i'm avoiding the elevator, but those stairs seem endless")
   pc_speaker:say_and_wait_for_input("seems good so far. what could go wrong?")
+  self.app:yield_delay_s(1)
+
+  pc_speaker:say_and_wait_for_input("wait, someone is coming!")
+  self.app:yield_delay_s(0.5)
+
+  self.app.managers[':fight']:set_next_opponent_to_matching_random_npc()
+  flow:query_gamestate_type(':fight')
+end
+
+function adventure_state:_start_floor_loop()
+  self.app:start_coroutine(self.play_floor_loop, self)
+end
+
+function adventure_state:play_floor_loop()
+  local pc_speaker = self.pc.speaker
+
+  -- check if player lost or won previous fight
+  local floor_number = self.app.game_session.floor_number
+  if self.app.managers[':fight'].won_last_fight then
+    pc_speaker:say_and_wait_for_input("great! i can go to the next floor")
+    self.app:yield_delay_s(1)
+
+    -- player won, allow access to next floor
+    -- for now, auto go up 1 floor
+    self.app.game_session.floor_number = min(floor_number + 1, 10)
+  else
+    pc_speaker:say_and_wait_for_input("ah, too bad. i should go down one floor.")
+    self.app:yield_delay_s(1)
+
+    -- player lost, prevent access to next floor
+    -- for now, auto go down 1 floor
+    self.app.game_session.floor_number = max(1, floor_number - 1)
+  end
+
+  self.app:yield_delay_s(1)
+
+  pc_speaker:say_and_wait_for_input("someone is coming!")
+  self.app:yield_delay_s(0.5)
 
   self.app.managers[':fight']:set_next_opponent_to_matching_random_npc()
   flow:query_gamestate_type(':fight')

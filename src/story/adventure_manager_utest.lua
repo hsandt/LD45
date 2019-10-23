@@ -56,7 +56,7 @@ describe('adventure_manager', function ()
     local adv
 
     before_each(function ()
-      app = adventureer_app()
+      app = wit_fighter_app()
 
       -- relies on gameapp.register_managers working
       app:register_managers({adv})

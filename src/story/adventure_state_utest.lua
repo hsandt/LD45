@@ -55,7 +55,7 @@ describe('adventure_state', function ()
 
     before_each(function ()
       local app = wit_fighter_app()
-      app:register_managers({dialogue_manager()})
+      app:instantiate_and_register_managers()
 
       state = adventure_state()
       -- no need to register gamestate properly, just add app member to pass tests
@@ -63,38 +63,20 @@ describe('adventure_state', function ()
     end)
 
     describe('on_enter', function ()
-      it('should not error', function ()
-        assert.has_no_errors(function ()
-          state:on_enter()
-        end)
-      end)
+      -- todo
     end)
 
     describe('on_exit', function ()
-      it('should not error', function ()
-        assert.has_no_errors(function ()
-          state:on_exit()
-        end)
-      end)
+      -- todo
     end)
 
     describe('update', function ()
-      it('should not error', function ()
-        assert.has_no_errors(function ()
-          state:update()
-        end)
-      end)
+      -- todo
     end)
 
     describe('render', function ()
-      it('should not error', function ()
-        assert.has_no_errors(function ()
-          state:render()
-        end)
-      end)
+      -- todo
     end)
-
-    -- play_intro is a coroutine, so better tested inside itest
 
   end)  -- (with instance)
 

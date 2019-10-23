@@ -14,7 +14,7 @@ local function short_press(button_id)
   wait(1, true)
 end
 
-itest_manager:register_itest('1st fight',
+itest_manager:register_itest('1st fight -> back to adv',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
     -- but without gamestate_proxy, not used
     {':fight'}, function ()
@@ -47,13 +47,21 @@ itest_manager:register_itest('1st fight',
 
   -- continue until someone dies
   short_press(button_ids.o)
+  wait(2.0)
   short_press(button_ids.o)
+  wait(2.0)
   short_press(button_ids.o)
+  wait(2.0)
   short_press(button_ids.o)
+  wait(2.0)
   short_press(button_ids.o)
+  wait(2.0)
+
+  -- opponent depends a bit on randomness, but after all these turns
+  --   we should have finished the fight and be back to the adventure for next step
 
   final_assert(function ()
-    return true, "impossible"
+    return flow.curr_state.type == ':adventure', "current game state is not ':adventure', has instead type: '"..flow.curr_state.type.."'"
   end)
 
 end)

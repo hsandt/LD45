@@ -32,6 +32,7 @@ local main_menu = require("menu/main_menu")
 local fight_state = require("fight/fight_state")
 local fight_manager = require("fight/fight_manager")
 local visual_data = require("resources/visual_data")
+local adventure_manager = require("story/adventure_manager")
 local adventure_state = require("story/adventure_state")
 
 local wit_fighter_app = derived_class(gameapp)
@@ -44,7 +45,7 @@ function wit_fighter_app:_init()
 end
 
 function wit_fighter_app:instantiate_managers() -- override
-  return {dialogue_manager(), fight_manager()}
+  return {dialogue_manager(), adventure_manager(), fight_manager()}
 end
 
 function wit_fighter_app:instantiate_gamestates() -- override

@@ -21,6 +21,7 @@ itest_manager:register_itest('play intro -> 1st fight',
 
   -- enter adventure state
   setup_callback(function (app)
+    app.managers[':adventure'].next_step = 'intro'
     flow:change_gamestate_by_type(':adventure')
   end)
 
@@ -39,6 +40,43 @@ itest_manager:register_itest('play intro -> 1st fight',
   short_press(button_ids.o)
 
   wait(8.0)
+
+  -- check that we entered the fight state
+  final_assert(function ()
+    return flow.curr_state.type == ':fight', "current game state is not ':fight', has instead type: '"..flow.curr_state.type.."'"
+  end)
+
+end)
+
+itest_manager:register_itest('play floor loop after won -> random fight',
+    -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
+    -- but without gamestate_proxy, not used
+    {':adventure'}, function ()
+
+  -- enter adventure state
+  setup_callback(function (app)
+    app.managers[':fight'].won_last_fight = true
+    app.managers[':adventure'].next_step = 'floor_loop'
+    flow:change_gamestate_by_type(':adventure')
+  end)
+
+  -- play intro coroutine starts
+
+  wait(8.0)
+
+  -- pc monologue starts
+
+  -- skip enough dialogues to start next fight
+  short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+  wait(2)
 
   -- check that we entered the fight state
   final_assert(function ()

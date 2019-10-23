@@ -65,13 +65,13 @@ describe('fight_manager', function ()
 
     local app
     local fm
+    local dm
 
     before_each(function ()
-      dm = dialogue_manager()
-      fm = fight_manager()
       app = wit_fighter_app()
-      -- relies on gameapp.register_managers working
-      app:register_managers({dm, fm})
+      app:instantiate_and_register_managers()
+      fm = app.managers[':fight']
+      dm = app.managers[':dialogue']
     end)
 
     describe('start', function ()
