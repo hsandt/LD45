@@ -135,26 +135,18 @@ local floors = {
 -- character story and visual info
 local pc_info = character_info(0, "you", 0)
 local npc_info_s = {
-  character_info(1, "intern designer", 1),
-  character_info(2, "intern programmer", 2),
-  character_info(3, "intern qa", 3),
-  character_info(4, "intern marketing", 4),
-  character_info(5, "placement designer", 5),
-  character_info(6, "placement programmer", 6),
-  character_info(7, "placement qa", 7),
-  character_info(8, "placement marketing", 8),
-  character_info(9, "junior designer", 9),
-  character_info(10, "junior programmer", 10),
-  character_info(11, "junior qa", 11),
-  character_info(12, "junior marketing", 12),
-  character_info(13, "designer", 13),
-  character_info(14, "programmer", 14),
-  character_info(15, "manager", 15),
-  character_info(16, "legal advisor", 16),
-  character_info(17, "senior designer", 17),
-  character_info(18, "senior programmer", 18),
-  character_info(19, "senior qa", 19),
-  character_info(20, "senior marketing", 20),
+  character_info(1, "junior designer", 1),
+  character_info(2, "junior programmer", 2),
+  character_info(3, "junior qa", 3),
+  character_info(4, "junior marketing", 4),
+  character_info(5, "designer", 5),
+  character_info(6, "programmer", 6),
+  character_info(7, "manager", 7),
+  character_info(8, "legal advisor", 8),
+  character_info(9, "senior designer", 9),
+  character_info(10, "senior programmer", 10),
+  character_info(11, "senior qa", 11),
+  character_info(12, "senior marketing", 12),
 }
 
 -- "start with nothing" -> no known quotes to start with
@@ -165,10 +157,10 @@ local pc_fighter_info = fighter_info(0, 0, 10, 3, {}, {}, {})
 --   in case we have a non-fighting npc
 local npc_fighter_info_s = {
   -- id, character_info_id, initial_level, initial_max_hp, initial_attack_ids, initial_reply_ids, initial_quote_match_ids
-  fighter_info( 1,  1, 1, 4, {1, 5}, {}, {}),     -- junior designer (good at attacks and wits in general)
-  fighter_info( 2,  2, 1, 3, {4, 6}, {}, {}),     -- junior programmer (good at replies and tech topics)
-  fighter_info( 3,  3, 1, 5, {3, 8}, {}, {}),     -- junior qa (tank character, good at planning topics)
-  fighter_info( 4,  4, 1, 3, {4, 5, 8}, {}, {}),  -- junior marketing (good at matching quotes)
+  fighter_info( 1,  1, 1, 4, {1, 5}, {6, 13, 14}, {}),     -- junior designer (good at attacks and wits in general)
+  fighter_info( 2,  2, 1, 3, {4, 6}, {3, 9, 10}, {}),     -- junior programmer (good at replies and tech topics)
+  fighter_info( 3,  3, 1, 5, {3, 8}, {6, 11}, {}),     -- junior qa (tank character, good at planning topics)
+  fighter_info( 4,  4, 1, 3, {4, 5, 8}, {5, 7, 8}, {}),  -- junior marketing (good at matching quotes)
   fighter_info( 5,  5, 2, 5, {7, 10}, {}, {}),    -- designer
   fighter_info( 6,  6, 2, 4, {1}, {}, {}),        -- programmer
   fighter_info( 7,  7, 2, 6, {1}, {}, {}),        -- manager (tank and planning topics)
