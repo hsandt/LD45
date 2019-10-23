@@ -45,18 +45,27 @@ local visual_data = {
   -- misc ui parameters
 
   -- characters
-  pc_sprite_pos = vector(19, 78),
-  npc_sprite_pos = vector(86, 78),
+  pc_sprite_pos = vector(19, 85),
+  npc_sprite_pos = vector(86, 85),
 
   -- bubble text
-  bubble_screen_margin_x = 4,   -- margin-x from the screen edges
-  bubble_line_max_chars = 29,   -- maximum chars per line in bubble text
+  -- Margin-x from both screen edges
+  -- In practice, this is the margin to the screen edge the closest to the speaker,
+  --   while the margin to the farthest edge is 27
+  -- But we can simulate that by setting the max number of chars below,
+  --   so we can control to how far the bubble can extend in the speaker
+  --   forward direction, without having to pass the faced direction to
+  --   the speaker component so the dialogue manager can compute appropriate bounds.
+  bubble_screen_margin_x = 4,
+  bubble_line_max_chars = 24,   -- maximum chars per line in bubble text
   bubble_min_width = 12,
   bubble_tail_height = 4,
   rel_bubble_tail_pos_by_horizontal_dir = {
-    vector(-2, -40),  -- horizontal_dirs.left  = 1
-    vector( 2, -40),  -- horizontal_dirs.right = 2
+    vector(-2, -36),  -- horizontal_dirs.left  = 1
+    vector( 2, -36),  -- horizontal_dirs.right = 2
   },
+  -- in fight, first speaker bubble is shown above second one to avoid overlapping
+  first_speaker_tail_offset_y = -23,
 
   -- bottom box
   bottom_box_topleft = vector(0, 89),
@@ -66,11 +75,12 @@ local visual_data = {
   health_bar_center_x_dist_from_char = 12,
   health_bar_half_width = 2,
   health_bar_top_from_char = -36,
-  health_bar_bottom_from_char = 0,
+  health_bar_bottom_from_char = -9,
 
   -- fighter name label
-  fighter_name_label_offset_y = 5,  -- y offset from character pos
-  fighter_name_label_half_width = 35,    -- box width
+  fighter_name_label_center_offset_x = 2,  -- x offset from character pos
+  fighter_name_label_center_offset_y = -2, -- y offset from character pos
+  fighter_name_label_half_width = 35,      -- box width
 
   -- timing (s)
   ai_say_quote_delay = 1,

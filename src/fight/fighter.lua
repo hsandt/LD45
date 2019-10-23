@@ -149,8 +149,12 @@ function fighter:draw_name_label()
   local text_width, text_height = compute_size(text)
   local label_width, label_height = text_width + 1, text_height + 1
 
-  local center_x = self.character.pos.x
-  local center_y = self.character.pos.y + visual_data.fighter_name_label_offset_y
+  local center_x_offset = visual_data.fighter_name_label_center_offset_x
+  if self.character.direction == horizontal_dirs.left  then
+    center_x_offset = - center_x_offset
+  end
+  local center_x = self.character.pos.x + center_x_offset
+  local center_y = self.character.pos.y + visual_data.fighter_name_label_center_offset_y
   local box_left = flr(center_x - label_width / 2)
   local box_right = ceil(center_x + label_width / 2)
   local box_top = flr(center_y - label_height / 2)

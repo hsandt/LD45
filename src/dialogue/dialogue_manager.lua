@@ -104,7 +104,7 @@ end
 -- static
 function dialogue_manager.render_speaker(speaker)
   if speaker.current_text then
-    dialogue_manager.draw_bubble_with_text(speaker.current_text, speaker.bubble_tail_pos)
+    dialogue_manager.draw_bubble_with_text(speaker.current_text, speaker:get_final_bubble_tail_pos())
   end
 end
 
