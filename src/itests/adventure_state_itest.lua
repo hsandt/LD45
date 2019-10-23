@@ -68,15 +68,8 @@ itest_manager:register_itest('play floor loop after won -> random fight',
 
   -- pc monologue starts
 
-  -- skip enough dialogues to start next fight
-  short_press(button_ids.o)
-  wait(2)
-  short_press(button_ids.o)
-  wait(2)
-  short_press(button_ids.o)
-  wait(2)
-  short_press(button_ids.o)
-  wait(2)
+  -- skip enough dialogues to start next fight,
+  --   but not too much to avoid finishing the fight already
   short_press(button_ids.o)
   wait(2)
   short_press(button_ids.o)
