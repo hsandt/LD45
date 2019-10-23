@@ -97,6 +97,7 @@ function adventure_state:play_floor_loop()
     -- player won, allow access to next floor
     -- for now, auto go up 1 floor
     self.app.game_session.floor_number = min(floor_number + 1, 10)
+    log("go to next floor: "..self.app.game_session.floor_number, "flow")
   else
     pc_speaker:say_and_wait_for_input("ah, too bad. i should go down one floor.")
     self.app:yield_delay_s(1)
@@ -104,6 +105,7 @@ function adventure_state:play_floor_loop()
     -- player lost, prevent access to next floor
     -- for now, auto go down 1 floor
     self.app.game_session.floor_number = max(1, floor_number - 1)
+    log("go to previous floor: "..self.app.game_session.floor_number, "flow")
   end
 
   self.app:yield_delay_s(1)
