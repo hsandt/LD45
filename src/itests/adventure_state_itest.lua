@@ -40,6 +40,15 @@ itest_manager:register_itest('play intro -> 1st fight',
   short_press(button_ids.o)
   wait(2)
   short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
 
   wait(8.0)
 

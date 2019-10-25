@@ -19,6 +19,8 @@ local character = new_class()
 --                                     (above head)
 -- state
 --   pos: vector                       foot position on screen. only changes during animations
+
+-- after constructing a character, you should call register_speaker
 function character:_init(character_info, direction, pos)
   -- paremeters
   self.character_info = character_info
@@ -33,6 +35,16 @@ function character:_init(character_info, direction, pos)
 
   -- state
   self.pos = pos
+end
+
+-- call after construction
+function character:register_speaker(dialogue_mgr)
+  dialogue_mgr:add_speaker(self.speaker)
+end
+
+-- call before removal of last reference (destruction via garbage collection)
+function character:unregister_speaker(dialogue_mgr)
+  dialogue_mgr:remove_speaker(self.speaker)
 end
 
 -- render

@@ -32,6 +32,36 @@ describe('character', function ()
     end)
   end)
 
+  describe('register_speaker', function ()
+
+    local fake_dialogue_mgr = {}
+    fake_dialogue_mgr.add_speaker = spy.new()
+
+    it('should add speaker to passed dialogue manager', function ()
+      c:register_speaker(fake_dialogue_mgr)
+
+      local s = assert.spy(fake_dialogue_mgr.add_speaker)
+      s.was_called(1)
+      s.was_called_with(match.ref(fake_dialogue_mgr), match.ref(c.speaker))
+    end)
+
+  end)
+
+  describe('unregister_speaker', function ()
+
+    local fake_dialogue_mgr = {}
+    fake_dialogue_mgr.remove_speaker = spy.new()
+
+    it('should remove speaker from passed dialogue manager', function ()
+      c:unregister_speaker(fake_dialogue_mgr)
+
+      local s = assert.spy(fake_dialogue_mgr.remove_speaker)
+      s.was_called(1)
+      s.was_called_with(match.ref(fake_dialogue_mgr), match.ref(c.speaker))
+    end)
+
+  end)
+
   describe('draw', function ()
     it('should not error', function ()
       assert.has_no_errors(function ()

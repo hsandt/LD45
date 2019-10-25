@@ -68,10 +68,6 @@ end
 
 -- flow
 
-function fight_manager:set_next_opponent_to_matching_random_npc()
-  self.next_opponent = self:pick_matching_random_npc_fighter_prog()
-end
-
 function fight_manager:pick_matching_random_npc_fighter_prog()
   local candidate_npc_fighter_prog_s = self:get_all_candidate_npc_fighter_prog(self.app.game_session.floor_number)
   return pick_random(candidate_npc_fighter_prog_s)
@@ -98,7 +94,7 @@ function fight_manager:start_fight_with_next_opponent()
 end
 
 function fight_manager:start_fight_with(opponent_fighter_prog)
-  self:load_fighters(self.app.game_session.pc_fighter_progression, opponent_fighter_prog)
+  self:spawn_fighters(self.app.game_session.pc_fighter_progression, opponent_fighter_prog)
 
   -- start battle flow (opponent starts)
   self.active_fighter_index = 2
@@ -111,24 +107,24 @@ function fight_manager:stop_fight()
   end
 
   self.active_fighter_index = 0
-  self:unload_fighters()
+  self:despawn_fighters()
 end
 
-function fight_manager:load_fighters(pc_fighter_prog, npc_fighter_prog)
-  local pc_fighter = fight_manager.generate_pc_fighter(pc_fighter_prog)
-  local npc_fighter = fight_manager.generate_npc_fighter(npc_fighter_prog)
+function fight_manager:spawn_fighters(pc_fighter_prog, npc_fighter_prog)
+  local dm = self.app.managers[':dialogue']
+
+  local pc_fighter = self:generate_pc_fighter(pc_fighter_prog)
+  local npc_fighter = self:generate_npc_fighter(npc_fighter_prog)
   self.fighters = {pc_fighter, npc_fighter}
 
   log("loaded fighters: "..pc_fighter:get_name().." vs "..npc_fighter:get_name(), "itest")
-
-  -- register fighter character speaker components
-  self.app.managers[':dialogue']:add_speaker(pc_fighter.character.speaker)
-  self.app.managers[':dialogue']:add_speaker(npc_fighter.character.speaker)
 end
 
-function fight_manager:unload_fighters()
+function fight_manager:despawn_fighters()
+  local dm = self.app.managers[':dialogue']
+
   for some_fighter in all(self.fighters) do
-    self.app.managers[':dialogue']:remove_speaker(some_fighter.character.speaker)
+    some_fighter.character:unregister_speaker(dm)
   end
 
   clear_table(self.fighters)
@@ -136,24 +132,28 @@ end
 
 -- pc_fighter_prog: fighter_progression
 -- static
-function fight_manager.generate_pc_fighter(pc_fighter_prog)
+function fight_manager:generate_pc_fighter(pc_fighter_prog)
   -- retrieve character info from pc fighter progression
   local char_info = gameplay_data.pc_info
   local char = character(char_info, horizontal_dirs.right, visual_data.pc_sprite_pos)
+  char:register_speaker(self.app.managers[':dialogue'])
+
   -- char reference is local, so pc_fighter effectively becomes its owner
-  -- (destroying fighter in unload_fighters will be enough to clear both via garbage collection)
+  -- (destroying fighter in despawn_fighters will be enough to clear both via garbage collection)
   local pc_fighter = fighter(char, pc_fighter_prog)
   return pc_fighter
 end
 
 -- npc_fighter_prog: fighter_progression
 -- static
-function fight_manager.generate_npc_fighter(npc_fighter_prog)
+function fight_manager:generate_npc_fighter(npc_fighter_prog)
   -- retrieve character info from npc fighter progression
   local char_info = gameplay_data.npc_info_s[npc_fighter_prog.fighter_info.character_info_id]
   local char = character(char_info, horizontal_dirs.left, visual_data.npc_sprite_pos)
+  char:register_speaker(self.app.managers[':dialogue'])
+
   -- char reference is local, so npc_fighter effectively becomes its owner
-  -- (destroying fighter in unload_fighters will be enough to clear both via garbage collection)
+  -- (destroying fighter in despawn_fighters will be enough to clear both via garbage collection)
   local npc_fighter = fighter(char, npc_fighter_prog)
   return npc_fighter
 end

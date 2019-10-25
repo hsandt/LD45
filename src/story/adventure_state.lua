@@ -15,26 +15,36 @@ function adventure_state:_init()
   gamestate._init(self)
 
   self.pc = character(gameplay_data.pc_info, horizontal_dirs.right, visual_data.pc_sprite_pos)
+  self.npc = nil
 end
 
 function adventure_state:on_enter()
+  local dm = self.app.managers[':dialogue']
   self.app.managers[':adventure'].active = true
 
   -- register components
-  self.app.managers[':dialogue']:add_speaker(self.pc.speaker)
+  dm:add_speaker(self.pc.speaker)
 
   -- show bottom box immediately, otherwise we'll see that the lower stairs is not finished...
-  self.app.managers[':dialogue'].should_show_bottom_box = true
+  dm.should_show_bottom_box = true
 
   -- start next adventure step
   self:start_step(self.app.managers[':adventure'].next_step)
 end
 
 function adventure_state:on_exit()
+  local dm = self.app.managers[':dialogue']
+
   self.app.managers[':adventure'].active = false
 
-  self.app.managers[':dialogue']:remove_speaker(self.pc.speaker)
-  self.app.managers[':dialogue'].should_show_bottom_box = false
+  -- unregister components
+  dm:remove_speaker(self.pc.speaker)
+  if self.npc then
+    dm:remove_speaker(self.npc.speaker)
+    self.npc = nil
+  end
+
+  dm.should_show_bottom_box = false
 end
 
 function adventure_state:update()
@@ -43,6 +53,26 @@ end
 function adventure_state:render()
   painter.draw_background()
   self.pc:draw()
+  if self.npc then
+    self.npc:draw()
+  end
+end
+
+function adventure_state:spawn_npc(npc_id)
+  local dm = self.app.managers[':dialogue']
+
+  local npc_info = gameplay_data.npc_info_s[npc_id]
+  self.npc = character(npc_info, horizontal_dirs.left, visual_data.npc_sprite_pos)
+  self.npc:register_speaker(dm)
+end
+
+function adventure_state:despawn_npc()
+  assert(npc)
+
+  local dm = self.app.managers[':dialogue']
+
+  self.npc:unregister_speaker(dm)
+  self.npc = nil
 end
 
 function adventure_state:start_step(next_step)
@@ -56,12 +86,14 @@ end
 --   and we add a suffix equal to a next_step name
 
 function adventure_state:_play_intro()
+  local dm = self.app.managers[':dialogue']
+  local fm = self.app.managers[':fight']
   local pc_speaker = self.pc.speaker
 
   self.app:yield_delay_s(2)
-  self.app.managers[':dialogue'].current_bottom_text = '= main building of it company\n* browsing solutions * ='
+  dm.current_bottom_text = '= main building of it company\n* browsing solutions * ='
   self.app:yield_delay_s(4)
-  self.app.managers[':dialogue'].current_bottom_text = nil
+  dm.current_bottom_text = nil
   self.app:yield_delay_s(2)
   pc_speaker:say_and_wait_for_input("ok, let's sum up")
   pc_speaker:say_and_wait_for_input("1. i need funding to organize a hackathon")
@@ -74,11 +106,29 @@ function adventure_state:_play_intro()
   pc_speaker:say_and_wait_for_input("wait, someone is coming!")
   self.app:yield_delay_s(0.5)
 
-  self.app.managers[':fight']:set_next_opponent_to_matching_random_npc()
+  local next_npc_fighter_prog = fm:pick_matching_random_npc_fighter_prog()
+
+  -- show npc
+  self:spawn_npc(next_npc_fighter_prog.fighter_info.character_info_id)
+  local npc_speaker = self.npc.speaker
+
+  self.app:yield_delay_s(1)
+
+  npc_speaker:say_and_wait_for_input("well, well, well. see who's in here")
+  pc_speaker:say_and_wait_for_input("not you again! i failed to get the ceo's support last time because of you!")
+  npc_speaker:say_and_wait_for_input("not at all. you just messed up on your own.")
+  pc_speaker:say_and_wait_for_input("enough! you're going down!")
+  npc_speaker:say_and_wait_for_input("if you're so motivated, why not solve this with a wit fight?")
+  npc_speaker:say_and_wait_for_input("we exchange verbal attacks and replies, and see who has the best comeback")
+  pc_speaker:say_and_wait_for_input("er... okay.")
+
+  -- start fight with npc
+  fm.next_opponent = next_npc_fighter_prog
   flow:query_gamestate_type(':fight')
 end
 
 function adventure_state:_play_floor_loop()
+  local fm = self.app.managers[':fight']
   local pc_speaker = self.pc.speaker
 
   -- check if player lost or won previous fight
@@ -101,12 +151,26 @@ function adventure_state:_play_floor_loop()
     log("go to previous floor: "..self.app.game_session.floor_number, "flow")
   end
 
+  -- clean existing npc
+  self:despawn_npc()
+
   self.app:yield_delay_s(1)
 
   pc_speaker:say_and_wait_for_input("someone is coming!")
   self.app:yield_delay_s(0.5)
 
-  self.app.managers[':fight']:set_next_opponent_to_matching_random_npc()
+  local next_npc_fighter_prog = fm:pick_matching_random_npc_fighter_prog()
+
+  -- show npc
+  self:spawn_npc(next_npc_fighter_prog.fighter_info.character_info_id)
+  local npc_speaker = self.npc.speaker
+
+  self.app:yield_delay_s(0.5)
+
+  npc_speaker:say_and_wait_for_input("en garde!")
+  self.app:yield_delay_s(0.5)
+
+  fm.next_opponent = next_npc_fighter_prog
   flow:query_gamestate_type(':fight')
 end
 
