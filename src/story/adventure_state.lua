@@ -46,19 +46,16 @@ function adventure_state:render()
 end
 
 function adventure_state:start_step(next_step)
-  local start_method_name = '_start_'..next_step
-  assert(self[start_method_name], "adventure_state has no method named: "..start_method_name)
-  self[start_method_name](self)
+  -- build async method name to start as coroutine
+  local play_method_name = '_play_'..next_step
+  assert(self[play_method_name], "adventure_state has no method named: "..play_method_name)
+  self.app:start_coroutine(self[play_method_name], self)
 end
 
--- step methods: they all start with '_start_'
+-- step methods: they all start with '_play_'
 --   and we add a suffix equal to a next_step name
 
-function adventure_state:_start_intro()
-  self.app:start_coroutine(self.play_intro, self)
-end
-
-function adventure_state:play_intro()
+function adventure_state:_play_intro()
   local pc_speaker = self.pc.speaker
 
   self.app:yield_delay_s(2)
@@ -81,11 +78,7 @@ function adventure_state:play_intro()
   flow:query_gamestate_type(':fight')
 end
 
-function adventure_state:_start_floor_loop()
-  self.app:start_coroutine(self.play_floor_loop, self)
-end
-
-function adventure_state:play_floor_loop()
+function adventure_state:_play_floor_loop()
   local pc_speaker = self.pc.speaker
 
   -- check if player lost or won previous fight
