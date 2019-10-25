@@ -67,7 +67,7 @@ function adventure_state:spawn_npc(npc_id)
 end
 
 function adventure_state:despawn_npc()
-  assert(npc)
+  assert(self.npc)
 
   local dm = self.app.managers[':dialogue']
 
