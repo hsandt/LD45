@@ -56,12 +56,12 @@ describe('game_session', function ()
   end)
 
   describe('generate_npc_fighter_progressions', function ()
-    it('should return 20 npcs, one per archetype', function ()
+    it('should return 13 npcs, one per archetype', function ()
       local npc_fighter_progs = game_session.generate_npc_fighter_progressions()
 
       -- Relies on generate_npc_fighter_progressions working.
-      assert.are_equal(12, #npc_fighter_progs)
-      assert.are_same({1, 12}, {npc_fighter_progs[1].fighter_info.id, npc_fighter_progs[12].fighter_info.id})
+      assert.are_equal(13, #npc_fighter_progs)
+      assert.are_same({1, 13}, {npc_fighter_progs[1].fighter_info.id, npc_fighter_progs[13].fighter_info.id})
     end)
   end)
 

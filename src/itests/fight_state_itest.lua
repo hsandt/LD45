@@ -21,8 +21,13 @@ itest_manager:register_itest('1st fight -> back to adv',
 
   -- enter fight state
   setup_callback(function (app)
-    -- a trick to access the managers via app via gamestate
-    app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[1]
+    -- just to avoid assert on despawn_npc, invent some npc you have supposedly
+    --   spawned just before to show him during the adventure
+    flow.gamestates[':adventure']:spawn_npc(2)
+
+    -- fight rossmann
+    app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[13]
+
     flow:change_gamestate_by_type(':fight')
   end)
 
@@ -46,20 +51,6 @@ itest_manager:register_itest('1st fight -> back to adv',
   -- quote match resolution
 
   -- continue until someone dies
-  short_press(button_ids.o)
-  wait(2.0)
-  short_press(button_ids.o)
-  wait(2.0)
-  short_press(button_ids.o)
-  wait(2.0)
-  short_press(button_ids.o)
-  wait(2.0)
-  short_press(button_ids.o)
-  wait(2.0)
-  short_press(button_ids.o)
-  wait(2.0)
-  short_press(button_ids.o)
-  wait(2.0)
   short_press(button_ids.o)
   wait(2.0)
   short_press(button_ids.o)

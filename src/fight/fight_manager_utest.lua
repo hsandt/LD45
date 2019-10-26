@@ -287,13 +287,6 @@ describe('fight_manager', function ()
         s.was_called_with(match.ref(fm), match.ref(fake_fighter_prog))
       end)
 
-      it('should clear next opponent (consumption)', function ()
-        fm.next_opponent = fake_fighter_prog
-        fm:start_fight_with_next_opponent()
-
-        assert.is_nil(fm.next_opponent)
-      end)
-
     end)
 
     describe('start_fight_with', function ()

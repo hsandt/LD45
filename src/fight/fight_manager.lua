@@ -90,7 +90,8 @@ end
 function fight_manager:start_fight_with_next_opponent()
   assert(self.next_opponent, "fight_manager:start_fight_with_next_opponent: next opponent not set")
   self:start_fight_with(self.next_opponent)
-  self.next_opponent = nil
+  -- do not consume next_opponent now, it will be checked at the beginning of
+  --   adventure_state:_play_floor_loop as the previous opponent
 end
 
 function fight_manager:start_fight_with(opponent_fighter_prog)

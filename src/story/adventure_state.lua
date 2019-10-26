@@ -106,7 +106,7 @@ function adventure_state:_play_intro()
   pc_speaker:say_and_wait_for_input("wait, someone is coming!")
   self.app:yield_delay_s(0.5)
 
-  local next_npc_fighter_prog = fm:pick_matching_random_npc_fighter_prog()
+  local next_npc_fighter_prog = self.app.game_session.npc_fighter_progressions[13]
 
   -- show npc
   self:spawn_npc(next_npc_fighter_prog.fighter_info.character_info_id)
@@ -127,9 +127,17 @@ function adventure_state:_play_intro()
   flow:query_gamestate_type(':fight')
 end
 
+-- floor loop: must be played after at least 1 fight
 function adventure_state:_play_floor_loop()
   local fm = self.app.managers[':fight']
   local pc_speaker = self.pc.speaker
+
+  -- plug special events after losing/winning vs npc (by id)
+  assert(fm.next_opponent)
+  local after_fight_method_name = '_after_fight_with_npc'..fm.next_opponent.fighter_info.id
+  if self[after_fight_method_name] then
+    self[after_fight_method_name](self)
+  end
 
   -- check if player lost or won previous fight
   local floor_number = self.app.game_session.floor_number
@@ -172,6 +180,17 @@ function adventure_state:_play_floor_loop()
 
   fm.next_opponent = next_npc_fighter_prog
   flow:query_gamestate_type(':fight')
+end
+
+-- after fight with rossmann
+function adventure_state:_after_fight_with_npc13()
+  local fm = self.app.managers[':fight']
+
+  -- rossmann had only level 1 attacks to avoid pc learning strong attacks too fast,
+  --   but for next encounter, let rossmann learn the level 2 attacks he should have
+  for attack_id in all(gameplay_data.rossmann_lv2_attack_ids) do
+    add(fm.next_opponent.known_attack_ids, attack_id)
+  end
 end
 
 return adventure_state

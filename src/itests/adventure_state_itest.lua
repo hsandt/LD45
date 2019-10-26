@@ -66,12 +66,15 @@ itest_manager:register_itest('play floor loop after won -> random fight',
 
   -- enter adventure state
   setup_callback(function (app)
-    app.managers[':fight'].won_last_fight = true
-    app.managers[':adventure'].next_step = 'floor_loop'
-
     -- just to avoid assert on despawn_npc, invent some npc you have supposedly
     --   fight just before
     flow.gamestates[':adventure']:spawn_npc(2)
+
+    -- we supposedly beat npc 1
+    app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[1]
+    app.managers[':fight'].won_last_fight = true
+
+    app.managers[':adventure'].next_step = 'floor_loop'
 
     flow:change_gamestate_by_type(':adventure')
   end)

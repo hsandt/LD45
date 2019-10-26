@@ -20,7 +20,7 @@ main_menu._items = transform({
       flow:query_gamestate_type(':adventure')
     end},
     {"debug fight", function(app)
-      app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[1]
+      app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[13]
       flow:query_gamestate_type(':fight')
     end}
   }, unpacking(menu_item))

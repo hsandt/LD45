@@ -2,6 +2,7 @@ require("engine/core/class")
 
 local manager = require("engine/application/manager")
 
+-- Manages the adventure state, and also tutorials
 local adventure_manager = derived_class(manager)
 
 adventure_manager.type = ':adventure'

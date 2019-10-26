@@ -147,28 +147,30 @@ local npc_info_s = {
   character_info(10, "senior programmer", 10),
   character_info(11, "senior qa", 11),
   character_info(12, "senior marketing", 12),
+  character_info(13, "rossmann", 13),
 }
 
 -- "start with nothing" -> no known quotes to start with
 -- pc has level 10 so he's able to learn any quote in one hearing
-local pc_fighter_info = fighter_info(0, 0, 10, 3, {}, {}, {})
+local pc_fighter_info = fighter_info(0, 0, 10, 2, {}, {}, {})
 
 -- fighters are mostly mapped to characters 1:1, but storing characters separately is useful
 --   in case we have a non-fighting npc
 local npc_fighter_info_s = {
   -- id, character_info_id, initial_level, initial_max_hp, initial_attack_ids, initial_reply_ids, initial_quote_match_ids
-  fighter_info( 1,  1, 1, 4, {1, 5}, {6, 13, 14}, {}),     -- junior designer (good at attacks and wits in general)
-  fighter_info( 2,  2, 1, 3, {4, 6}, {3, 9, 10}, {}),     -- junior programmer (good at replies and tech topics)
-  fighter_info( 3,  3, 1, 5, {3, 8}, {6, 11}, {}),     -- junior qa (tank character, good at planning topics)
-  fighter_info( 4,  4, 1, 3, {4, 5, 8}, {5, 7, 8}, {}),  -- junior marketing (good at matching quotes)
-  fighter_info( 5,  5, 2, 5, {7, 10}, {}, {}),    -- designer
-  fighter_info( 6,  6, 2, 4, {1}, {}, {}),        -- programmer
-  fighter_info( 7,  7, 2, 6, {1}, {}, {}),        -- manager (tank and planning topics)
-  fighter_info( 8,  8, 2, 4, {1}, {}, {}),        -- legal advisor (good at matching quotes)
-  fighter_info( 9,  9, 3, 6, {1}, {}, {}),        -- senior designer
-  fighter_info(10, 10, 3, 5, {1}, {}, {}),        -- senior programmer
-  fighter_info(11, 11, 3, 7, {1}, {}, {}),        -- senior qa
-  fighter_info(12, 12, 3, 5, {1}, {}, {}),        -- senior marketing
+  fighter_info( 1,  1, 1, 4, {1, 5}, {6, 13, 14}, {}),         -- junior designer (good at attacks and wits in general)
+  fighter_info( 2,  2, 1, 3, {4, 6}, {3, 9, 10}, {}),          -- junior programmer (good at replies and tech topics)
+  fighter_info( 3,  3, 1, 5, {3, 8}, {6, 11}, {}),             -- junior qa (tank character, good at planning topics)
+  fighter_info( 4,  4, 1, 3, {4, 5, 8}, {5, 7, 8}, {}),        -- junior marketing (good at matching quotes)
+  fighter_info( 5,  5, 2, 5, {7, 10}, {}, {}),                 -- designer
+  fighter_info( 6,  6, 2, 4, {1}, {}, {}),                     -- programmer
+  fighter_info( 7,  7, 2, 6, {1}, {}, {}),                     -- manager (tank and planning topics)
+  fighter_info( 8,  8, 2, 4, {1}, {}, {}),                     -- legal advisor (good at matching quotes)
+  fighter_info( 9,  9, 3, 6, {1}, {}, {}),                     -- senior designer
+  fighter_info(10, 10, 3, 5, {1}, {}, {}),                     -- senior programmer
+  fighter_info(11, 11, 3, 7, {1}, {}, {}),                     -- senior qa
+  fighter_info(12, 12, 3, 5, {1}, {}, {}),                     -- senior marketing
+  fighter_info(13, 13, 2, 3, {1, 2, 5, 6}, {}, {}), -- rossmann
 }
 
 local gameplay_data = {
@@ -181,11 +183,15 @@ local gameplay_data = {
   pc_fighter_info = pc_fighter_info,
   npc_fighter_info_s = npc_fighter_info_s,
 
-  -- misc gameplay parameters
-
+  -- game session
   initial_floor = 3,
+
+  -- rossmann lv2 attack ids unlocked after the 1st encounter
+  rossmann_lv2_attack_ids = {7, 10, 11},
+
+  -- fight
   losing_attack_penalty = 1,
-  
+
   -- How many times ai fighter of level L must receive quote of level L
   --   to learn it. Decrements with each fighter level above quote level,
   --   but minimum is 1.
