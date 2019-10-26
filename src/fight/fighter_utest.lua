@@ -4,9 +4,10 @@ local fighter = require("fight/fighter")
 local character_info = require("content/character_info")
 local fighter_info = require("content/fighter_info")
 local quote_info = require("content/quote_info")  -- for quote_types
+local speaker_component = require("dialogue/speaker_component")
 local fighter_progression = require("progression/fighter_progression")
 local character = require("story/character")
- 
+
 describe('fighter', function ()
 
   local mock_character_info = character_info(2, "employee", 5)
@@ -32,8 +33,9 @@ describe('fighter', function ()
     end)
 
     it('should init a fighter', function ()
-      assert.are_same({5, nil, {}, {}},
-        {f.hp, f.last_quote, f.received_attack_id_count_map, f.received_reply_id_count_map})
+      assert.are_same({5, nil, {}, {}, {11, 27, 35}, {12, 28, 37}},
+        {f.hp, f.last_quote, f.received_attack_id_count_map, f.received_reply_id_count_map,
+        f.available_attack_ids, f.available_reply_ids})
     end)
 
   end)
@@ -60,6 +62,58 @@ describe('fighter', function ()
     it('should return sequence of all known reply ids with quote_types.reply (for now)', function ()
       assert.are_same({12, 28, 37}, f:get_available_quote_ids(quote_types.reply))
     end)
+  end)
+
+  describe('say_quote', function ()
+
+    setup(function ()
+      stub(speaker_component, "say")
+    end)
+
+    teardown(function ()
+      speaker_component.say:revert()
+    end)
+
+    after_each(function ()
+      speaker_component.say:clear()
+    end)
+
+    it('should call say on character speaker component', function ()
+      local q = quote_info(3, quote_types.attack, 1, "attack 3")
+
+      f:say_quote(q)
+
+      local s = assert.spy(speaker_component.say)
+      s.was_called(1)
+      s.was_called_with(match.ref(f.character.speaker), "attack 3", false, true)
+    end)
+
+    it('should set last quote to passed quote', function ()
+      local q = quote_info(3, quote_types.attack, 1, "attack 3")
+
+      f:say_quote(q)
+
+      assert.are_equal(q, f.last_quote)
+    end)
+
+    it('should remove an attack id from the sequence of available attack ids', function ()
+      local q = quote_info(27, quote_types.attack, 2, "attack 27")
+
+      f:say_quote(q)
+
+      assert.are_same({11, 35}, f.available_attack_ids)
+    end)
+
+    it('should preserve available attack/reply if saying a reply', function ()
+      local q = quote_info(27, quote_types.reply, 2, "reply 27")
+      local q = quote_info(28, quote_types.reply, 2, "reply 28")
+
+      f:say_quote(q)
+
+      assert.are_same({11, 27, 35}, f.available_attack_ids)
+      assert.are_same({12, 28, 37}, f.available_attack_ids)
+    end)
+
   end)
 
   describe('take_damage', function ()

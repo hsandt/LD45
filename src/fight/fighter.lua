@@ -17,13 +17,15 @@ Parameters
   direction: horizontal_dirs       facing left or right?
 
 State
-  hp: int                                  current hp
-  is_attacker: bool                        true iff fighter attacks this turn
-  last_quote: (quote_info|nil)             last quote said, if any
-  received_attack_id_count_map: {int: int} count of new attacks received during current fight,
-                                           indexed by attack id (to measure exposure)
-  received_reply_id_count_map: {int: int}  count of new replies received during current fight,
-                                           indexed by attack id (to measure exposure)
+  hp: int                                   current hp
+  is_attacker: bool                         true iff fighter attacks this turn
+  last_quote: (quote_info|nil)              last quote said, if any
+  received_attack_id_count_map: {int: int}  count of new attacks received during current fight,
+                                            indexed by attack id (to measure exposure)
+  received_reply_id_count_map: {int: int}   count of new replies received during current fight,
+                                            indexed by attack id (to measure exposure)
+  available_attack_ids: {int}               sequence of attacks that can still be used in this fight
+  available_reply_ids: {int}                sequence of replies that can still be used in this fight
 --]]
 function fighter:_init(char, fighter_prog)
   self.character = char
@@ -34,6 +36,8 @@ function fighter:_init(char, fighter_prog)
   self.last_quote = nil
   self.received_attack_id_count_map = {}
   self.received_reply_id_count_map = {}
+  self.available_attack_ids = copy_seq(fighter_prog.known_attack_ids)
+  self.available_reply_ids = copy_seq(fighter_prog.known_reply_ids)
 end
 
 --#if log
@@ -54,6 +58,18 @@ function fighter:get_available_quote_ids(quote_type)
     return self.fighter_progression.known_attack_ids
   else  -- quote_type == quote_types.reply
     return self.fighter_progression.known_reply_ids
+  end
+end
+
+function fighter:say_quote(quote)
+  local is_attacking = quote.type == quote_types.attack
+
+  self.character.speaker:say(quote.text, false, is_attacking)
+  self.last_quote = quote
+
+  -- if an attack, remove it from available sequence for this fight
+  if is_attacking then
+    del(self.available_attack_ids, quote.id)
   end
 end
 
