@@ -263,9 +263,9 @@ function fight_manager:request_next_fighter_action()
 end
 
 function fight_manager:resolve_losing_attack(losing_attacker, passive_replier)
-  self:hit_fighter(attacker, gameplay_data.losing_attack_penalty)
+  self:hit_fighter(losing_attacker, gameplay_data.losing_attack_penalty)
   self.app:wait_and_do(visual_data.check_exchange_result_delay,
-    self.check_exchange_result, self, attacker, passive_replier)
+    self.check_exchange_result, self, losing_attacker, passive_replier)
 end
 
 -- attacker: fighter

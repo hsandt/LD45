@@ -56,6 +56,16 @@ itest_manager:register_itest('1st fight -> back to adv',
   wait(2.0)
   short_press(button_ids.o)
   wait(2.0)
+  short_press(button_ids.o)
+  wait(2.0)
+  short_press(button_ids.o)
+  wait(2.0)
+  short_press(button_ids.o)
+  wait(2.0)
+  short_press(button_ids.o)
+  wait(2.0)
+  short_press(button_ids.o)
+  wait(2.0)
 
   -- opponent depends a bit on randomness, but after all these turns
   --   we should have finished the fight and be back to the adventure for next step
