@@ -54,10 +54,9 @@ end
 
 function fighter:get_available_quote_ids(quote_type)
   if quote_type == quote_types.attack then
-    -- for now, ignore attacks already used and just return all known attack ids
-    return self.fighter_progression.known_attack_ids
+    return self.available_attack_ids
   else  -- quote_type == quote_types.reply
-    return self.fighter_progression.known_reply_ids
+    return self.available_reply_ids
   end
 end
 

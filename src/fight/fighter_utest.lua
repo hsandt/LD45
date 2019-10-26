@@ -57,10 +57,12 @@ describe('fighter', function ()
 
   describe('get_available_quote_ids', function ()
     it('should return sequence of all known attack ids with quote_types.attack (for now)', function ()
-      assert.are_same({11, 27, 35}, f:get_available_quote_ids(quote_types.attack))
+      del(f.available_attack_ids, 11)
+      assert.are_same({27, 35}, f:get_available_quote_ids(quote_types.attack))
     end)
     it('should return sequence of all known reply ids with quote_types.reply (for now)', function ()
-      assert.are_same({12, 28, 37}, f:get_available_quote_ids(quote_types.reply))
+      del(f.available_reply_ids, 37)
+      assert.are_same({12, 28}, f:get_available_quote_ids(quote_types.reply))
     end)
   end)
 
@@ -111,7 +113,7 @@ describe('fighter', function ()
       f:say_quote(q)
 
       assert.are_same({11, 27, 35}, f.available_attack_ids)
-      assert.are_same({12, 28, 37}, f.available_attack_ids)
+      assert.are_same({12, 28, 37}, f.available_reply_ids)
     end)
 
   end)
