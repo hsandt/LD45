@@ -183,7 +183,9 @@ local gameplay_data = {
 
   -- misc gameplay parameters
 
+  initial_floor = 3,
   losing_attack_penalty = 1,
+  
   -- How many times ai fighter of level L must receive quote of level L
   --   to learn it. Decrements with each fighter level above quote level,
   --   but minimum is 1.

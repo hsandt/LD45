@@ -7,7 +7,7 @@ local game_session = new_class()
 
 function game_session:_init()
   -- current floor number the player character is located at
-  self.floor_number = 1
+  self.floor_number = gameplay_data.initial_floor
 
   self.pc_fighter_progression = fighter_progression(character_types.human, gameplay_data.pc_fighter_info)
   self.npc_fighter_progressions = game_session.generate_npc_fighter_progressions()

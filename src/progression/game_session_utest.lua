@@ -25,7 +25,7 @@ describe('game_session', function ()
 
     it('should init a game_session', function ()
       local gs = game_session()
-      assert.are_equal(1, gs.floor_number)
+      assert.are_equal(gameplay_data.initial_floor, gs.floor_number)
       assert.are_same(fighter_progression(character_types.human, gameplay_data.pc_fighter_info), gs.pc_fighter_progression)
       assert.are_equal(fake_npc_fighter_prog1, gs.npc_fighter_progressions[1])
       assert.are_equal(fake_npc_fighter_prog2, gs.npc_fighter_progressions[2])
