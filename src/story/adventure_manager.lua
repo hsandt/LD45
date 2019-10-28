@@ -2,6 +2,10 @@ require("engine/core/class")
 
 local manager = require("engine/application/manager")
 
+local gameplay_data = require("resources/gameplay_data")
+local visual_data = require("resources/visual_data")
+local character = require("story/character")
+
 -- Manages the adventure state, and also tutorials
 local adventure_manager = derived_class(manager)
 

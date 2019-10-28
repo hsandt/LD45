@@ -4,8 +4,6 @@ local flow = require("engine/application/flow")
 
 local painter = require("render/painter")
 local gameplay_data = require("resources/gameplay_data")
-local visual_data = require("resources/visual_data")
-local character = require("story/character")
 
 local adventure_state = derived_class(gamestate)
 
@@ -59,7 +57,7 @@ function adventure_state:_play_intro()
   local am = self.app.managers[':adventure']
   local dm = self.app.managers[':dialogue']
   local fm = self.app.managers[':fight']
-  local pc_speaker = self.pc.speaker
+  local pc_speaker = am.pc.speaker
 
   self.app:yield_delay_s(2)
   dm.current_bottom_text = '= main building of it company\n* browsing solutions * ='
@@ -81,7 +79,7 @@ function adventure_state:_play_intro()
 
   -- show npc
   am:spawn_npc(next_npc_fighter_prog.fighter_info.character_info_id)
-  local npc_speaker = self.npc.speaker
+  local npc_speaker = am.npc.speaker
 
   self.app:yield_delay_s(1)
 
@@ -102,7 +100,7 @@ end
 function adventure_state:_play_floor_loop()
   local am = self.app.managers[':adventure']
   local fm = self.app.managers[':fight']
-  local pc_speaker = self.pc.speaker
+  local pc_speaker = am.pc.speaker
 
   -- plug special events after losing/winning vs npc (by id)
   assert(fm.next_opponent)
@@ -143,7 +141,7 @@ function adventure_state:_play_floor_loop()
 
   -- show npc
   am:spawn_npc(next_npc_fighter_prog.fighter_info.character_info_id)
-  local npc_speaker = self.npc.speaker
+  local npc_speaker = am.npc.speaker
 
   self.app:yield_delay_s(0.5)
 

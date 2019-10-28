@@ -21,12 +21,15 @@ itest_manager:register_itest('1st fight -> back to adv',
 
   -- enter fight state
   setup_callback(function (app)
+    local am = app.managers[':adventure']
+    local fm = app.managers[':fight']
+
     -- just to avoid assert on despawn_npc, invent some npc you have supposedly
     --   spawned just before to show him during the adventure
-    flow.gamestates[':adventure']:spawn_npc(2)
+    am:spawn_npc(2)
 
     -- fight rossmann
-    app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[13]
+    fm.next_opponent = app.game_session.npc_fighter_progressions[13]
 
     flow:change_gamestate_by_type(':fight')
   end)

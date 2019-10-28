@@ -50,7 +50,7 @@ end
 function fighter_progression:get_name()
   local character_info
 
-  if character_type == character_types.human then
+  if self.character_type == character_types.human then
     character_info = gameplay_data.pc_info
   else
     character_info = gameplay_data.npc_info_s[self.fighter_info.character_info_id]
