@@ -39,4 +39,4 @@ end
 --   you need to force setup some variables (like the next opponent) in your specific itest
 srand(os.time())
 
-create_describe_headless_itests_callback(app, should_render, describe, setup, teardown, it, assert)
+create_describe_headless_itests_callback(app, should_render, describe, setup, teardown, before_each, after_each, it, assert)
