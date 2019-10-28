@@ -45,18 +45,29 @@ describe('fighter_progression', function ()
 
   describe('(with instance)', function ()
 
+    local mock_pc_fighter_info = fighter_info(0, 0, 1, 3, {}, {}, {})
     local mock_fighter_info = fighter_info(4, 4, 2, 5, {11, 27}, {12, 28}, {2, 4})
+
+    local pc_f_progression
     local f_progression
 
     before_each(function ()
+      pc_f_progression = fighter_progression(character_types.human, mock_pc_fighter_info)
       f_progression = fighter_progression(character_types.ai, mock_fighter_info)
     end)
 
     describe('get_name', function ()
+
+      it('should return the name from the character info', function ()
+        -- this test depends on gameplay_data
+        assert.are_equal("you", pc_f_progression:get_name())
+      end)
+
       it('should return the name from the character info', function ()
         -- this test depends on gameplay_data
         assert.are_equal("junior marketing", f_progression:get_name())
       end)
+
     end)
 
     describe('(spying add_received_quote_id_count_map)', function ()
