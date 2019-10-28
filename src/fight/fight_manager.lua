@@ -118,7 +118,33 @@ function fight_manager:spawn_fighters(pc_fighter_prog, npc_fighter_prog)
   local npc_fighter = self:generate_npc_fighter(npc_fighter_prog)
   self.fighters = {pc_fighter, npc_fighter}
 
+  for some_fighter in all(self.fighters) do
+    some_fighter.character:register_speaker(dm)
+  end
+
   log("loaded fighters: "..pc_fighter:get_name().." vs "..npc_fighter:get_name(), "itest")
+end
+
+-- pc_fighter_prog: fighter_progression
+-- UB unless adventure manager has created pc as a character with same id
+--   as pc_fighter_prog's fighter_info
+function fight_manager:generate_pc_fighter(pc_fighter_prog)
+  local am = self.app.managers[':adventure']
+
+  -- attach fighter to pre-existing character in adventure manager
+  local pc_fighter = fighter(am.pc, pc_fighter_prog)
+  return pc_fighter
+end
+
+-- npc_fighter_prog: fighter_progression
+-- UB unless adventure manager has created npc as a character with same id
+--   as npc_fighter_prog's fighter_info
+function fight_manager:generate_npc_fighter(npc_fighter_prog)
+  local am = self.app.managers[':adventure']
+
+  -- attach fighter to pre-existing character in adventure manager
+  local npc_fighter = fighter(am.npc, npc_fighter_prog)
+  return npc_fighter
 end
 
 function fight_manager:despawn_fighters()
@@ -129,34 +155,6 @@ function fight_manager:despawn_fighters()
   end
 
   clear_table(self.fighters)
-end
-
--- pc_fighter_prog: fighter_progression
--- static
-function fight_manager:generate_pc_fighter(pc_fighter_prog)
-  -- retrieve character info from pc fighter progression
-  local char_info = gameplay_data.pc_info
-  local char = character(char_info, horizontal_dirs.right, visual_data.pc_sprite_pos)
-  char:register_speaker(self.app.managers[':dialogue'])
-
-  -- char reference is local, so pc_fighter effectively becomes its owner
-  -- (destroying fighter in despawn_fighters will be enough to clear both via garbage collection)
-  local pc_fighter = fighter(char, pc_fighter_prog)
-  return pc_fighter
-end
-
--- npc_fighter_prog: fighter_progression
--- static
-function fight_manager:generate_npc_fighter(npc_fighter_prog)
-  -- retrieve character info from npc fighter progression
-  local char_info = gameplay_data.npc_info_s[npc_fighter_prog.fighter_info.character_info_id]
-  local char = character(char_info, horizontal_dirs.left, visual_data.npc_sprite_pos)
-  char:register_speaker(self.app.managers[':dialogue'])
-
-  -- char reference is local, so npc_fighter effectively becomes its owner
-  -- (destroying fighter in despawn_fighters will be enough to clear both via garbage collection)
-  local npc_fighter = fighter(char, npc_fighter_prog)
-  return npc_fighter
 end
 
 function fight_manager:request_active_fighter_action()

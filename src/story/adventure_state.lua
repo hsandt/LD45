@@ -13,36 +13,26 @@ adventure_state.type = ':adventure'
 
 function adventure_state:_init()
   gamestate._init(self)
-
-  self.pc = character(gameplay_data.pc_info, horizontal_dirs.right, visual_data.pc_sprite_pos)
-  self.npc = nil
 end
 
 function adventure_state:on_enter()
+  local am = self.app.managers[':adventure']
   local dm = self.app.managers[':dialogue']
-  self.app.managers[':adventure'].active = true
 
-  -- register components
-  dm:add_speaker(self.pc.speaker)
+  am.active = true
 
   -- show bottom box immediately, otherwise we'll see that the lower stairs is not finished...
   dm.should_show_bottom_box = true
 
   -- start next adventure step
-  self:start_step(self.app.managers[':adventure'].next_step)
+  self:start_step(am.next_step)
 end
 
 function adventure_state:on_exit()
+  local am = self.app.managers[':adventure']
   local dm = self.app.managers[':dialogue']
 
-  self.app.managers[':adventure'].active = false
-
-  -- unregister components
-  dm:remove_speaker(self.pc.speaker)
-  if self.npc then
-    dm:remove_speaker(self.npc.speaker)
-    self.npc = nil
-  end
+  am.active = false
 
   dm.should_show_bottom_box = false
 end
@@ -52,27 +42,7 @@ end
 
 function adventure_state:render()
   painter.draw_background()
-  self.pc:draw()
-  if self.npc then
-    self.npc:draw()
-  end
-end
 
-function adventure_state:spawn_npc(npc_id)
-  local dm = self.app.managers[':dialogue']
-
-  local npc_info = gameplay_data.npc_info_s[npc_id]
-  self.npc = character(npc_info, horizontal_dirs.left, visual_data.npc_sprite_pos)
-  self.npc:register_speaker(dm)
-end
-
-function adventure_state:despawn_npc()
-  assert(self.npc)
-
-  local dm = self.app.managers[':dialogue']
-
-  self.npc:unregister_speaker(dm)
-  self.npc = nil
 end
 
 function adventure_state:start_step(next_step)
@@ -86,6 +56,7 @@ end
 --   and we add a suffix equal to a next_step name
 
 function adventure_state:_play_intro()
+  local am = self.app.managers[':adventure']
   local dm = self.app.managers[':dialogue']
   local fm = self.app.managers[':fight']
   local pc_speaker = self.pc.speaker
@@ -109,7 +80,7 @@ function adventure_state:_play_intro()
   local next_npc_fighter_prog = self.app.game_session.npc_fighter_progressions[13]
 
   -- show npc
-  self:spawn_npc(next_npc_fighter_prog.fighter_info.character_info_id)
+  am:spawn_npc(next_npc_fighter_prog.fighter_info.character_info_id)
   local npc_speaker = self.npc.speaker
 
   self.app:yield_delay_s(1)
@@ -129,6 +100,7 @@ end
 
 -- floor loop: must be played after at least 1 fight
 function adventure_state:_play_floor_loop()
+  local am = self.app.managers[':adventure']
   local fm = self.app.managers[':fight']
   local pc_speaker = self.pc.speaker
 
@@ -160,7 +132,7 @@ function adventure_state:_play_floor_loop()
   end
 
   -- clean existing npc
-  self:despawn_npc()
+  am:despawn_npc()
 
   self.app:yield_delay_s(1)
 
@@ -170,7 +142,7 @@ function adventure_state:_play_floor_loop()
   local next_npc_fighter_prog = fm:pick_matching_random_npc_fighter_prog()
 
   -- show npc
-  self:spawn_npc(next_npc_fighter_prog.fighter_info.character_info_id)
+  am:spawn_npc(next_npc_fighter_prog.fighter_info.character_info_id)
   local npc_speaker = self.npc.speaker
 
   self.app:yield_delay_s(0.5)

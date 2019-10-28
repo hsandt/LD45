@@ -28,6 +28,12 @@ State
   available_reply_ids: {int}                sequence of replies that can still be used in this fight
 --]]
 function fighter:_init(char, fighter_prog)
+--#if assert
+  assert(fighter_prog.fighter_info.character_info_id, char.character_info.id,
+    "fighter_prog.fighter_info.character_info_id ("..fighter_prog.fighter_info.character_info_id..
+    ") != char.character_info.id ("..char.character_info.id..")")
+--#endif
+
   self.character = char
   self.fighter_progression = fighter_prog
 

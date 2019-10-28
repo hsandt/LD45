@@ -64,12 +64,14 @@ describe('fight_manager', function ()
   describe('(with instance)', function ()
 
     local app
+    local am
     local fm
     local dm
 
     before_each(function ()
       app = wit_fighter_app()
       app:instantiate_and_register_managers()
+      am = app.managers[':adventure']
       fm = app.managers[':fight']
       dm = app.managers[':dialogue']
     end)
@@ -339,174 +341,149 @@ describe('fight_manager', function ()
 
     end)
 
-    describe('spawn_fighters', function ()
+    describe('(mock pc and npc info/character/fighter/prog)', function ()
 
       local mock_pc_character_info = character_info(0, "pc", 0)
       local mock_pc_fighter_info = fighter_info(99, 99, 12, 8, {}, {}, {})
       local mock_pc_fighter_prog = fighter_progression(character_types.human, mock_pc_fighter_info)
-      local fake_pc_speaker = {"pc speaker"}
-      local fake_pc_character = {character_info = mock_pc_character_info, speaker = fake_pc_speaker}
 
       local mock_npc_character_info = character_info(7, "npc", 7)
       local mock_npc_fighter_info = fighter_info(8, 8, 4, 5, {11, 27}, {12, 28}, {2, 4})
       local mock_npc_fighter_prog = fighter_progression(character_types.ai, mock_npc_fighter_info)
-      local fake_npc_speaker = {"npc speaker"}
-      local fake_npc_character = {character_info = mock_npc_character_info, speaker = fake_npc_speaker}
 
-      local mock_pc_fighter  = fighter(fake_pc_character, mock_pc_fighter_prog)
-      local mock_npc_fighter = fighter(fake_npc_character, mock_npc_fighter_prog)
-
-      setup(function ()
-        stub(fight_manager, "generate_pc_fighter", function (self, fighter_prog)
-          -- ignore fighter_prog but it should be mock_pc_fighter_prog
-          return mock_pc_fighter
-        end)
-        stub(fight_manager, "generate_npc_fighter", function (self, fighter_prog)
-          -- ignore fighter_prog but it should be mock_npc_fighter_prog
-          return mock_npc_fighter
-        end)
-      end)
-
-      teardown(function ()
-        fight_manager.generate_pc_fighter:revert()
-        fight_manager.generate_npc_fighter:revert()
-      end)
-
-      after_each(function ()
-        fight_manager.generate_pc_fighter:clear()
-        fight_manager.generate_npc_fighter:clear()
-      end)
-
-      it('should spawn fighters for pc and opponent', function ()
-        fm:spawn_fighters(mock_pc_fighter_prog, mock_npc_fighter_prog)
-
-        -- spy of intermediate functions is not necessary if we check the final result
-        --   but useful here to check self/arguments are correct, as we don't use them
-        --   in the stubs
-        local s = assert.spy(fight_manager.generate_pc_fighter)
-        s.was_called(1)
-        s.was_called_with(match.ref(fm), mock_pc_fighter_prog)
-
-        s = assert.spy(fight_manager.generate_npc_fighter)
-        s.was_called(1)
-        s.was_called_with(match.ref(fm), mock_npc_fighter_prog)
-
-        assert.are_equal(mock_pc_fighter, fm.fighters[1])
-        assert.are_equal(mock_npc_fighter, fm.fighters[2])
-      end)
-
-    end)
-
-    describe('despawn_fighters', function ()
-
-      local fake_pc_speaker = {"pc speaker"}
-      local fake_npc_speaker = {"npc speaker"}
-      local fake_pc_character = {speaker = fake_pc_speaker, unregister_speaker = spy.new()}
-      local fake_npc_character = {speaker = fake_npc_speaker, unregister_speaker = spy.new()}
-      local fake_pc_fighter_prog  = {level = 1}
-      local fake_npc_fighter_prog = {level = 2}
-      local fake_pc_fighter  = {character = fake_pc_character, fighter_progression = fake_pc_fighter_prog}
-      local fake_npc_fighter = {character = fake_npc_character, fighter_progression = fake_npc_fighter_prog}
-
-      setup(function ()
-        stub(fake_pc_character, "unregister_speaker")
-        stub(fake_npc_character, "unregister_speaker")
-      end)
-
-      teardown(function ()
-        fake_pc_character.unregister_speaker:revert()
-        fake_npc_character.unregister_speaker:revert()
-      end)
+      local mock_pc_character
+      local mock_npc_character
+      local mock_pc_fighter
+      local mock_npc_fighter
 
       before_each(function ()
-        fm.fighters = {fake_pc_fighter, fake_npc_fighter}
+        mock_pc_character = character(mock_pc_character_info, horizontal_dirs.right, visual_data.pc_sprite_pos)
+        mock_pc_fighter_prog = fighter_progression(character_types.human, mock_pc_fighter_info)
+        mock_pc_fighter = fighter(mock_pc_character, mock_pc_fighter_prog)
+
+        mock_npc_character = character(mock_npc_character_info, horizontal_dirs.left, visual_data.npc_sprite_pos)
+        mock_npc_fighter_prog = fighter_progression(character_types.ai, mock_npc_fighter_info)
+        mock_npc_fighter = fighter(mock_npc_character, mock_pc_fighter_prog)
+
+        am.pc = mock_pc_character
+        am.npc = mock_npc_character
       end)
 
-      after_each(function ()
-        fake_pc_character.unregister_speaker:clear()
-        fake_npc_character.unregister_speaker:clear()
-      end)
+      describe('spawn_fighters', function ()
 
-      it('should clear fighter table', function ()
-        fm:despawn_fighters()
+        setup(function ()
+          stub(fight_manager, "generate_pc_fighter", function (self, fighter_prog)
+            -- ignore fighter_prog but it should be mock_pc_fighter_prog
+            return mock_pc_fighter
+          end)
+          stub(fight_manager, "generate_npc_fighter", function (self, fighter_prog)
+            -- ignore fighter_prog but it should be mock_npc_fighter_prog
+            return mock_npc_fighter
+          end)
+          stub(character, "register_speaker")
+        end)
 
-        assert.are_equal(0, #fm.fighters)
-      end)
+        teardown(function ()
+          fight_manager.generate_pc_fighter:revert()
+          fight_manager.generate_npc_fighter:revert()
+          character.register_speaker:revert()
+        end)
 
-      it('should unregister speakers for pc and npc in dialogue manager', function ()
-        fm:despawn_fighters(fake_pc_fighter_prog, fake_npc_fighter_prog)
+        after_each(function ()
+          fight_manager.generate_pc_fighter:clear()
+          fight_manager.generate_npc_fighter:clear()
+          character.register_speaker:clear()
+        end)
 
-        local s = assert.spy(fake_pc_character.unregister_speaker)
-        s.was_called(1)
-        s.was_called_with(fake_pc_character, match.ref(dm))
+        it('should spawn fighters for pc and opponent', function ()
+          fm:spawn_fighters(mock_pc_fighter_prog, mock_npc_fighter_prog)
 
-        local s = assert.spy(fake_npc_character.unregister_speaker)
-        s.was_called(1)
-        s.was_called_with(fake_npc_character, match.ref(dm))
-      end)
+          -- spy of intermediate functions is not necessary if we check the final result
+          --   but useful here to check self/arguments are correct, as we don't use them
+          --   in the stubs
+          local s = assert.spy(fight_manager.generate_pc_fighter)
+          s.was_called(1)
+          s.was_called_with(match.ref(fm), mock_pc_fighter_prog)
 
-    end)
+          s = assert.spy(fight_manager.generate_npc_fighter)
+          s.was_called(1)
+          s.was_called_with(match.ref(fm), mock_npc_fighter_prog)
 
-    describe('(stub register_speaker)', function ()
+          assert.are_equal(mock_pc_fighter, fm.fighters[1])
+          assert.are_equal(mock_npc_fighter, fm.fighters[2])
+        end)
 
-      setup(function ()
-        stub(character, "register_speaker")
-      end)
+        it('should register speakers for generated pc and npc in dialogue manager', function ()
+          fm:spawn_fighters(mock_pc_fighter_prog, mock_npc_fighter_prog)
 
-      teardown(function ()
-        character.register_speaker:revert()
-      end)
+          local s = assert.spy(character.register_speaker)
+          s.was_called(2)
+          s.was_called_with(match.ref(mock_pc_character), match.ref(dm))
+          s.was_called_with(match.ref(mock_npc_character), match.ref(dm))
+        end)
 
-      after_each(function ()
-        character.register_speaker:clear()
       end)
 
       describe('generate_pc_fighter', function ()
 
-        local mock_pc_fighter_prog = fighter_progression(character_types.human, fighter_info(99, 99, 12, 8, {}, {}, {}))
-
         it('should return a pc fighter with pc info', function ()
           local pc_fighter = fm:generate_pc_fighter(mock_pc_fighter_prog)
 
-          assert.are_same(character(gameplay_data.pc_info, horizontal_dirs.right, visual_data.pc_sprite_pos), pc_fighter.character)
+          assert.are_equal(mock_pc_character, pc_fighter.character)
           assert.are_equal(mock_pc_fighter_prog, pc_fighter.fighter_progression)
-          assert.are_same({mock_pc_fighter_prog.max_hp, nil}, {pc_fighter.hp, pc_fighter.last_quote})
-
-        end)
-
-        it('should register speaker for the created pc', function ()
-          local pc_fighter = fm:generate_pc_fighter(mock_pc_fighter_prog)
-
-          local s = assert.spy(character.register_speaker)
-          s.was_called(1)
-          s.was_called_with(match.ref(pc_fighter.character), match.ref(dm))
         end)
 
       end)
 
       describe('generate_npc_fighter', function ()
 
-        local mock_npc_fighter_prog = fighter_progression(character_types.ai, fighter_info(10, 2, 3, 3, {6, 7}, {}, {}))
-
         it('should return a npc fighter with pc info', function ()
+          am.npc = mock_npc_character
+
           local npc_fighter = fm:generate_npc_fighter(mock_npc_fighter_prog)
 
-          assert.are_same(character(gameplay_data.npc_info_s[2], horizontal_dirs.left, visual_data.npc_sprite_pos), npc_fighter.character)
+          assert.are_equal(mock_npc_character, npc_fighter.character)
           assert.are_equal(mock_npc_fighter_prog, npc_fighter.fighter_progression)
-          assert.are_same({mock_npc_fighter_prog.max_hp, nil}, {npc_fighter.hp, npc_fighter.last_quote})
-        end)
-
-        it('should register speaker for the created npc', function ()
-          local npc_fighter = fm:generate_npc_fighter(mock_npc_fighter_prog)
-
-          local s = assert.spy(character.register_speaker)
-          s.was_called(1)
-          s.was_called_with(match.ref(npc_fighter.character), match.ref(dm))
         end)
 
       end)
 
-    end)
+      describe('despawn_fighters', function ()
+
+        setup(function ()
+          stub(character, "unregister_speaker")
+        end)
+
+        teardown(function ()
+          character.unregister_speaker:revert()
+        end)
+
+        before_each(function ()
+          fm.fighters = {mock_pc_fighter, mock_npc_fighter}
+        end)
+
+        after_each(function ()
+          character.unregister_speaker:clear()
+        end)
+
+        it('should clear fighter table', function ()
+          fm:despawn_fighters()
+
+          assert.are_equal(0, #fm.fighters)
+        end)
+
+        it('should unregister speakers for pc and npc in dialogue manager', function ()
+          fm:despawn_fighters(mock_pc_fighter_prog, mock_npc_fighter_prog)
+
+          local s = assert.spy(character.unregister_speaker)
+          s.was_called(2)
+          s.was_called_with(mock_pc_character, match.ref(dm))
+          s.was_called_with(mock_npc_character, match.ref(dm))
+        end)
+
+      end)
+
+    end)  -- (mock pc and npc info/character/fighter/prog)
 
     describe('request_active_fighter_action', function ()
 
@@ -585,9 +562,11 @@ describe('fight_manager', function ()
       -- it's not necessary to have a real fighter, we could also just make a table
       --   but would have to stub in before_each (not setup) on the specific mock table
       --   rather than the fighter class
+      local mock_human_character_info = character_info(0, "pc", 0)
       local mock_human_fighter_info = fighter_info(0, 0, 1, 3, {}, {}, {})
 
-      local mock_human_fighter_progression
+      local mock_human_character
+      local mock_human_fighter
       local mock_human_fighter
 
         -- set character_type just to pass the assertions
@@ -622,8 +601,11 @@ describe('fight_manager', function ()
       end)
 
       before_each(function ()
+        -- mock character doesn't exist
+
+        mock_human_character = character(mock_human_character_info, horizontal_dirs.right, visual_data.pc_sprite_pos)
         mock_human_fighter_progression = fighter_progression(character_types.human, mock_human_fighter_info)
-        mock_human_fighter = fighter(mock_character, mock_human_fighter_progression)
+        mock_human_fighter = fighter(mock_human_character, mock_human_fighter_progression)
 
         -- just to pass the assertions
         fm.active_fighter_index = 1
@@ -839,21 +821,7 @@ describe('fight_manager', function ()
 
     describe('draw_fighters', function ()
 
-      local mock_fighter_info = fighter_info(7, "employee", 4, {11, 27})
-
-      it('should not error', function ()
-        assert.has_no_errors(function ()
-          fm:draw_fighters()
-        end)
-      end)
-
-      it('should not error with npc info set', function ()
-        fm.fighter_info = mock_fighter_info
-
-        assert.has_no_errors(function ()
-          fm:draw_fighters()
-        end)
-      end)
+      -- todo
 
     end)
 
