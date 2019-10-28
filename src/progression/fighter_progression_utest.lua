@@ -34,13 +34,11 @@ describe('fighter_progression', function ()
           f_progression.received_reply_id_count_persistent_map
         })
       assert.are_equal(mock_fighter_info, f_progression.fighter_info)
-      assert.are_equal(gameplay_data.npc_info_s[4], f_progression.character_info)
     end)
 
     it('should init a fighter_progression with pc_info for a pc', function ()
       local mock_fighter_info = fighter_info(0, 0, 2, 5, {11, 27}, {12, 28}, {2, 4})
       local f_progression = fighter_progression(character_types.human, mock_fighter_info)
-      assert.are_equal(gameplay_data.pc_info, f_progression.character_info)
     end)
 
   end)

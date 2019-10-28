@@ -35,13 +35,6 @@ function fighter_progression:_init(character_type, some_fighter_info)
   self.character_type = character_type
   self.fighter_info = some_fighter_info
 
-  if character_type == character_types.human then
-    self.character_info = gameplay_data.pc_info
-  else
-    self.character_info = gameplay_data.npc_info_s[some_fighter_info.character_info_id]
-    assert(self.character_info, "no character_info found for id: "..some_fighter_info.character_info_id)
-  end
-
   -- State
   self.level = some_fighter_info.initial_level
   self.max_hp = some_fighter_info.initial_max_hp
@@ -55,7 +48,16 @@ end
 
 --#if log
 function fighter_progression:get_name()
-  return self.character_info.name
+  local character_info
+
+  if character_type == character_types.human then
+    character_info = gameplay_data.pc_info
+  else
+    character_info = gameplay_data.npc_info_s[self.fighter_info.character_info_id]
+    assert(character_info, "no character_info found for id: "..self.fighter_info.character_info_id)
+  end
+
+  return character_info.name
 end
 --#endif
 
