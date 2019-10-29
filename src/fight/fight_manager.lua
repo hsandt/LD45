@@ -118,10 +118,6 @@ function fight_manager:spawn_fighters(pc_fighter_prog, npc_fighter_prog)
   local npc_fighter = self:generate_npc_fighter(npc_fighter_prog)
   self.fighters = {pc_fighter, npc_fighter}
 
-  for some_fighter in all(self.fighters) do
-    some_fighter.character:register_speaker(dm)
-  end
-
   log("loaded fighters: "..pc_fighter:get_name().." vs "..npc_fighter:get_name(), "itest")
 end
 
@@ -131,7 +127,16 @@ end
 function fight_manager:generate_pc_fighter(pc_fighter_prog)
   local am = self.app.managers[':adventure']
 
-  -- attach fighter to pre-existing character in adventure manager
+  -- usually the pc has been spawned in the previous adventure state,
+  --   but it may not have been (e.g. in debug when starting a fight immediately),
+  --   so lazily spawn character if needed
+  if not am.pc then
+    am:spawn_pc()
+  end
+
+  -- attach fighter to pre-existing (or lazily created) character in adventure manager
+  -- do not register fighter character speaker, let adventure manager
+  --   handle that when character arrives in the adventure state
   local pc_fighter = fighter(am.pc, pc_fighter_prog)
   return pc_fighter
 end
@@ -142,17 +147,23 @@ end
 function fight_manager:generate_npc_fighter(npc_fighter_prog)
   local am = self.app.managers[':adventure']
 
-  -- attach fighter to pre-existing character in adventure manager
+  -- usually the npc has been spawned in the previous adventure state,
+  --   but it may not have been (e.g. in debug when starting a fight immediately),
+  --   so lazily spawn character if needed
+  if not am.npc then
+    am:spawn_npc(npc_fighter_prog.fighter_info.character_info_id)
+  end
+
+  -- attach fighter to pre-existing (or lazily created) npc in adventure manager
+  -- do not register fighter character speaker, let adventure manager
+  --   handle that when character arrives in the adventure state
   local npc_fighter = fighter(am.npc, npc_fighter_prog)
   return npc_fighter
 end
 
 function fight_manager:despawn_fighters()
-  local dm = self.app.managers[':dialogue']
-
-  for some_fighter in all(self.fighters) do
-    some_fighter.character:unregister_speaker(dm)
-  end
+  -- do not unregister fighter character speakers, let adventure manager
+  --   handle that when character leaves in the adventure state
 
   clear_table(self.fighters)
 end
