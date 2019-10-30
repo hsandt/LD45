@@ -235,9 +235,40 @@ function fight_manager:request_ai_fighter_action(ai_fighter)
     add(available_quote_ids, -1)
   end
 
-  local random_quote_id = pick_random(available_quote_ids)
-  local random_quote = gameplay_data:get_quote(quote_type, random_quote_id)
-  self.app:wait_and_do(visual_data.ai_say_quote_delay, self.say_quote, self, ai_fighter, random_quote)
+  local quote = nil
+
+  if quote_type == quote_types.attack then
+    -- for attack, ai picks random one among available (sequence is never empty here)
+    local random_quote_id = pick_random(available_quote_ids)
+    quote = gameplay_data:get_quote(quote_type, random_quote_id)
+  else  -- quote_type == quote_types.reply
+    local attack = self:get_active_fighter_opponent().last_quote
+    assert(attack)
+
+    -- for replies, ai picks matching one if possible
+    -- v1: just pick first working match, ignoring power
+    for quote_match_id in all(ai_fighter.fighter_progression.known_quote_match_ids) do
+      local quote_match = gameplay_data.quote_matches[quote_match_id]
+      if quote_match.attack_id == attack.id then
+--#if assert
+        assert(contains(available_quote_ids, quote_match.reply_id),
+          "'"..ai_fighter:get_name().."' knows quote match "..quote_match..
+          " but not reply "..quote_match.reply_id.." itself")
+--#endif
+        quote = gameplay_data:get_quote(quote_types.reply, quote_match.reply_id)
+        log("fighter '"..ai_fighter:get_name().."' found matching reply: "..quote_match.reply_id, 'itest')
+      end
+    end
+
+    if not quote then
+      -- no matching quote found; pick a random reply instead
+      -- remember we added a dummy quote above if needed, so sequence is never empty
+      local random_quote_id = pick_random(available_quote_ids)
+      quote = gameplay_data:get_quote(quote_type, random_quote_id)
+    end
+  end
+
+  self.app:wait_and_do(visual_data.ai_say_quote_delay, self.say_quote, self, ai_fighter, quote)
 end
 
 function fight_manager:say_quote(active_fighter, quote)
@@ -245,7 +276,7 @@ function fight_manager:say_quote(active_fighter, quote)
 
   -- don't wait for input, since either the quote menu (pc replying), the auto play (npc replying),
   --   or the quote match resolution (if saying a reply) will hide that text eventually
-  log('fighter "'..active_fighter:get_name()..'" says: "'..quote.text..'"', "itest")
+  log("fighter '"..active_fighter:get_name().."' "..(is_attacking and "attacks" or "replies")..": \""..quote.text.."\"", "itest")
   active_fighter:say_quote(quote)  -- will set its last_quote
 
   if is_attacking then
