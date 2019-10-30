@@ -73,8 +73,10 @@ if [[ $config == 'debug' ]]; then
   # symbols='assert,log,visual_logger,tuner,profiler,mouse'
   # lighter config
   symbols='assert,log'
-elif [[ $config == 'ultrafast' ]]; then
+elif [[ $config == 'debug-ultrafast' ]]; then
   symbols='assert,log,ultrafast'
+elif [[ $config == 'ultrafast' ]]; then
+  symbols='ultrafast'
 fi
 
 # Build from main

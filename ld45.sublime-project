@@ -34,6 +34,10 @@
 			"variants":
 			[
 				{
+					"name": "debug-ultrafast",
+					"cmd": ["./build_game.sh debug-ultrafast"]
+				},
+				{
 					"name": "ultrafast",
 					"cmd": ["./build_game.sh ultrafast"]
 				},
@@ -61,6 +65,10 @@
 			"variants":
 			[
 				{
+					"name": "debug-ultrafast",
+					"cmd": ["./build_game.sh debug-ultrafast && (./pico-boots/scripts/reload.sh || ./run_game.sh debug-ultrafast)"]
+				},
+				{
 					"name": "ultrafast",
 					"cmd": ["./build_game.sh ultrafast && (./pico-boots/scripts/reload.sh || ./run_game.sh ultrafast)"]
 				},
@@ -86,6 +94,10 @@
 			"syntax": "Packages/Python/Python.sublime-syntax",
 			"variants":
 			[
+				{
+					"name": "debug-ultrafast",
+					"cmd": ["./run_game.sh debug-ultrafast"]
+				},
 				{
 					"name": "ultrafast",
 					"cmd": ["./run_game.sh ultrafast"]
