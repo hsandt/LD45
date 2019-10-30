@@ -43,7 +43,6 @@ function adventure_manager:render()  -- override
 end
 
 function adventure_manager:spawn_pc()
-  printh("spawn_pc")
   local dm = self.app.managers[':dialogue']
 
   self.pc = character(gameplay_data.pc_info, horizontal_dirs.right, visual_data.pc_sprite_pos)
@@ -51,7 +50,6 @@ function adventure_manager:spawn_pc()
 end
 
 function adventure_manager:spawn_npc(npc_id)
-  printh("spawn_npc: "..npc_id)
   local dm = self.app.managers[':dialogue']
 
   local npc_info = gameplay_data.npc_info_s[npc_id]
@@ -60,7 +58,6 @@ function adventure_manager:spawn_npc(npc_id)
 end
 
 function adventure_manager:despawn_pc()
-  printh("despawn_pc")
   assert(self.pc)
 
   local dm = self.app.managers[':dialogue']
@@ -70,7 +67,6 @@ function adventure_manager:despawn_pc()
 end
 
 function adventure_manager:despawn_npc()
-  printh("despawn_npc")
   assert(self.npc)
 
   local dm = self.app.managers[':dialogue']

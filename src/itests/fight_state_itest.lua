@@ -24,10 +24,6 @@ itest_manager:register_itest('1st fight -> back to adv',
     local am = app.managers[':adventure']
     local fm = app.managers[':fight']
 
-    -- just to avoid assert on despawn_npc, invent some npc you have supposedly
-    --   spawned just before to show him during the adventure
-    am:spawn_npc(2)
-
     -- fight rossmann
     fm.next_opponent = app.game_session.npc_fighter_progressions[13]
 

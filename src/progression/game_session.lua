@@ -8,9 +8,15 @@ local game_session = new_class()
 function game_session:_init()
   -- current floor number the player character is located at
   self.floor_number = gameplay_data.initial_floor
+  -- number of fights already finished (used for tutorial steps)
+  self.fight_count = 0
 
   self.pc_fighter_progression = fighter_progression(character_types.human, gameplay_data.pc_fighter_info)
   self.npc_fighter_progressions = game_session.generate_npc_fighter_progressions()
+end
+
+function game_session:increment_fight_count()
+  self.fight_count = min(self.fight_count + 1, 100)
 end
 
 function game_session:get_all_npc_fighter_progressions_with_level(level)

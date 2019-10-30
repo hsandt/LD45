@@ -22,8 +22,7 @@ function adventure_state:on_enter()
   -- show bottom box immediately, otherwise we'll see that the lower stairs is not finished...
   dm.should_show_bottom_box = true
 
-  -- start next adventure step
-  self:start_step(am.next_step)
+  self:start_sequence()
 end
 
 function adventure_state:on_exit()
@@ -43,17 +42,55 @@ function adventure_state:render()
 
 end
 
-function adventure_state:start_step(next_step)
-  -- build async method name to start as coroutine
-  local play_method_name = '_play_'..next_step
-  assert(self[play_method_name], "adventure_state has no method named: "..play_method_name)
-  self.app:start_coroutine(self[play_method_name], self)
+function adventure_state:start_sequence()
+  self.app:start_coroutine(self._async_sequence, self)
 end
 
--- step methods: they all start with '_play_'
+function adventure_state:_async_sequence()
+  local am = self.app.managers[':adventure']
+
+  -- tutorial if any
+  local play_method_name = '_async_tutorial'..self.app.game_session.fight_count
+  if self[play_method_name] then
+    self[play_method_name](self)
+  end
+
+  -- next step
+  local play_method_name = '_async_'..am.next_step
+  assert(self[play_method_name], "adventure_state has no method named: "..play_method_name)
+  self[play_method_name](self)
+end
+
+-- tutorial methods: they all start with '_async_tutorial'
+--   and we add a suffix equal to the fight count (so we may skip some values)
+
+function adventure_state:_async_tutorial1()
+  printh("tuto1")
+  local am = self.app.managers[':adventure']
+  local dm = self.app.managers[':dialogue']
+  local fm = self.app.managers[':fight']
+  local pc_speaker = am.pc.speaker
+
+  self.app:yield_delay_s(1)
+  pc_speaker:say_and_wait_for_input("ok, that was harsh.")
+  pc_speaker:say_and_wait_for_input("i should write down the attacks i've just received so i can reuse them")
+  pc_speaker:say_and_wait_for_input("an attack may lose its effect once said, so i shouldn't reuse the same twice in the same fight")
+  pc_speaker:say_and_wait_for_input("ok, i'm done.")
+  self.app:yield_delay_s(1)
+end
+
+function adventure_state:_async_tutorial2()
+  printh("tuto2")
+end
+
+function adventure_state:_async_tutorial3()
+  printh("tuto3")
+end
+
+-- step methods: they all start with '_async_'
 --   and we add a suffix equal to a next_step name
 
-function adventure_state:_play_intro()
+function adventure_state:_async_intro()
   local am = self.app.managers[':adventure']
   local dm = self.app.managers[':dialogue']
   local fm = self.app.managers[':fight']
@@ -97,42 +134,44 @@ function adventure_state:_play_intro()
 end
 
 -- floor loop: must be played after at least 1 fight
-function adventure_state:_play_floor_loop()
+function adventure_state:_async_floor_loop()
   local am = self.app.managers[':adventure']
   local fm = self.app.managers[':fight']
   local pc_speaker = am.pc.speaker
 
   -- plug special events after losing/winning vs npc (by id)
-  assert(fm.next_opponent)
-  local after_fight_method_name = '_after_fight_with_npc'..fm.next_opponent.fighter_info.id
-  if self[after_fight_method_name] then
-    self[after_fight_method_name](self)
+  -- only done if there was actually a fight with an opponent before
+  if fm.next_opponent then
+    local after_fight_method_name = '_after_fight_with_npc'..fm.next_opponent.fighter_info.id
+    if self[after_fight_method_name] then
+      self[after_fight_method_name](self)
+    end
+
+    -- check if player lost or won previous fight
+    local floor_number = self.app.game_session.floor_number
+    if self.app.managers[':fight'].won_last_fight then
+      pc_speaker:say_and_wait_for_input("fine, let's go to the next floor now.")
+      self.app:yield_delay_s(1)
+
+      -- player won, allow access to next floor
+      -- for now, auto go up 1 floor
+      self.app.game_session.floor_number = min(floor_number + 1, 10)
+      log("go to next floor: "..self.app.game_session.floor_number, "flow")
+    else
+      pc_speaker:say_and_wait_for_input("guess after my loss, i should go down one floor now.")
+      self.app:yield_delay_s(1)
+
+      -- player lost, prevent access to next floor
+      -- for now, auto go down 1 floor
+      self.app.game_session.floor_number = max(1, floor_number - 1)
+      log("go to previous floor: "..self.app.game_session.floor_number, "flow")
+    end
+
+    -- clean existing npc
+    am:despawn_npc()
+
+    self.app:yield_delay_s(0.5)
   end
-
-  -- check if player lost or won previous fight
-  local floor_number = self.app.game_session.floor_number
-  if self.app.managers[':fight'].won_last_fight then
-    pc_speaker:say_and_wait_for_input("great! i can go to the next floor")
-    self.app:yield_delay_s(1)
-
-    -- player won, allow access to next floor
-    -- for now, auto go up 1 floor
-    self.app.game_session.floor_number = min(floor_number + 1, 10)
-    log("go to next floor: "..self.app.game_session.floor_number, "flow")
-  else
-    pc_speaker:say_and_wait_for_input("ah, too bad. i should go down one floor.")
-    self.app:yield_delay_s(1)
-
-    -- player lost, prevent access to next floor
-    -- for now, auto go down 1 floor
-    self.app.game_session.floor_number = max(1, floor_number - 1)
-    log("go to previous floor: "..self.app.game_session.floor_number, "flow")
-  end
-
-  -- clean existing npc
-  am:despawn_npc()
-
-  self.app:yield_delay_s(1)
 
   pc_speaker:say_and_wait_for_input("someone is coming!")
   self.app:yield_delay_s(0.5)

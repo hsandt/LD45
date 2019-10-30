@@ -103,10 +103,15 @@ function fight_manager:start_fight_with(opponent_fighter_prog)
 end
 
 function fight_manager:stop_fight()
+  -- learning
   for some_fighter in all(self.fighters) do
     some_fighter:update_learned_quotes()
   end
 
+  -- update count
+  self.app.game_session:increment_fight_count()
+
+  -- cleanup
   self.active_fighter_index = 0
   self:despawn_fighters()
 end

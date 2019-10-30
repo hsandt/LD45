@@ -25,11 +25,29 @@ describe('game_session', function ()
 
     it('should init a game_session', function ()
       local gs = game_session()
-      assert.are_equal(gameplay_data.initial_floor, gs.floor_number)
+      assert.are_same({gameplay_data.initial_floor, 0}, {gs.floor_number, gs.fight_count})
       assert.are_same(fighter_progression(character_types.human, gameplay_data.pc_fighter_info), gs.pc_fighter_progression)
       assert.are_equal(fake_npc_fighter_prog1, gs.npc_fighter_progressions[1])
       assert.are_equal(fake_npc_fighter_prog2, gs.npc_fighter_progressions[2])
     end)
+  end)
+
+  describe('increment_fight_count', function ()
+
+    it('should increment the fight count', function ()
+      local gs = game_session()
+      gs.fight_count = 5
+      gs:increment_fight_count()
+      assert.are_equal(6, gs.fight_count)
+    end)
+
+    it('should clamp at 100', function ()
+      local gs = game_session()
+      gs.fight_count = 100
+      gs:increment_fight_count()
+      assert.are_equal(100, gs.fight_count)
+    end)
+
   end)
 
   describe('get_all_npc_fighter_progressions_with_level', function ()
