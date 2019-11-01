@@ -37,6 +37,9 @@ end
 --   while PICO-8 will automatically randomize the seed on start)
 -- ! since itests won't give the same results every time, if you want a specific result,
 --   you need to force setup some variables (like the next opponent) in your specific itest
-srand(os.time())
+local random_seed = os.time()
+-- local random_seed = 9  -- vs junior marketing, junior programmer learning match 6 -> 5 before reply 5
+print("[headless itest] setting random seed to: "..random_seed)
+srand(random_seed)
 
 create_describe_headless_itests_callback(app, should_render, describe, setup, teardown, before_each, after_each, it, assert)
