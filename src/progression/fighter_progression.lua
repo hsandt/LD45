@@ -121,6 +121,9 @@ function fighter_progression:try_learn_quote_match(id)
 
   if not contains(self.known_quote_match_ids, id) then
     add(self.known_quote_match_ids, id)
+--#if log
+    log("fighter '"..self:get_name().."' learns "..gameplay_data.quote_matches[id], "itest")
+--#endif
   end
 end
 

@@ -123,7 +123,7 @@ function fight_manager:spawn_fighters(pc_fighter_prog, npc_fighter_prog)
   local npc_fighter = self:generate_npc_fighter(npc_fighter_prog)
   self.fighters = {pc_fighter, npc_fighter}
 
-  log("loaded fighters: "..pc_fighter:get_name().." vs "..npc_fighter:get_name(), "itest")
+  log("loaded fighters: "..pc_fighter:get_name().." vs "..npc_fighter:get_name(), 'itest')
 end
 
 -- pc_fighter_prog: fighter_progression
@@ -250,13 +250,16 @@ function fight_manager:request_ai_fighter_action(ai_fighter)
     for quote_match_id in all(ai_fighter.fighter_progression.known_quote_match_ids) do
       local quote_match = gameplay_data.quote_matches[quote_match_id]
       if quote_match.attack_id == attack.id then
---#if assert
-        assert(contains(available_quote_ids, quote_match.reply_id),
-          "'"..ai_fighter:get_name().."' knows quote match "..quote_match..
-          " but not reply "..quote_match.reply_id.." itself")
---#endif
-        quote = gameplay_data:get_quote(quote_types.reply, quote_match.reply_id)
-        log("fighter '"..ai_fighter:get_name().."' found matching reply: "..quote_match.reply_id, 'itest')
+        -- AI found a match, but it must also know the reply itself (it may be still in learning phase)
+        if contains(available_quote_ids, quote_match.reply_id) then
+          quote = gameplay_data:get_quote(quote_types.reply, quote_match.reply_id)
+          log("fighter \""..ai_fighter:get_name().."\" found matching reply ("..quote_match.reply_id..")", 'itest')
+        else
+--#if log
+          log("fighter \""..ai_fighter:get_name().."\" knowns about matching reply "..quote_match.reply_id..
+            " \""..gameplay_data:get_quote(quote_types.reply, quote_match.reply_id).text.."\" but hasn't finished learning it", 'itest')
+--#endif_pattern.match
+        end
       end
     end
 
@@ -265,6 +268,7 @@ function fight_manager:request_ai_fighter_action(ai_fighter)
       -- remember we added a dummy quote above if needed, so sequence is never empty
       local random_quote_id = pick_random(available_quote_ids)
       quote = gameplay_data:get_quote(quote_type, random_quote_id)
+      log("fighter \""..ai_fighter:get_name().."\" picks randomly ("..quote.id..")", 'itest')
     end
   end
 
@@ -276,7 +280,7 @@ function fight_manager:say_quote(active_fighter, quote)
 
   -- don't wait for input, since either the quote menu (pc replying), the auto play (npc replying),
   --   or the quote match resolution (if saying a reply) will hide that text eventually
-  log("fighter '"..active_fighter:get_name().."' "..(is_attacking and "attacks" or "replies")..": \""..quote.text.."\"", "itest")
+  log("fighter '"..active_fighter:get_name().."' "..(is_attacking and "attacks" or "replies")..": ("..quote.id..") \""..quote.text.."\"", 'itest')
   active_fighter:say_quote(quote)  -- will set its last_quote
 
   if is_attacking then
@@ -332,7 +336,8 @@ function fight_manager:resolve_exchange(attacker, replier)
     -- don't use the reply level, but the match power to determine how good the counter is
     self:hit_fighter(attacker, quote_match.power)
 
-    -- learning: remember quote match (except cancel which automatically
+    -- learning: both fighters witness quote match and can remember it
+    --   (except cancel which automatically
     --   becomes available when cancel reply is learned)
     -- we check for directly inequality with cancel quote match, and not
     --   replier_quote.id > 0 (which wouldn't work for extra cancel replies we add later)
@@ -340,7 +345,8 @@ function fight_manager:resolve_exchange(attacker, replier)
     --   quote_match.power > 0 (which would prevent learning normal replies which happen
     --     to be just good enough not to be hit on certain attacks only)
     if quote_match ~= gameplay_data.cancel_quote_match then
-      self:get_active_fighter_opponent():on_witness_quote_match(quote_match)
+      attacker:on_witness_quote_match(quote_match)
+      replier:on_witness_quote_match(quote_match)
     end
   else
     -- reply failed, just use the attack level directly to deal damage
@@ -385,10 +391,10 @@ end
 
 function fight_manager:start_victory(some_fighter)
   if some_fighter.fighter_progression.character_type == character_types.human then
-    log("player wins", "itest")
+    log("player wins", 'itest')
     self.won_last_fight = true
   else  -- some_fighter.fighter_progression.character_type == character_types.ai
-    log("ai wins", "itest")
+    log("ai wins", 'itest')
     self.won_last_fight = false
   end
 
