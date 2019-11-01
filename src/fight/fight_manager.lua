@@ -286,7 +286,7 @@ function fight_manager:say_quote(active_fighter, quote)
       self.app:wait_and_do(visual_data.resolve_losing_attack_delay,
         self.resolve_losing_attack, self, active_fighter, self:get_active_fighter_opponent())
     else
-      -- replier receives quote and may remember it for later
+      -- learning: replier receives quote and may remember it for later
       self:get_active_fighter_opponent():on_receive_quote(quote)
 
       -- normal quote was said
@@ -294,7 +294,7 @@ function fight_manager:say_quote(active_fighter, quote)
         self.request_next_fighter_action, self)
     end
   else  -- not is_attacking
-    -- attacker receives quote and may remember it for later
+    -- learning: attacker receives quote and may remember it for later
     self:get_active_fighter_opponent():on_receive_quote(quote)
 
     -- last quote of opponent should be attack, and active fighter has replied
@@ -323,12 +323,25 @@ function fight_manager:resolve_exchange(attacker, replier)
   assert(attacker_quote.type == quote_types.attack)
   assert(replier_quote.type == quote_types.reply)
 
-  local match_power = gameplay_data:get_quote_match_power(attacker_quote, replier_quote)
+  local quote_match = gameplay_data:get_quote_match(attacker_quote, replier_quote)
 
-  -- A match power of 0 is accepted to cancel an attack. -1, however, means the reply failed completely.
-  if match_power >= 0 then
+  -- cancel_quote_match is used to cancel an attack
+  -- a nil quote_match, however, means the reply failed completely
+  if quote_match then
+    -- reply worked
     -- don't use the reply level, but the match power to determine how good the counter is
-    self:hit_fighter(attacker, match_power)
+    self:hit_fighter(attacker, quote_match.power)
+
+    -- learning: remember quote match (except cancel which automatically
+    --   becomes available when cancel reply is learned)
+    -- we check for directly inequality with cancel quote match, and not
+    --   replier_quote.id > 0 (which wouldn't work for extra cancel replies we add later)
+    -- nor
+    --   quote_match.power > 0 (which would prevent learning normal replies which happen
+    --     to be just good enough not to be hit on certain attacks only)
+    if quote_match ~= gameplay_data.cancel_quote_match then
+      self:get_active_fighter_opponent():on_witness_quote_match(quote_match)
+    end
   else
     -- reply failed, just use the attack level directly to deal damage
     self:hit_fighter(replier, attacker_quote.level)

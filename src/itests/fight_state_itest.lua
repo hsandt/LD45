@@ -66,7 +66,7 @@ itest_manager:register_itest('1st fight -> back to adv',
 
 end)
 
-itest_manager:register_itest('#solo intermediate fight -> back to adv',
+itest_manager:register_itest('intermediate fight -> back to adv',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
     -- but without gamestate_proxy, not used
     {':fight'}, function ()

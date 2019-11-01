@@ -163,7 +163,7 @@ describe('fighter_progression', function ()
 
     describe('check_learn_quote', function ()
 
-      it('should not learn any quote staying below the required count threshold (quote of same level)', function ()
+      it('should not learn any quote staying below the required count threshold (attack of same level)', function ()
         -- quote 7 is of level 2, mock fighter has level 2
         -- so the threshold is exactly the base threshold
         -- which is gameplay_data.base_learning_repetition_threshold = 2
@@ -179,7 +179,7 @@ describe('fighter_progression', function ()
         assert.are_same({11, 27}, f_progression.known_attack_ids)
       end)
 
-      it('should learn a quote just reaching the required count threshold (quote of same level)', function ()
+      it('should learn a quote just reaching the required count threshold (attack of same level)', function ()
         -- quote 7 is of level 2, mock fighter has level 2
         local added_count_map = {[7] = 1}  -- increase doesn't matter, only new count below does
         f_progression.received_attack_id_count_persistent_map = {[7] = 2}
@@ -189,7 +189,17 @@ describe('fighter_progression', function ()
         assert.are_same({11, 27, 7}, f_progression.known_attack_ids)
       end)
 
-      it('should learn a quote going above the required count threshold (quote of same level)', function ()
+      it('should learn a quote just reaching the required count threshold (reply of same level)', function ()
+        -- quote 7 is of level 2, mock fighter has level 2
+        local added_count_map = {[7] = 1}  -- increase doesn't matter, only new count below does
+        f_progression.received_reply_id_count_persistent_map = {[7] = 2}
+
+        f_progression:check_learn_quote(added_count_map, quote_types.reply)
+
+        assert.are_same({12, 28, 7}, f_progression.known_reply_ids)
+      end)
+
+      it('should learn a quote going above the required count threshold (attack of same level)', function ()
         -- quote 7 is of level 2, mock fighter has level 2
         local added_count_map = {[7] = 2}  -- increase doesn't matter, only new count below does
         f_progression.received_attack_id_count_persistent_map = {[7] = 3}
@@ -199,7 +209,7 @@ describe('fighter_progression', function ()
         assert.are_same({11, 27, 7}, f_progression.known_attack_ids)
       end)
 
-      it('should learn a quote just reaching the required count threshold (quote of lower level)', function ()
+      it('should learn a quote just reaching the required count threshold (attack of lower level)', function ()
         -- quote 1 is of level 1, mock fighter has level 2, so only 1 reception is needed
         local added_count_map = {[1] = 1}  -- increase doesn't matter, only new count below does
         f_progression.received_attack_id_count_persistent_map = {[1] = 1}
@@ -209,7 +219,7 @@ describe('fighter_progression', function ()
         assert.are_same({11, 27, 1}, f_progression.known_attack_ids)
       end)
 
-      it('should learn a quote going above the required count threshold (quote of lower level)', function ()
+      it('should learn a quote going above the required count threshold (attack of lower level)', function ()
         -- quote 1 is of level 1, mock fighter has level 2, so only 1 reception is needed
         local added_count_map = {[1] = 1}  -- increase doesn't matter, only new count below does
         f_progression.received_attack_id_count_persistent_map = {[1] = 2}
@@ -217,6 +227,24 @@ describe('fighter_progression', function ()
         f_progression:check_learn_quote(added_count_map, quote_types.attack)
 
         assert.are_same({11, 27, 1}, f_progression.known_attack_ids)
+      end)
+
+    end)
+
+    describe('try_learn_quote_match', function ()
+
+      it('should error if id <= 0 (like cancel quote)', function ()
+        assert.has_error(function ()
+          f_progression:try_learn_quote_match(0)
+        end)
+      end)
+
+      it('should add quote id if not already known', function ()
+        f_progression.known_quote_match_ids = {1, 2, 3}
+
+        f_progression:try_learn_quote_match(4)
+
+        assert.are_same({1, 2, 3, 4}, f_progression.known_quote_match_ids)
       end)
 
     end)

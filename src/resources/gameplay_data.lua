@@ -69,6 +69,7 @@ local replies = {
 -- see doc/quote_graph.dot edges
 -- (default penwidth for power 1, penwidth=22 for power 2, penwidth=34 for power 3)
 local quote_matches = {
+  -- id, attack_id, reply_id, power
   quote_match_info( 1,  1,  6, 1),
   quote_match_info( 2,  1,  7, 2),
   quote_match_info( 3,  2, 13, 2),
@@ -178,6 +179,7 @@ local gameplay_data = {
   attacks = attacks,
   replies = replies,
   quote_matches = quote_matches,
+  cancel_quote_match = quote_match_info(0, '*', 0, 0),  -- reply 0 cancels anything
   floors = floors,
   pc_info = pc_info,
   npc_info_s = npc_info_s,
@@ -209,27 +211,25 @@ function gameplay_data:get_quote(quote_type, id)
   end
 end
 
--- Return the quote match power for two quote info
---   - -1 if quotes are not matching at all
---   - otherwise the power of the existing quote_match_info
--- This allows us to distinguish an incorrect reply, and a cancelling
---   reply that would have a power of 0, just enough to avoid damage
---   while not dealing damage back either.
-function gameplay_data:get_quote_match_power(attack_info, reply_info)
+-- Return the quote match for two quote info
+--   - nil if quotes are not matching at all
+--   - cancel_quote_match if using the cancel reply
+--   - otherwise the existing quote_match_info
+function gameplay_data:get_quote_match(attack_info, reply_info)
   assert(attack_info.id >= 0, "a losing attack should be resolved immediately with resolve_losing_attack")
 
   if reply_info.id == 0 then
     -- cancel reply cancels any damage
-    return 0
+    return gameplay_data.cancel_quote_match
   end
 
   for quote_match in all(quote_matches) do
     if quote_match.attack_id == attack_info.id and quote_match.reply_id == reply_info.id then
-      return quote_match.power
+      return quote_match
     end
   end
 
-  return -1
+  return nil
 end
 
 function gameplay_data:get_floor_info(floor_number)

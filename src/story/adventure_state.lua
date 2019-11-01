@@ -65,7 +65,6 @@ end
 --   and we add a suffix equal to the fight count (so we may skip some values)
 
 function adventure_state:_async_tutorial1()
-  printh("tuto1")
   local am = self.app.managers[':adventure']
   local dm = self.app.managers[':dialogue']
   local fm = self.app.managers[':fight']

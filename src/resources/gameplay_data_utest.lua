@@ -21,24 +21,24 @@ describe('gameplay_data', function ()
 
   end)
 
-  describe('get_quote_match_power', function ()
+  describe('get_quote_match', function ()
 
-    it('should return 0 if using the cancel reply against anything', function ()
+    it('should return cancel_quote_match (power 0) if using the cancel reply against anything', function ()
       local attack = gameplay_data.attacks[8]
       local reply = gameplay_data.replies[0]
-      assert.are_equal(0, gameplay_data:get_quote_match_power(attack, reply))
+      assert.are_equal(gameplay_data.cancel_quote_match, gameplay_data:get_quote_match(attack, reply))
     end)
 
-    it('should return -1 if quotes are not matching', function ()
+    it('should return nil if quotes are not matching', function ()
       local attack = gameplay_data.attacks[8]
       local reply = gameplay_data.replies[10]
-      assert.are_equal(-1, gameplay_data:get_quote_match_power(attack, reply))
+      assert.is_nil(gameplay_data:get_quote_match(attack, reply))
     end)
 
     it('should return match power if quotes are matching', function ()
       local attack = gameplay_data.attacks[8]
       local reply = gameplay_data.replies[11]
-      assert.are_equal(2, gameplay_data:get_quote_match_power(attack, reply))
+      assert.are_equal(gameplay_data.quote_matches[17], gameplay_data:get_quote_match(attack, reply))
     end)
 
   end)

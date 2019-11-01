@@ -85,9 +85,9 @@ end
 
 function fighter:take_damage(damage)
   self.hp = self.hp - damage
-  log('fighter "'..self:get_name()..'" takes '..damage..' damage! => '..self.hp..' HP', "itest")
+  log("fighter '"..self:get_name().."' takes "..damage.." damage! => "..self.hp.." HP", "itest")
   if self.hp <= 0 then
-    log('fighter "'..self:get_name()..'" dies!', "itest")
+    log("fighter '"..self:get_name().."' dies!", "itest")
     self.hp = 0
   end
 end
@@ -116,7 +116,8 @@ function fighter:on_receive_quote(quote)
   end
 
   -- check if quote can be learned (must be new, and not losing quote;
-  --   cancel reply can be learned)
+  --   cancel reply can be learned, although logic is special, as AI cannot
+  --   learn the cancel quote match and will only use it in special circumstances)
   local can_learn = not contains(known_quote_ids, quote.id) and quote.id >= 0 and
     quote.level <= self.fighter_progression.level
   if can_learn then
@@ -129,6 +130,16 @@ function fighter:on_receive_quote(quote)
       received_quote_id_count_map[quote.id] = 1
     end
   end
+end
+
+function fighter:on_witness_quote_match(quote_match)
+  -- Upon witnessing a quote match (as attacker or replier),
+  --   fighter *immediately* learns the match.
+  -- This allows for reactive fights where known replies can be reused in
+  --   different ways, learning from your opponent.
+  -- By the way, soon, replies will also be learned immediately
+  --   so we can do that for new replies too.
+  self.fighter_progression:try_learn_quote_match(quote_match.id)
 end
 
 function fighter:update_learned_quotes()

@@ -43,7 +43,7 @@ describe('text_menu', function ()
     describe('show_items', function ()
 
       it('should error with empty items', function ()
-        assert.has_errors(function ()
+        assert.has_error(function ()
             menu.show_items({})
         end)
       end)

@@ -4,6 +4,7 @@ local fighter = require("fight/fighter")
 local character_info = require("content/character_info")
 local fighter_info = require("content/fighter_info")
 local quote_info = require("content/quote_info")  -- for quote_types
+local quote_match_info = require("content/quote_match_info")
 local speaker_component = require("dialogue/speaker_component")
 local fighter_progression = require("progression/fighter_progression")
 local character = require("story/character")
@@ -190,6 +191,26 @@ describe('fighter', function ()
       assert.are_same({[3] = 11}, f.received_reply_id_count_map)
     end)
 
+  end)
+
+  describe('on_witness_quote_match', function ()
+
+    setup(function ()
+      stub(fighter_progression, "try_learn_quote_match")
+    end)
+
+    teardown(function ()
+      fighter_progression.try_learn_quote_match:revert()
+    end)
+
+    it('should let fighter progression try to learn quote by id', function ()
+      f.fighter_progression.known_quote_match_ids = {3}
+      f:on_witness_quote_match(quote_match_info(11,  6,  3, 3))
+
+      local s = assert.spy(fighter_progression.try_learn_quote_match)
+      s.was_called(1)
+      s.was_called_with(match.ref(f.fighter_progression), 11)
+    end)
 
   end)
 
