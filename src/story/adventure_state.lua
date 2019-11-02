@@ -35,7 +35,7 @@ function adventure_state:on_exit()
 
   dm.should_show_bottom_box = false
 
-  music()
+  music(-1)
 end
 
 function adventure_state:update()
