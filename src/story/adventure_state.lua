@@ -22,6 +22,8 @@ function adventure_state:on_enter()
   -- show bottom box immediately, otherwise we'll see that the lower stairs is not finished...
   dm.should_show_bottom_box = true
 
+  music(0)
+
   self:start_sequence()
 end
 
@@ -32,6 +34,8 @@ function adventure_state:on_exit()
   am.active = false
 
   dm.should_show_bottom_box = false
+
+  music()
 end
 
 function adventure_state:update()
