@@ -70,6 +70,7 @@ end
 
 function fight_manager:pick_matching_random_npc_fighter_prog()
   local candidate_npc_fighter_prog_s = self:get_all_candidate_npc_fighter_prog(self.app.game_session.floor_number)
+  assert(#candidate_npc_fighter_prog_s > 0, "no candidate npc found at floor "..self.app.game_session.floor_number)
   return pick_random(candidate_npc_fighter_prog_s)
 end
 
@@ -178,7 +179,7 @@ function fight_manager:request_active_fighter_action()
 end
 
 function fight_manager:request_fighter_action(active_fighter)
-  if active_fighter.fighter_progression.character_type == character_types.human then
+  if active_fighter.fighter_progression.character_type == character_types.pc then
     self:request_human_fighter_action(active_fighter)
   else
     self:request_ai_fighter_action(active_fighter)
@@ -187,7 +188,7 @@ end
 
 function fight_manager:request_human_fighter_action(human_fighter)
   assert(self.fighters[self.active_fighter_index] == human_fighter)
-  assert(human_fighter.fighter_progression.character_type == character_types.human)
+  assert(human_fighter.fighter_progression.character_type == character_types.pc)
 
   local quote_type = self:is_active_fighter_attacking() and quote_types.attack or quote_types.reply
   local available_quote_ids = human_fighter:get_available_quote_ids(quote_type)
@@ -205,8 +206,16 @@ function fight_manager:request_human_fighter_action(human_fighter)
     end
   end
 
-  local items = self:generate_quote_menu_items(human_fighter, quote_type, available_quote_ids)
-  self.app.managers[':dialogue']:prompt_items(items)
+  -- for debugging, allow ai control over pc
+  if human_fighter.fighter_progression.control_type == control_types.human then
+    local items = self:generate_quote_menu_items(human_fighter, quote_type, available_quote_ids)
+    self.app.managers[':dialogue']:prompt_items(items)
+  else  -- control_types.ai
+    -- DEBUG
+    -- pick quote and say it automatically like an ai
+    local next_quote = self:auto_pick_quote(human_fighter, quote_type)
+    self.app:wait_and_do(visual_data.ai_say_quote_delay, self.say_quote, self, human_fighter, next_quote)
+  end
 end
 
 -- it's a bit weird to pass available_quote_ids whereas we could get them from human_fighter
@@ -225,7 +234,7 @@ end
 
 function fight_manager:request_ai_fighter_action(ai_fighter)
   assert(self.fighters[self.active_fighter_index] == ai_fighter)
-  assert(ai_fighter.fighter_progression.character_type == character_types.ai)
+  assert(ai_fighter.fighter_progression.character_type == character_types.npc)
 
   local quote_type = self:is_active_fighter_attacking() and quote_types.attack or quote_types.reply
   local available_quote_ids = ai_fighter:get_available_quote_ids(quote_type)
@@ -235,44 +244,20 @@ function fight_manager:request_ai_fighter_action(ai_fighter)
     add(available_quote_ids, -1)
   end
 
-  local quote = nil
+  -- npc always use ai control (we cannot plug human input into npc decisions currently)
+  local next_quote = self:auto_pick_quote(ai_fighter, quote_type)
 
+  self.app:wait_and_do(visual_data.ai_say_quote_delay, self.say_quote, self, ai_fighter, next_quote)
+end
+
+function fight_manager:auto_pick_quote(fighter, quote_type)
   if quote_type == quote_types.attack then
-    -- for attack, ai picks random one among available (sequence is never empty here)
-    local random_quote_id = pick_random(available_quote_ids)
-    quote = gameplay_data:get_quote(quote_type, random_quote_id)
+    return fighter:auto_pick_attack()
   else  -- quote_type == quote_types.reply
     local attack = self:get_active_fighter_opponent().last_quote
     assert(attack)
-
-    -- for replies, ai picks matching one if possible
-    -- v1: just pick first working match, ignoring power
-    for quote_match_id in all(ai_fighter.fighter_progression.known_quote_match_ids) do
-      local quote_match = gameplay_data.quote_matches[quote_match_id]
-      if quote_match.attack_id == attack.id then
-        -- AI found a match, but it must also know the reply itself (it may be still in learning phase)
-        if contains(available_quote_ids, quote_match.reply_id) then
-          quote = gameplay_data:get_quote(quote_types.reply, quote_match.reply_id)
-          log("fighter \""..ai_fighter:get_name().."\" found matching reply ("..quote_match.reply_id..")", 'itest')
-        else
---#if log
-          log("fighter \""..ai_fighter:get_name().."\" knowns about matching reply "..quote_match.reply_id..
-            " \""..gameplay_data:get_quote(quote_types.reply, quote_match.reply_id).text.."\" but hasn't finished learning it", 'itest')
---#endif_pattern.match
-        end
-      end
-    end
-
-    if not quote then
-      -- no matching quote found; pick a random reply instead
-      -- remember we added a dummy quote above if needed, so sequence is never empty
-      local random_quote_id = pick_random(available_quote_ids)
-      quote = gameplay_data:get_quote(quote_type, random_quote_id)
-      log("fighter \""..ai_fighter:get_name().."\" picks randomly ("..quote.id..")", 'itest')
-    end
+    return fighter:auto_pick_reply(attack.id)
   end
-
-  self.app:wait_and_do(visual_data.ai_say_quote_delay, self.say_quote, self, ai_fighter, quote)
 end
 
 function fight_manager:say_quote(active_fighter, quote)
@@ -390,10 +375,10 @@ function fight_manager:hit_fighter(some_fighter, damage)
 end
 
 function fight_manager:start_victory(some_fighter)
-  if some_fighter.fighter_progression.character_type == character_types.human then
+  if some_fighter.fighter_progression.character_type == character_types.pc then
     log("player wins", 'itest')
     self.won_last_fight = true
-  else  -- some_fighter.fighter_progression.character_type == character_types.ai
+  else  -- some_fighter.fighter_progression.character_type == character_types.npc
     log("ai wins", 'itest')
     self.won_last_fight = false
   end

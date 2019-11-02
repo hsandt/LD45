@@ -12,9 +12,10 @@ describe('fighter_progression', function ()
 
     it('should init a fighter_progression for an npc', function ()
       local mock_fighter_info = fighter_info(4, 4, 2, 5, {11, 27}, {12, 28}, {2, 4})
-      local f_progression = fighter_progression(character_types.ai, mock_fighter_info)
+      local f_progression = fighter_progression(character_types.npc, mock_fighter_info)
       assert.are_same({
-          character_types.ai,
+          character_types.npc,
+          control_types.ai,
           2,
           5,
           {11, 27},
@@ -25,6 +26,7 @@ describe('fighter_progression', function ()
         },
         {
           f_progression.character_type,
+          f_progression.control_type,
           f_progression.level,
           f_progression.max_hp,
           f_progression.known_attack_ids,
@@ -38,7 +40,30 @@ describe('fighter_progression', function ()
 
     it('should init a fighter_progression with pc_info for a pc', function ()
       local mock_fighter_info = fighter_info(0, 0, 2, 5, {11, 27}, {12, 28}, {2, 4})
-      local f_progression = fighter_progression(character_types.human, mock_fighter_info)
+      local f_progression = fighter_progression(character_types.pc, mock_fighter_info)
+      assert.are_same({
+          character_types.pc,
+          control_types.human,
+          2,
+          5,
+          {11, 27},
+          {12, 28},
+          {2, 4},
+          {},
+          {}
+        },
+        {
+          f_progression.character_type,
+          f_progression.control_type,
+          f_progression.level,
+          f_progression.max_hp,
+          f_progression.known_attack_ids,
+          f_progression.known_reply_ids,
+          f_progression.known_quote_match_ids,
+          f_progression.received_attack_id_count_persistent_map,
+          f_progression.received_reply_id_count_persistent_map
+        })
+      assert.are_equal(mock_fighter_info, f_progression.fighter_info)
     end)
 
   end)
@@ -52,8 +77,8 @@ describe('fighter_progression', function ()
     local f_progression
 
     before_each(function ()
-      pc_f_progression = fighter_progression(character_types.human, mock_pc_fighter_info)
-      f_progression = fighter_progression(character_types.ai, mock_fighter_info)
+      pc_f_progression = fighter_progression(character_types.pc, mock_pc_fighter_info)
+      f_progression = fighter_progression(character_types.npc, mock_fighter_info)
     end)
 
     describe('get_name', function ()

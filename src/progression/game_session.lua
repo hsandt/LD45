@@ -11,7 +11,7 @@ function game_session:_init()
   -- number of fights already finished (used for tutorial steps)
   self.fight_count = 0
 
-  self.pc_fighter_progression = fighter_progression(character_types.human, gameplay_data.pc_fighter_info)
+  self.pc_fighter_progression = fighter_progression(character_types.pc, gameplay_data.pc_fighter_info)
   self.npc_fighter_progressions = game_session.generate_npc_fighter_progressions()
 end
 
@@ -31,7 +31,7 @@ function game_session.generate_npc_fighter_progressions()
 
   -- generate one instance of npc per archetype
   for npc_fighter_info in all(gameplay_data.npc_fighter_info_s) do
-    add(npc_fighter_progressions, fighter_progression(character_types.ai, npc_fighter_info))
+    add(npc_fighter_progressions, fighter_progression(character_types.npc, npc_fighter_info))
   end
 
   return npc_fighter_progressions

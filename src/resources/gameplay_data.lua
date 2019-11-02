@@ -122,15 +122,16 @@ local quote_matches = {
 
 local floors = {
   floor_info( 1,  1,  1),
-  floor_info( 2,  1,  2),
-  floor_info( 3,  2,  2),
-  floor_info( 4,  2,  3),
-  floor_info( 5,  3,  3),
-  floor_info( 6,  3,  4),
-  floor_info( 7,  4,  4),
-  floor_info( 8,  4,  5),
-  floor_info( 9,  5,  5),
-  floor_info(10,  6,  6),
+  floor_info( 2,  1,  1),
+  floor_info( 3,  1,  2),
+  floor_info( 4,  1,  2),
+  floor_info( 5,  2,  2),
+  floor_info( 6,  2,  2),
+  floor_info( 7,  2,  3),
+  floor_info( 8,  2,  3),
+  floor_info( 9,  3,  3),
+  floor_info(10,  3,  3),
+  floor_info(11,  4,  4),
 }
 
 -- character story and visual info
@@ -149,6 +150,8 @@ local npc_info_s = {
   character_info(11, "senior qa", 11),
   character_info(12, "senior marketing", 12),
   character_info(13, "rossmann", 13),
+  character_info(14, "rival", 14),
+  character_info(15, "ceo", 15),
 }
 
 -- "start with nothing" -> no known quotes to start with
@@ -173,6 +176,9 @@ local npc_fighter_info_s = {
   fighter_info(12, 12, 3, 5, {1}, {}, {}),                     -- senior marketing
   fighter_info(13, 13, 2, 3, {1, 2, 5, 6}, {3, 7, 11, 13}, {2, 3, 11}), -- rossmann
   -- doesn't know match 13: 6 -> 11, but can learn it from pc later
+  fighter_info(14, 14, 1, 3, {}, {}, {}), -- rival
+  fighter_info(15, 15, 4, 8, {}, {}, {}), -- ceo
+  -- no quotes yet... I need to invent unique level 4 quotes for the boss
 }
 
 local gameplay_data = {

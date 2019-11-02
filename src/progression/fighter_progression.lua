@@ -4,6 +4,11 @@ require("engine/core/helper")
 local gameplay_data = require("resources/gameplay_data")
 
 character_types = enum {
+  'pc',
+  'npc'
+}
+
+control_types = enum {
   'human',
   'ai'
 }
@@ -14,7 +19,8 @@ local fighter_progression = new_class()
 
 --[[
 Parameters
-  character_type: character_types     is the fighter controlled by the player or some ai?
+  character_type: character_types     is the fighter representing a player or an npc?
+  control_type: control_types         is the fighter controlled by the player or some ai?
   fighter_info: fighter_info          fighter info this was created with
   character_info: character_info      cached reference to character info (derived from fighter_info)
 
@@ -33,6 +39,7 @@ State
 function fighter_progression:_init(character_type, some_fighter_info)
   -- Parameters
   self.character_type = character_type
+  self.control_type = character_type == character_types.pc and control_types.human or control_types.ai
   self.fighter_info = some_fighter_info
 
   -- State
@@ -50,7 +57,7 @@ end
 function fighter_progression:get_name()
   local character_info
 
-  if self.character_type == character_types.human then
+  if self.character_type == character_types.pc then
     character_info = gameplay_data.pc_info
   else
     character_info = gameplay_data.npc_info_s[self.fighter_info.character_info_id]

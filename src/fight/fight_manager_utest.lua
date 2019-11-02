@@ -215,7 +215,7 @@ describe('fight_manager', function ()
           if floor_number == 3 then
             return {{}, {}, fake_npc_fighter_prog}
           else
-            return {{}}
+            return {}
           end
         end)
         stub(_G, "random_int_range_exc", function (range)
@@ -231,6 +231,13 @@ describe('fight_manager', function ()
       it('should pick a random npc info among the possible npc levels at the current floor', function ()
         app.game_session.floor_number = 3
         assert.are_equal(fake_npc_fighter_prog, fm:pick_matching_random_npc_fighter_prog())
+      end)
+
+      it('should assert if no candidate npc found at the current floor', function ()
+        app.game_session.floor_number = 4
+        assert.has_error(function ()
+          fm:pick_matching_random_npc_fighter_prog()
+        end)
       end)
 
     end)
@@ -294,7 +301,7 @@ describe('fight_manager', function ()
 
     describe('start_fight_with', function ()
 
-      local mock_npc_fighter_prog = fighter_progression(character_types.ai, fighter_info(10, 2, 3, 3, {6, 7}, {}, {}))
+      local mock_npc_fighter_prog = fighter_progression(character_types.npc, fighter_info(10, 2, 3, 3, {6, 7}, {}, {}))
 
       setup(function ()
         stub(fight_manager, "spawn_fighters")
@@ -346,11 +353,11 @@ describe('fight_manager', function ()
 
       local mock_pc_character_info = character_info(0, "pc", 0)
       local mock_pc_fighter_info = fighter_info(0, 0, 1, 2, {}, {}, {})
-      local mock_pc_fighter_prog = fighter_progression(character_types.human, mock_pc_fighter_info)
+      local mock_pc_fighter_prog = fighter_progression(character_types.pc, mock_pc_fighter_info)
 
       local mock_npc_character_info = character_info(7, "npc", 7)
       local mock_npc_fighter_info = fighter_info(7, 7, 4, 5, {11, 27}, {12, 28}, {2, 4})
-      local mock_npc_fighter_prog = fighter_progression(character_types.ai, mock_npc_fighter_info)
+      local mock_npc_fighter_prog = fighter_progression(character_types.npc, mock_npc_fighter_info)
 
       local mock_pc_character
       local mock_npc_character
@@ -359,11 +366,11 @@ describe('fight_manager', function ()
 
       before_each(function ()
         mock_pc_character = character(mock_pc_character_info, horizontal_dirs.right, visual_data.pc_sprite_pos)
-        mock_pc_fighter_prog = fighter_progression(character_types.human, mock_pc_fighter_info)
+        mock_pc_fighter_prog = fighter_progression(character_types.pc, mock_pc_fighter_info)
         mock_pc_fighter = fighter(mock_pc_character, mock_pc_fighter_prog)
 
         mock_npc_character = character(mock_npc_character_info, horizontal_dirs.left, visual_data.npc_sprite_pos)
-        mock_npc_fighter_prog = fighter_progression(character_types.ai, mock_npc_fighter_info)
+        mock_npc_fighter_prog = fighter_progression(character_types.npc, mock_npc_fighter_info)
         mock_npc_fighter = fighter(mock_npc_character, mock_pc_fighter_prog)
       end)
 
@@ -585,7 +592,7 @@ describe('fight_manager', function ()
       end)
 
       it('should request action for human fighter if fighter is human', function ()
-        local fake_human_fighter = {fighter_progression = {character_type = character_types.human}}
+        local fake_human_fighter = {fighter_progression = {character_type = character_types.pc}}
         fm:request_fighter_action(fake_human_fighter)
 
         local s = assert.spy(fight_manager.request_human_fighter_action)
@@ -594,7 +601,7 @@ describe('fight_manager', function ()
       end)
 
       it('should request action for ai fighter if fighter is ai', function ()
-        local fake_ai_fighter = {fighter_progression = {character_type = character_types.ai}}
+        local fake_ai_fighter = {fighter_progression = {character_type = character_types.npc}}
         fm:request_fighter_action(fake_ai_fighter)
 
         local s = assert.spy(fight_manager.request_ai_fighter_action)
@@ -640,19 +647,31 @@ describe('fight_manager', function ()
           return fake_menu_items
         end)
         stub(dialogue_manager, "prompt_items")
+
+        stub(fight_manager, "auto_pick_quote", function (self, fighter, quote_type)
+          if quote_type == quote_types.attack then
+            return fake_attack_items[2]
+          else
+            return fake_reply_items[1]
+          end
+        end)
+        stub(wit_fighter_app, "wait_and_do")
       end)
 
       teardown(function ()
         fight_manager.is_active_fighter_attacking:revert()
         fight_manager.generate_quote_menu_items:revert()
         dialogue_manager.prompt_items:revert()
+
+        fight_manager.auto_pick_quote:revert()
+        wit_fighter_app.wait_and_do:revert()
       end)
 
       before_each(function ()
         -- mock character doesn't exist
 
         mock_human_character = character(mock_human_character_info, horizontal_dirs.right, visual_data.pc_sprite_pos)
-        mock_human_fighter_progression = fighter_progression(character_types.human, mock_human_fighter_info)
+        mock_human_fighter_progression = fighter_progression(character_types.pc, mock_human_fighter_info)
         mock_human_fighter = fighter(mock_human_character, mock_human_fighter_progression)
 
         -- just to pass the assertions
@@ -664,6 +683,9 @@ describe('fight_manager', function ()
         fight_manager.is_active_fighter_attacking:clear()
         fight_manager.generate_quote_menu_items:clear()
         dialogue_manager.prompt_items:clear()
+
+        fight_manager.auto_pick_quote:clear()
+        wit_fighter_app.wait_and_do:clear()
       end)
 
       describe('(when active fighter is attacking)', function ()
@@ -733,6 +755,28 @@ describe('fight_manager', function ()
             s.was_called_with(match.ref(dm), {"attack1", "attack2"})
           end)
 
+          describe('(when under ai control', function ()
+
+            before_each(function ()
+              mock_human_fighter.fighter_progression.control_type = control_types.ai
+            end)
+
+            it('should prompt generated attack items', function ()
+              fm:request_human_fighter_action(mock_human_fighter)
+
+              assert.spy(fight_manager.request_next_fighter_action).was_not_called()
+
+              local s = assert.spy(dialogue_manager.prompt_items)
+              s.was_not_called()
+
+              local s = assert.spy(wit_fighter_app.wait_and_do)
+              s.was_called(1)
+              s.was_called_with(match.ref(app), visual_data.ai_say_quote_delay, fight_manager.say_quote,
+                fm, mock_human_fighter, fake_attack_items[2])
+            end)
+
+          end)
+
         end)
 
       end)
@@ -793,6 +837,28 @@ describe('fight_manager', function ()
             local s = assert.spy(dialogue_manager.prompt_items)
             s.was_called(1)
             s.was_called_with(match.ref(dm), {"cancel reply", "reply1"})
+          end)
+
+          describe('(when under ai control', function ()
+
+            before_each(function ()
+              mock_human_fighter.fighter_progression.control_type = control_types.ai
+            end)
+
+            it('should prompt generated attack items', function ()
+              fm:request_human_fighter_action(mock_human_fighter)
+
+              assert.spy(fight_manager.request_next_fighter_action).was_not_called()
+
+              local s = assert.spy(dialogue_manager.prompt_items)
+              s.was_not_called()
+
+              local s = assert.spy(wit_fighter_app.wait_and_do)
+              s.was_called(1)
+              s.was_called_with(match.ref(app), visual_data.ai_say_quote_delay, fight_manager.say_quote,
+                fm, mock_human_fighter, fake_reply_items[1])
+            end)
+
           end)
 
         end)

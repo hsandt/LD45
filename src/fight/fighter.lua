@@ -2,6 +2,7 @@ require("engine/core/class")
 require("engine/core/math")
 local ui = require("engine/ui/ui")
 
+local gameplay_data = require("resources/gameplay_data")
 local visual_data = require("resources/visual_data")
 
 local fighter = new_class()
@@ -66,6 +67,74 @@ function fighter:get_available_quote_ids(quote_type)
   end
 end
 
+-- Return an attack quote following the policy:
+--   pick a random one from the available ids
+-- Humans can call this method so we can itest easily with AI controlling PC.
+-- AI fallback to losing attack if no attack is available
+--   but human should have skipped his turn on caller side,
+--   so assert if there are no attacks available for him
+function fighter:auto_pick_attack()
+  -- copy is not needed since even an added losing attack will be removed from the
+  --   available attacks after usage, but cleaner
+  local available_attack_ids = copy_seq(self:get_available_quote_ids(quote_types.attack))
+
+  if #available_attack_ids == 0 then
+--#if assert
+    assert(self.fighter_progression.character_type == character_types.npc, "only npc are forced to say losing attack when none is left. "..
+      "pc should skip their turn, so you should never call auto_pick_attack in that case, even in debug.")
+--#endif
+    -- ai has nothing to say, whether attack or reply, add losing attack
+    add(available_attack_ids, -1)
+  end
+
+  -- for attack, ai picks random one among available (sequence is never empty here)
+  local random_attack_id = pick_random(available_attack_ids)
+  return gameplay_data:get_quote(quote_types.attack, random_attack_id)
+end
+
+-- Return a reply following the policy:
+-- - return any matching reply for the passed attack id, if possible
+-- - else, return a random reply
+-- Humans can call this method so we can itest easily with AI controlling PC.
+-- Both AI and human fallback to losing reply if no reply is available
+function fighter:auto_pick_reply(attack_id)
+  local available_reply_ids = copy_seq(self:get_available_quote_ids(quote_types.reply))
+
+  if #available_reply_ids == 0 then
+    add(available_reply_ids, -1)
+  end
+
+  local reply = nil
+
+  -- pick matching reply if possible
+  -- v1: just pick first working match, ignoring power
+  for quote_match_id in all(self.fighter_progression.known_quote_match_ids) do
+    local quote_match = gameplay_data.quote_matches[quote_match_id]
+    if quote_match.attack_id == attack_id then
+      -- found a match, but it must also know the reply itself (it may be still in learning phase)
+      if contains(available_reply_ids, quote_match.reply_id) then
+        reply = gameplay_data:get_quote(quote_types.reply, quote_match.reply_id)
+        log("fighter \""..self:get_name().."\" found matching reply ("..reply.id..")", 'itest')
+      else
+--#if log
+        log("fighter \""..self:get_name().."\" knowns about matching reply "..quote_match.reply_id..
+          " \""..gameplay_data:get_quote(quote_types.reply, quote_match.reply_id).text.."\" but hasn't finished learning it", 'itest')
+--#endif
+      end
+    end
+  end
+
+  if not reply then
+    -- no matching quote found; pick a random reply instead
+    -- remember we added a dummy quote above if needed, so sequence is never empty
+    local random_reply_id = pick_random(available_reply_ids)
+    reply = gameplay_data:get_quote(quote_type, random_reply_id)
+    log("fighter \""..self:get_name().."\" picks randomly reply ("..random_reply_id..")", 'itest')
+  end
+
+  return reply
+end
+
 function fighter:say_quote(quote)
   local is_attacking = quote.type == quote_types.attack
 
@@ -76,11 +145,6 @@ function fighter:say_quote(quote)
   if is_attacking then
     del(self.available_attack_ids, quote.id)
   end
-end
-
-function fighter:auto_pick_quote()
-  assert(self.character_type == character_types.ai)
-  -- todo
 end
 
 function fighter:take_damage(damage)

@@ -7,6 +7,7 @@ local quote_info = require("content/quote_info")  -- for quote_types
 local quote_match_info = require("content/quote_match_info")
 local speaker_component = require("dialogue/speaker_component")
 local fighter_progression = require("progression/fighter_progression")
+local gameplay_data = require("resources/gameplay_data")
 local character = require("story/character")
 
 describe('fighter', function ()
@@ -14,15 +15,15 @@ describe('fighter', function ()
   local mock_character_info = character_info(2, "employee", 5)
   local pos = vector(20, 60)
   local mock_character = character(mock_character_info, horizontal_dirs.right, pos)
-  local mock_fighter_info = fighter_info(3, 3, 2, 5, {11, 27}, {12, 28}, {2, 4})
+  local mock_fighter_info = fighter_info(3, 3, 2, 5, {1, 3}, {2, 4}, {2, 4})
 
   local mock_fighter_progression
   local f
 
   before_each(function ()
-    mock_fighter_progression = fighter_progression(character_types.ai, mock_fighter_info)
-    add(mock_fighter_progression.known_attack_ids, 35)
-    add(mock_fighter_progression.known_reply_ids, 37)
+    mock_fighter_progression = fighter_progression(character_types.npc, mock_fighter_info)
+    add(mock_fighter_progression.known_attack_ids, 5)
+    add(mock_fighter_progression.known_reply_ids, 7)
     f = fighter(mock_character, mock_fighter_progression)
   end)
 
@@ -34,7 +35,7 @@ describe('fighter', function ()
     end)
 
     it('should init a fighter', function ()
-      assert.are_same({5, nil, {}, {}, {11, 27, 35}, {12, 28, 37}},
+      assert.are_same({5, nil, {}, {}, {1, 3, 5}, {2, 4, 7}},
         {f.hp, f.last_quote, f.received_attack_id_count_map, f.received_reply_id_count_map,
         f.available_attack_ids, f.available_reply_ids})
     end)
@@ -58,13 +59,93 @@ describe('fighter', function ()
 
   describe('get_available_quote_ids', function ()
     it('should return sequence of all known attack ids with quote_types.attack (for now)', function ()
-      del(f.available_attack_ids, 11)
-      assert.are_same({27, 35}, f:get_available_quote_ids(quote_types.attack))
+      del(f.available_attack_ids, 1)
+      assert.are_same({3, 5}, f:get_available_quote_ids(quote_types.attack))
     end)
     it('should return sequence of all known reply ids with quote_types.reply (for now)', function ()
-      del(f.available_reply_ids, 37)
-      assert.are_same({12, 28}, f:get_available_quote_ids(quote_types.reply))
+      del(f.available_reply_ids, 7)
+      assert.are_same({2, 4}, f:get_available_quote_ids(quote_types.reply))
     end)
+  end)
+
+  describe('auto_pick_attack', function ()
+
+    setup(function ()
+      stub(_G, "pick_random", function (seq)
+        -- always return last element for this test
+        assert(#seq > 0)
+        return seq[#seq]
+      end)
+    end)
+
+    teardown(function ()
+      pick_random:revert()
+    end)
+
+    after_each(function ()
+      pick_random:clear()
+    end)
+
+    it('should return a random available attack using pick_random', function ()
+      -- f.available_attack_ids is {1, 3, 5}
+      assert.are_equal(gameplay_data.attacks[5], f:auto_pick_attack())
+    end)
+
+    it('should return a losing attack when no attack is available', function ()
+      f.available_attack_ids = {}
+      assert.are_equal(gameplay_data.attacks[-1], f:auto_pick_attack())
+    end)
+
+    it('should assert if no attack is available for human fighter', function ()
+      f.available_attack_ids = {}
+      f.fighter_progression.character_type = character_types.pc
+      assert.has_error(function ()
+        f:auto_pick_attack()
+      end)
+    end)
+
+  end)
+
+   describe('auto_pick_reply', function ()
+
+    setup(function ()
+      stub(_G, "pick_random", function (seq)
+        -- always return last element for this test
+        assert(#seq > 0)
+        return seq[#seq]
+      end)
+    end)
+
+    teardown(function ()
+      pick_random:revert()
+    end)
+
+    after_each(function ()
+      pick_random:clear()
+    end)
+
+    -- soon: return matching reply with highest power
+    it('should return a matching reply', function ()
+      -- this test dependson gameplay data for quote matches
+      -- we use quote match 2: 1 -> 7 (power 2)
+      -- f knows matches 2 and 4, so should be able to reply with 7
+      -- just add 13 at the end of the reply ids so we are sure
+      --   that 7 is not picked just because it's last
+      f.available_reply_ids = {2, 4, 7, 13}
+      assert.are_equal(gameplay_data.replies[7], f:auto_pick_reply(1))
+    end)
+
+    it('should return a random available reply using pick_random when no matching reply is known', function ()
+      -- f doesn't know any matching reply for 10, so will return random one, stubbed to last
+      f.available_reply_ids = {2, 4, 7, 13}
+      assert.are_equal(gameplay_data.replies[13], f:auto_pick_reply(10))
+    end)
+
+    it('should return a losing reply when no reply is available', function ()
+      f.available_reply_ids = {}
+      assert.are_equal(gameplay_data.replies[-1], f:auto_pick_reply(1))
+    end)
+
   end)
 
   describe('say_quote', function ()
@@ -100,21 +181,21 @@ describe('fighter', function ()
     end)
 
     it('should remove an attack id from the sequence of available attack ids', function ()
-      local q = quote_info(27, quote_types.attack, 2, "attack 27")
+      local q = quote_info(3, quote_types.attack, 2, "attack 3")
 
       f:say_quote(q)
 
-      assert.are_same({11, 35}, f.available_attack_ids)
+      assert.are_same({1, 5}, f.available_attack_ids)
     end)
 
     it('should preserve available attack/reply if saying a reply', function ()
-      local q = quote_info(27, quote_types.reply, 2, "reply 27")
-      local q = quote_info(28, quote_types.reply, 2, "reply 28")
+      local q = quote_info(3, quote_types.reply, 2, "reply 3")
+      local q = quote_info(4, quote_types.reply, 2, "reply 4")
 
       f:say_quote(q)
 
-      assert.are_same({11, 27, 35}, f.available_attack_ids)
-      assert.are_same({12, 28, 37}, f.available_reply_ids)
+      assert.are_same({1, 3, 5}, f.available_attack_ids)
+      assert.are_same({2, 4, 7}, f.available_reply_ids)
     end)
 
   end)
@@ -170,25 +251,25 @@ describe('fighter', function ()
 
     it('should initialize reception count of new learnable attack to 1', function ()
       -- level 2 quote can be learned
-      f:on_receive_quote(quote_info(5, quote_types.attack, 2, "attack 5"))
-      assert.are_same({[5] = 1}, f.received_attack_id_count_map)
+      f:on_receive_quote(quote_info(6, quote_types.attack, 2, "attack 6"))
+      assert.are_same({[6] = 1}, f.received_attack_id_count_map)
     end)
 
     it('should initialize reception count of new learnable reply to 1', function ()
-      f:on_receive_quote(quote_info(3, quote_types.reply, 1, "reply 3"))
-      assert.are_same({[3] = 1}, f.received_reply_id_count_map)
+      f:on_receive_quote(quote_info(8, quote_types.reply, 1, "reply 8"))
+      assert.are_same({[8] = 1}, f.received_reply_id_count_map)
     end)
 
     it('should increment reception count of received attack by 1', function ()
-      f.received_attack_id_count_map[3] = 10
-      f:on_receive_quote(quote_info(3, quote_types.attack, 1, "attack 3"))
-      assert.are_same({[3] = 11}, f.received_attack_id_count_map)
+      f.received_attack_id_count_map[8] = 10
+      f:on_receive_quote(quote_info(8, quote_types.attack, 1, "attack 8"))
+      assert.are_same({[8] = 11}, f.received_attack_id_count_map)
     end)
 
     it('should increment reception count of received reply by 1', function ()
-      f.received_reply_id_count_map[3] = 10
-      f:on_receive_quote(quote_info(3, quote_types.reply, 1, "reply 3"))
-      assert.are_same({[3] = 11}, f.received_reply_id_count_map)
+      f.received_reply_id_count_map[8] = 10
+      f:on_receive_quote(quote_info(8, quote_types.reply, 1, "reply 8"))
+      assert.are_same({[8] = 11}, f.received_reply_id_count_map)
     end)
 
   end)

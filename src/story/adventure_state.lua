@@ -83,12 +83,21 @@ function adventure_state:_async_tutorial1()
 end
 
 function adventure_state:_async_tutorial2()
-  printh("tuto2")
+  local am = self.app.managers[':adventure']
+  local pc_speaker = am.pc.speaker
+
+  self.app:yield_delay_s(1)
+  pc_speaker:say_and_wait_for_input("[tuto 2]")
+  self.app:yield_delay_s(1)
 end
 
 function adventure_state:_async_tutorial3()
-  printh("tuto3")
-end
+  local am = self.app.managers[':adventure']
+  local pc_speaker = am.pc.speaker
+
+  self.app:yield_delay_s(1)
+  pc_speaker:say_and_wait_for_input("[tuto 3]")
+  self.app:yield_delay_s(1)end
 
 -- step methods: they all start with '_async_'
 --   and we add a suffix equal to a next_step name
