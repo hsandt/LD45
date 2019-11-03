@@ -355,7 +355,7 @@ itest_manager:register_itest('start -> real fights loop',
 
 end)
 
-itest_manager:register_itest('#solo start -> end with ai control on pc',
+itest_manager:register_itest('start -> end with ai control on pc',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
     -- but without gamestate_proxy, not used
     {':fight'}, function ()

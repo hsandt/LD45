@@ -26,6 +26,7 @@ function character:_init(character_info, direction, pos)
   self.character_info = character_info
   -- cache sprite data ref
   self.sprite = visual_data.sprites.character[character_info.sprite_id]
+  assert(self.sprite, "no sprite found for id: "..character_info.sprite_id)
   self.direction = direction
 
   -- components (inject relative position directly as currently,
