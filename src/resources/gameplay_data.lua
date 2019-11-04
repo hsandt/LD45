@@ -177,7 +177,7 @@ local npc_fighter_info_s = {
   fighter_info(13, 13, 2, 3, {1, 2, 5, 6}, {3, 7, 11, 13}, {2, 3, 11}), -- rossmann
   -- doesn't know match 13: 6 -> 11, but can learn it from pc later
   fighter_info(14, 14, 1, 3, {}, {}, {}), -- rival
-  fighter_info(15, 15, 4, 8, {}, {}, {}), -- ceo
+  fighter_info(15, 15, 4, 8, {}, {}, {}), -- ceo/boss
   -- no quotes yet... I need to invent unique level 4 quotes for the boss
 }
 
