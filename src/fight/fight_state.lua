@@ -29,7 +29,7 @@ function fight_state:update()
 end
 
 function fight_state:render()
-  painter.draw_background()
+  painter.draw_background(self.app.game_session.floor_number)
   self:draw_floor_number()
 end
 

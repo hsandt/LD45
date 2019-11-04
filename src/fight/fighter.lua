@@ -255,7 +255,7 @@ function fighter:draw_name_label()
   local box_right = ceil(center_x + label_width / 2)
   local box_top = flr(center_y - label_height / 2)
   local box_bottom = ceil(center_y + label_height / 2)
-  ui.draw_rounded_box(box_left, box_top, box_right, box_bottom, colors.indigo, colors.white)
+  ui.draw_rounded_box(box_left, box_top, box_right, box_bottom, colors.black, colors.white)
   ui.print_centered(text, center_x, center_y, colors.black)
 end
 

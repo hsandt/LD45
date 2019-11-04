@@ -4,7 +4,15 @@ local visual_data = require("resources/visual_data")
 
 local painter = {}
 
-function painter.draw_background()
+function painter.draw_background(floor_number)
+  if floor_number < 11 then
+    painter.draw_background_stairs()
+  else
+    painter.draw_background_ceo_room()
+  end
+end
+
+function painter.draw_background_stairs()
   -- wall
   rectfill(0, 0, 127, 127, colors.dark_gray)
 
@@ -23,6 +31,26 @@ function painter.draw_background()
   -- lower stairs
   visual_data.sprites.lower_stairs_step:render(vector(104, 80))
   visual_data.sprites.lower_stairs_step:render(vector(110, 84))
+end
+
+function painter.draw_background_ceo_room()
+  -- wall (ok to draw bottom part without clamping because floor s drawn afterward,
+  --   and will hide the extra part at the bottom)
+  for i = 0, 11 do
+    for j = 0, 4 do
+      visual_data.sprites.ceo_room_wallpaper:render(vector(11 * i, 11 * j - 1))
+    end
+  end
+
+  -- floor
+  line(0, 50, 127, 50, colors.black)
+  rectfill(0, 51, 127, 127, colors.indigo)
+
+  -- desk
+  rect(103, 56, 120, 96, colors.black)
+  line(104, 85, 119, 85, colors.black)
+  rectfill(104, 57, 119, 84, colors.orange)
+  rectfill(104, 86, 119, 95, colors.brown)
 end
 
 return painter

@@ -11,6 +11,7 @@ local sprites = {
   upper_stairs_step1 = sprite_data(sprite_id_location(0, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
   upper_stairs_step2 = sprite_data(sprite_id_location(1, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
   lower_stairs_step  = sprite_data(sprite_id_location(2, 1), tile_vector(1, 2), vector(0, 0), colors.pink),
+  ceo_room_wallpaper = sprite_data(sprite_id_location(2, 4), tile_vector(2, 2), vector(0, 0), colors.pink),
   -- characters
   character = {
     -- pc

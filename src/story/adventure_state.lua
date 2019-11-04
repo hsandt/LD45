@@ -42,8 +42,7 @@ function adventure_state:update()
 end
 
 function adventure_state:render()
-  painter.draw_background()
-
+  painter.draw_background(self.app.game_session.floor_number)
 end
 
 function adventure_state:start_sequence()
