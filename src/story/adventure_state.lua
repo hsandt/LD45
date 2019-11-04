@@ -124,7 +124,7 @@ function adventure_state:_async_intro()
   pc_speaker:say_and_wait_for_input("wait, someone is coming!")
   self.app:yield_delay_s(0.5)
 
-  local next_npc_fighter_prog = self.app.game_session.npc_fighter_progressions[13]
+  local next_npc_fighter_prog = self.app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
 
   -- show npc
   am:spawn_npc(next_npc_fighter_prog.fighter_info.character_info_id)

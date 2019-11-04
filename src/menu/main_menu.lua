@@ -7,6 +7,7 @@ local ui = require("engine/ui/ui")
 
 local menu_item = require("menu/menu_item")
 local text_menu = require("menu/text_menu")
+local gameplay_data = require("resources/gameplay_data")
 
 -- main menu: gamestate for player navigating in main menu
 local main_menu = derived_class(gamestate)
@@ -20,11 +21,13 @@ main_menu._items = transform({
       flow:query_gamestate_type(':adventure')
     end},
     {"debug: 1st fight", function(app)
-      app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[13]
+      app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
       flow:query_gamestate_type(':fight')
     end},
     {"debug: boss fight", function(app)
-      app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[15]
+      app.game_session.floor_number = 11
+      app.game_session.fight_count = 10  -- high count to avoid unwanted tutorials
+      app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.ceo_id]
       flow:query_gamestate_type(':fight')
     end}
   }, unpacking(menu_item))

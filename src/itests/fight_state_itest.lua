@@ -3,6 +3,8 @@ local itest_manager = integrationtest.itest_manager
 local input = require("engine/input/input")
 local flow = require("engine/application/flow")
 
+local gameplay_data = require("resources/gameplay_data")
+
 local function short_press(button_id)
   act(function ()
     input.simulated_buttons_down[0][button_id] = true
@@ -25,7 +27,7 @@ itest_manager:register_itest('1st fight -> back to adv',
     local fm = app.managers[':fight']
 
     -- fight rossmann
-    fm.next_opponent = app.game_session.npc_fighter_progressions[13]
+    fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
 
     flow:change_gamestate_by_type(':fight')
   end)
@@ -80,7 +82,7 @@ itest_manager:register_itest('intermediate fight -> back to adv',
     app.game_session.pc_fighter_progression.known_attack_ids = {1, 2, 3, 4, 5, 6}
 
     -- fight rossmann
-    fm.next_opponent = app.game_session.npc_fighter_progressions[13]
+    fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
 
     flow:change_gamestate_by_type(':fight')
   end)

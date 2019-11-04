@@ -144,14 +144,12 @@ local npc_info_s = {
   character_info(5, "designer", 5),
   character_info(6, "programmer", 6),
   character_info(7, "manager", 7),
-  character_info(8, "legal advisor", 8),
-  character_info(9, "senior designer", 9),
-  character_info(10, "senior programmer", 10),
-  character_info(11, "senior qa", 11),
-  character_info(12, "senior marketing", 12),
+  character_info(8, "senior designer", 8),
+  character_info(9, "senior programmer", 9),
+  character_info(10, "senior qa", 10),
+  character_info(11, "senior marketing", 11),
+  character_info(12, "ceo", 12),
   character_info(13, "rossmann", 13),
-  character_info(14, "rival", 14),
-  character_info(15, "ceo", 15),
 }
 
 -- "start with nothing" -> no known quotes to start with
@@ -169,16 +167,14 @@ local npc_fighter_info_s = {
   fighter_info( 5,  5, 2, 5, {7, 10}, {}, {}),                 -- designer
   fighter_info( 6,  6, 2, 4, {1}, {}, {}),                     -- programmer
   fighter_info( 7,  7, 2, 6, {1}, {}, {}),                     -- manager (tank and planning topics)
-  fighter_info( 8,  8, 2, 4, {1}, {}, {}),                     -- legal advisor (good at matching quotes)
-  fighter_info( 9,  9, 3, 6, {1}, {}, {}),                     -- senior designer
-  fighter_info(10, 10, 3, 5, {1}, {}, {}),                     -- senior programmer
-  fighter_info(11, 11, 3, 7, {1}, {}, {}),                     -- senior qa
-  fighter_info(12, 12, 3, 5, {1}, {}, {}),                     -- senior marketing
+  fighter_info( 8,  8, 3, 6, {1}, {}, {}),                     -- senior designer
+  fighter_info( 9,  9, 3, 5, {1}, {}, {}),                     -- senior programmer
+  fighter_info(10, 10, 3, 7, {1}, {}, {}),                     -- senior qa
+  fighter_info(11, 11, 3, 5, {1}, {}, {}),                     -- senior marketing
+  fighter_info(12, 12, 4, 8, {}, {}, {}),                      -- ceo/boss
+  -- no quotes yet... I need to invent unique level 4 quotes for the boss
   fighter_info(13, 13, 2, 3, {1, 2, 5, 6}, {3, 7, 11, 13}, {2, 3, 11}), -- rossmann
   -- doesn't know match 13: 6 -> 11, but can learn it from pc later
-  fighter_info(14, 14, 1, 3, {}, {}, {}), -- rival
-  fighter_info(15, 15, 4, 8, {}, {}, {}), -- ceo/boss
-  -- no quotes yet... I need to invent unique level 4 quotes for the boss
 }
 
 local gameplay_data = {
@@ -196,6 +192,8 @@ local gameplay_data = {
   initial_floor = 3,
 
   -- rossmann lv2 attack ids unlocked after the 1st encounter
+  rossmann_id = 13,
+  ceo_id = 12,
   rossmann_lv2_attack_ids = {7, 10, 11},
 
   -- fight
