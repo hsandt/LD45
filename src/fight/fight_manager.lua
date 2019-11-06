@@ -4,6 +4,7 @@ require("engine/render/color")
 
 local flow = require("engine/application/flow")
 local manager = require("engine/application/manager")
+local animated_sprite = require("engine/render/animated_sprite")
 
 local quote_info = require("content/quote_info")
 local fighter = require("fight/fighter")
@@ -26,6 +27,8 @@ Dynamic parameters (fixed for a given fight)
 State
   active_fighter_index  int                        index of fighter currently selecting action / acting
   won_last_fight        (bool|nil)                 true iff player won the last fight, if any
+  hit_fx                animated_sprite            hit fx animated sprite
+  hit_fx_pos            (vector|nil)               position of the hit fx animated sprite, if any
 --]]
 function fight_manager:_init()
   manager._init(self)
@@ -35,16 +38,26 @@ function fight_manager:_init()
 
   self.active_fighter_index = 0  -- invalid index
   self.won_last_fight = nil
+
+  self.hit_fx = animated_sprite(visual_data.anim_sprites.hit_fx)
+  self.hit_fx_pos = nil
 end
 
 function fight_manager:start()  -- override
 end
 
 function fight_manager:update()  -- override
+  -- we should have some fx manager updating all fx, but for now we do it ourselves
+  self.hit_fx:update()
 end
 
 function fight_manager:render()  -- override
   self:draw_fighters()
+
+  -- we should have some fx manager rendering all fx, but for now we do it ourselves
+  self.hit_fx:render(self.hit_fx_pos)
+
+  -- hud on top of everything
   self:draw_hud()
 end
 
@@ -371,7 +384,15 @@ end
 function fight_manager:hit_fighter(some_fighter, damage)
   some_fighter:take_damage(damage)
 
-  -- todo: fx and sfx
+  -- fx
+  local hit_fx_offset = visual_data.hit_fx_offset_right
+  if some_fighter.direction == horizontal_dirs.left then
+    hit_fx_offset.x = - hit_fx_offset.x
+  end
+  self.hit_fx_pos = some_fighter.character.pos + hit_fx_offset
+  self.hit_fx:play('once')
+
+  -- todo: sfx
 end
 
 function fight_manager:start_victory(some_fighter)

@@ -14,7 +14,6 @@ Parameters
                                    else, nil
   max_hp: int                      initial hp
   sprite: sprite_data              sprite to render
-  pos: vector                      position on screen
   direction: horizontal_dirs       facing left or right?
 
 State
@@ -218,7 +217,7 @@ end
 -- render
 
 function fighter:draw()
-  self.character:draw(self.pos)
+  self.character:draw()
   self:draw_health_bar()
   self:draw_name_label()
 end

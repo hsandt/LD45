@@ -30,19 +30,23 @@ local sprites = {
     [11] = sprite_data(sprite_id_location(10, 0), tile_vector(2, 5), vector(9, 39), colors.pink),
     [12] = sprite_data(sprite_id_location(12, 0), tile_vector(2, 5), vector(9, 39), colors.pink),
     [13] = sprite_data(sprite_id_location(14, 0), tile_vector(2, 5), vector(9, 39), colors.black),
+  },
+  -- fx
+  hit_fx = {
+    sprite_data(sprite_id_location(0, 12), tile_vector(2, 2), vector(6, 6), colors.pink),
+    sprite_data(sprite_id_location(2, 12), tile_vector(2, 2), vector(6, 6), colors.pink),
+    sprite_data(sprite_id_location(4, 12), tile_vector(2, 2), vector(6, 6), colors.pink),
+    sprite_data(sprite_id_location(6, 12), tile_vector(2, 2), vector(6, 6), colors.pink),
+    sprite_data(sprite_id_location(8, 12), tile_vector(2, 2), vector(6, 6), colors.pink)
   }
 }
 
 local anim_sprites = {
-  -- ex:
-  -- gem = {
-  --   idle = animated_sprite_data.create(sprites.gem,
-  --     {"idle", "idle1", "idle2", "idle1"},
-  --     13, true),
-  --   spin = animated_sprite_data.create(sprites.gem,
-  --     {"idle", "spin1", "spin2", "spin3"},
-  --     13, true)
-  -- }
+  hit_fx = {
+    once = animated_sprite_data.create(sprites.hit_fx,
+      {1, 2, 3, 4, 5},
+      1, false)
+  }
 }
 
 local visual_data = {
@@ -54,6 +58,9 @@ local visual_data = {
   -- characters
   pc_sprite_pos = vector(19, 85),
   npc_sprite_pos = vector(86, 85),
+
+  -- hit fx: offset from character position when facing right (flip x when facing left)
+  hit_fx_offset_right = vector(4, -35),
 
   -- bubble text
   -- Margin-x from both screen edges

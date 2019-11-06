@@ -2,6 +2,7 @@ require("engine/test/bustedhelper")
 local fight_manager = require("fight/fight_manager")
 
 local manager = require("engine/application/manager")
+local animated_sprite = require("engine/render/animated_sprite")
 
 local wit_fighter_app = require("application/wit_fighter_app")
 local character_info = require("content/character_info")
@@ -87,11 +88,13 @@ describe('fight_manager', function ()
 
       setup(function ()
         stub(fight_manager, "draw_fighters")
+        stub(animated_sprite, "render")
         stub(fight_manager, "draw_hud")
       end)
 
       teardown(function ()
         fight_manager.draw_fighters:revert()
+        animated_sprite.render:revert()
         fight_manager.draw_hud:revert()
       end)
 
@@ -102,7 +105,11 @@ describe('fight_manager', function ()
         s.was_called(1)
         s.was_called_with(match.ref(fm))
 
-        local s = assert.spy(fight_manager.draw_hud)
+        s = assert.spy(animated_sprite.render)
+        s.was_called(1)
+        s.was_called_with(match.ref(fm.hit_fx))
+
+        s = assert.spy(fight_manager.draw_hud)
         s.was_called(1)
         s.was_called_with(match.ref(fm))
       end)
