@@ -24,6 +24,12 @@ main_menu._items = transform({
       app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
       flow:query_gamestate_type(':fight')
     end},
+    {"debug: boss floor", function(app)
+      app.game_session.floor_number = 11
+      app.game_session.fight_count = 10  -- high count to avoid unwanted tutorials
+      app.managers[':adventure'].next_step = 'floor_loop'
+      flow:query_gamestate_type(':adventure')
+    end},
     {"debug: boss fight", function(app)
       app.game_session.floor_number = 11
       app.game_session.fight_count = 10  -- high count to avoid unwanted tutorials
@@ -54,7 +60,7 @@ end
 
 function main_menu:render()
   self:draw_title()
-  self.text_menu:draw(screen_width / 2, 77)
+  self.text_menu:draw(screen_width / 2, 72)
   self:draw_instructions()
 end
 
@@ -71,7 +77,7 @@ function main_menu:draw_instructions()
   y = y + 15
   ui.print_centered(wwrap("win to reach the top!", 25), 64, y, colors.white)
 
-  y = 96
+  y = 100
   api.print("arrows: navigate", 33, y, colors.white)
   y = y + 6
   api.print("z/c/n: confirm", 33, y, colors.white)

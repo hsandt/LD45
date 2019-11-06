@@ -57,6 +57,7 @@ function adventure_manager:spawn_npc(npc_id)
   self.npc:register_speaker(dm)
 end
 
+-- currently unused, as pc *always* exists
 function adventure_manager:despawn_pc()
   assert(self.pc)
 

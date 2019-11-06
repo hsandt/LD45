@@ -11,6 +11,8 @@ adventure_state.type = ':adventure'
 
 function adventure_state:_init()
   gamestate._init(self)
+
+  self.should_finish_game = false
 end
 
 function adventure_state:on_enter()
@@ -51,26 +53,154 @@ end
 
 function adventure_state:_async_sequence()
   local am = self.app.managers[':adventure']
+  local fm = self.app.managers[':fight']
 
-  -- tutorial if any
+  -- next step
+  local play_method_name = '_async_step_'..am.next_step
+  assert(self[play_method_name], "adventure_state has no method named: "..play_method_name)
+  self[play_method_name](self)
+end
+
+-- step sequence methods
+-- they all start with '_async_step_'
+
+function adventure_state:_async_step_intro()
+  local am = self.app.managers[':adventure']
+  local dm = self.app.managers[':dialogue']
+  local pc_speaker = am.pc.speaker
+
+  self.app:yield_delay_s(0.5)
+  dm.current_bottom_text = '= main building of it company\n* browsing solutions * ='
+  self.app:yield_delay_s(2)
+  dm.current_bottom_text = nil
+  self.app:yield_delay_s(1)
+  pc_speaker:say_and_wait_for_input("ok, let's sum up")
+  pc_speaker:say_and_wait_for_input("1. i need funding to organize a hackathon")
+  pc_speaker:say_and_wait_for_input("2. my sister is the ceo of this company and could be my sponsor")
+  pc_speaker:say_and_wait_for_input("3. she's working at the 20th floor")
+  pc_speaker:say_and_wait_for_input("4. i don't want be to seen, so i'm avoiding the elevator, but those stairs seem endless")
+  pc_speaker:say_and_wait_for_input("seems good so far. what could go wrong?")
+  self.app:yield_delay_s(1)
+
+  pc_speaker:say_and_wait_for_input("wait, someone is coming!")
+  self.app:yield_delay_s(0.5)
+
+  local next_npc_fighter_prog = self.app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
+  self:async_encounter_npc(next_npc_fighter_prog)
+end
+
+function adventure_state:_async_step_floor_loop()
+  local am = self.app.managers[':adventure']
+  local fm = self.app.managers[':fight']
+  local pc_speaker = am.pc.speaker
+
+  -- if we have just exited a fight, play the aftermath sequence
+  if fm.next_opponent then
+    self:async_fight_aftermath()
+  end
+
+  if self.should_finish_game then
+    -- we should also despawn pc, but currently it's spawned on adventure_manager:start
+    -- so to be really symmetrical, we need to create methods for in-game start/stop
+    --   to be called when actually starting game from menu, and finishing game session
+    --   to come back to main menu (maybe put them in game session or some game session manager)
+    -- then call spawn_npc on game session start, despawn_pc on game session end
+    am:despawn_npc()
+
+    -- back to main menu
+    flow:query_gamestate_type(':main_menu')
+    return
+  end
+
+  -- after-fight tutorial if any
   local play_method_name = '_async_tutorial'..self.app.game_session.fight_count
   if self[play_method_name] then
     self[play_method_name](self)
   end
 
-  -- next step
-  local play_method_name = '_async_'..am.next_step
-  assert(self[play_method_name], "adventure_state has no method named: "..play_method_name)
-  self[play_method_name](self)
+  pc_speaker:say_and_wait_for_input("someone is coming!")
+  self.app:yield_delay_s(0.5)
+
+  local next_npc_fighter_prog = fm:pick_matching_random_npc_fighter_prog()
+  self:async_encounter_npc(next_npc_fighter_prog)
 end
 
--- tutorial methods: they all start with '_async_tutorial'
---   and we add a suffix equal to the fight count (so we may skip some values)
+function adventure_state:async_encounter_npc(npc_fighter_prog)
+  local am = self.app.managers[':adventure']
+  local fm = self.app.managers[':fight']
+  local pc_speaker = am.pc.speaker
+
+  -- show npc
+  am:spawn_npc(npc_fighter_prog.fighter_info.character_info_id)
+  local npc_speaker = am.npc.speaker
+
+  -- before fight sequence
+  local before_fight_method_name = '_async_before_fight_with_npc'..npc_fighter_prog.fighter_info.id
+  if self[before_fight_method_name] then
+    self[before_fight_method_name](self)
+  else
+    npc_speaker:say_and_wait_for_input("en garde!")
+  end
+
+  -- start fight
+  fm.next_opponent = npc_fighter_prog
+  flow:query_gamestate_type(':fight')
+end
+
+function adventure_state:async_fight_aftermath()
+  local am = self.app.managers[':adventure']
+  local fm = self.app.managers[':fight']
+  local pc_speaker = am.pc.speaker
+  local npc_speaker = am.npc.speaker
+
+  assert(fm.next_opponent, "no previous opponent, cannot play aftermath")
+
+  -- after fight sequence, specific to each npc
+  local after_fight_method_name = '_async_after_fight_with_npc'..fm.next_opponent.fighter_info.id
+  if self[after_fight_method_name] then
+    self[after_fight_method_name](self)
+    if self.should_finish_game then
+      -- avoid any extra events until we leave the game properly
+      return
+    end
+  else
+    if fm.won_last_fight then
+      npc_speaker:say_and_wait_for_input("urg...")
+    else
+      npc_speaker:say_and_wait_for_input("ha! you won't go past me!")
+    end
+  end
+
+  -- check if player lost or won previous fight
+  local floor_number = self.app.game_session.floor_number
+  if fm.won_last_fight then
+    -- remove existing npc first
+    am:despawn_npc()
+
+    -- player won, allow access to next floor
+    -- for now, auto go up 1 floor
+    pc_speaker:say_and_wait_for_input("fine, let's go to the next floor now.")
+
+    self.app.game_session.floor_number = min(floor_number + 1, #gameplay_data.floors)
+    log("go to next floor: "..self.app.game_session.floor_number, "flow")
+  else
+    -- player lost, prevent access to next floor
+    -- for now, auto go down 1 floor
+    pc_speaker:say_and_wait_for_input("guess after my loss, i should go down one floor now.")
+
+    self.app.game_session.floor_number = max(1, floor_number - 1)
+    log("go to previous floor: "..self.app.game_session.floor_number, "flow")
+
+    -- remove existing npc last, as he was blocking you (even after fade-out)
+    am:despawn_npc()
+  end
+end
+
+-- tutorial sequence methods
+-- they all start with '_async_tutorial'
 
 function adventure_state:_async_tutorial1()
   local am = self.app.managers[':adventure']
-  local dm = self.app.managers[':dialogue']
-  local fm = self.app.managers[':fight']
   local pc_speaker = am.pc.speaker
 
   self.app:yield_delay_s(1)
@@ -96,40 +226,70 @@ function adventure_state:_async_tutorial3()
 
   self.app:yield_delay_s(1)
   pc_speaker:say_and_wait_for_input("[tuto 3]")
-  self.app:yield_delay_s(1)end
+  self.app:yield_delay_s(1)
+end
 
--- step methods: they all start with '_async_'
---   and we add a suffix equal to a next_step name
+-- before/after fight sequence methods
+-- they all start with '_async_before/after_fight_with_npc'
 
-function adventure_state:_async_intro()
+-- before fight with ceo
+function adventure_state:_async_before_fight_with_npc12()
+  local am = self.app.managers[':adventure']
+  local pc_speaker = am.pc.speaker
+  local npc_speaker = am.npc.speaker
+
+  npc_speaker:say_and_wait_for_input("you took your time.")
+  npc_speaker:say_and_wait_for_input("i was about to leave.")
+  pc_speaker:say_and_wait_for_input("this time, i won't leave without your sponsorship!")
+  npc_speaker:say_and_wait_for_input("why do you so much want the support of a corporation for an independent event?")
+  self.app:yield_delay_s(0.5)
+  pc_speaker:say_and_wait_for_input("we need funds.")
+  self.app:yield_delay_s(0.5)
+  npc_speaker:say_and_wait_for_input("you'll need better words than that to convince me.")
+  pc_speaker:say_and_wait_for_input("that's perfect, i've got exactly what you're asking for.")
+end
+
+-- after fight with ceo
+function adventure_state:_async_after_fight_with_npc12()
   local am = self.app.managers[':adventure']
   local dm = self.app.managers[':dialogue']
   local fm = self.app.managers[':fight']
   local pc_speaker = am.pc.speaker
-
-  self.app:yield_delay_s(2)
-  dm.current_bottom_text = '= main building of it company\n* browsing solutions * ='
-  self.app:yield_delay_s(4)
-  dm.current_bottom_text = nil
-  self.app:yield_delay_s(2)
-  pc_speaker:say_and_wait_for_input("ok, let's sum up")
-  pc_speaker:say_and_wait_for_input("1. i need funding to organize a hackathon")
-  pc_speaker:say_and_wait_for_input("2. my sister is the ceo of this company and could be my sponsor")
-  pc_speaker:say_and_wait_for_input("3. she's working at the 20th floor")
-  pc_speaker:say_and_wait_for_input("4. i don't want be to seen, so i'm avoiding the elevator, but those stairs seem endless")
-  pc_speaker:say_and_wait_for_input("seems good so far. what could go wrong?")
-  self.app:yield_delay_s(1)
-
-  pc_speaker:say_and_wait_for_input("wait, someone is coming!")
-  self.app:yield_delay_s(0.5)
-
-  local next_npc_fighter_prog = self.app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
-
-  -- show npc
-  am:spawn_npc(next_npc_fighter_prog.fighter_info.character_info_id)
   local npc_speaker = am.npc.speaker
 
-  self.app:yield_delay_s(1)
+  if fm.won_last_fight then
+    npc_speaker:say_and_wait_for_input("huh... you got better wits than last time.")
+    pc_speaker:say_and_wait_for_input("no, yours are just rotten.")
+    npc_speaker:say_and_wait_for_input("ok, ok, enough replies for today. we will sponsor your event.")
+    npc_speaker:say_and_wait_for_input("i'll send someone to oversee the details with you tomorrow.")
+    self.app:yield_delay_s(0.5)
+    pc_speaker:say_and_wait_for_input("er... thanks.")
+    self.app:yield_delay_s(0.5)
+    npc_speaker:say_and_wait_for_input("you can go, now.")
+    self.app:yield_delay_s(0.5)
+    pc_speaker:say_and_wait_for_input("ah, ok.")
+    self.app:yield_delay_s(0.5)
+    -- todo: pc turning toward the camera
+    pc_speaker:say_and_wait_for_input("what a day. i hope it was worth it.")
+
+    self.app:yield_delay_s(0.5)
+    dm.current_bottom_text = 'GAME END'
+    self.app:yield_delay_s(2)
+    dm.current_bottom_text = nil
+
+    -- GAME END
+    self.should_finish_game = true
+  else
+    npc_speaker:say_and_wait_for_input("that's all? you're wasting my time.")
+    self.app:yield_delay_s(0.5)
+  end
+end
+
+-- before fight with rossmann
+function adventure_state:_async_before_fight_with_npc13()
+  local am = self.app.managers[':adventure']
+  local pc_speaker = am.pc.speaker
+  local npc_speaker = am.npc.speaker
 
   npc_speaker:say_and_wait_for_input("well, well, well. see who's in here")
   pc_speaker:say_and_wait_for_input("not you again! i failed to get the ceo's support last time because of you!")
@@ -138,72 +298,10 @@ function adventure_state:_async_intro()
   npc_speaker:say_and_wait_for_input("if you're so motivated, why not solve this with a wit fight?")
   npc_speaker:say_and_wait_for_input("we exchange verbal attacks and replies, and see who has the best comeback")
   pc_speaker:say_and_wait_for_input("er... okay.")
-
-  -- start fight with npc
-  fm.next_opponent = next_npc_fighter_prog
-  flow:query_gamestate_type(':fight')
-end
-
--- floor loop: must be played after at least 1 fight
-function adventure_state:_async_floor_loop()
-  local am = self.app.managers[':adventure']
-  local fm = self.app.managers[':fight']
-  local pc_speaker = am.pc.speaker
-
-  -- plug special events after losing/winning vs npc (by id)
-  -- only done if there was actually a fight with an opponent before
-  if fm.next_opponent then
-    local after_fight_method_name = '_after_fight_with_npc'..fm.next_opponent.fighter_info.id
-    if self[after_fight_method_name] then
-      self[after_fight_method_name](self)
-    end
-
-    -- check if player lost or won previous fight
-    local floor_number = self.app.game_session.floor_number
-    if self.app.managers[':fight'].won_last_fight then
-      pc_speaker:say_and_wait_for_input("fine, let's go to the next floor now.")
-      self.app:yield_delay_s(1)
-
-      -- player won, allow access to next floor
-      -- for now, auto go up 1 floor
-      self.app.game_session.floor_number = min(floor_number + 1, 10)
-      log("go to next floor: "..self.app.game_session.floor_number, "flow")
-    else
-      pc_speaker:say_and_wait_for_input("guess after my loss, i should go down one floor now.")
-      self.app:yield_delay_s(1)
-
-      -- player lost, prevent access to next floor
-      -- for now, auto go down 1 floor
-      self.app.game_session.floor_number = max(1, floor_number - 1)
-      log("go to previous floor: "..self.app.game_session.floor_number, "flow")
-    end
-
-    -- clean existing npc
-    am:despawn_npc()
-
-    self.app:yield_delay_s(0.5)
-  end
-
-  pc_speaker:say_and_wait_for_input("someone is coming!")
-  self.app:yield_delay_s(0.5)
-
-  local next_npc_fighter_prog = fm:pick_matching_random_npc_fighter_prog()
-
-  -- show npc
-  am:spawn_npc(next_npc_fighter_prog.fighter_info.character_info_id)
-  local npc_speaker = am.npc.speaker
-
-  self.app:yield_delay_s(0.5)
-
-  npc_speaker:say_and_wait_for_input("en garde!")
-  self.app:yield_delay_s(0.5)
-
-  fm.next_opponent = next_npc_fighter_prog
-  flow:query_gamestate_type(':fight')
 end
 
 -- after fight with rossmann
-function adventure_state:_after_fight_with_npc13()
+function adventure_state:_async_after_fight_with_npc13()
   local fm = self.app.managers[':fight']
 
   -- rossmann had only level 1 attacks to avoid pc learning strong attacks too fast,
