@@ -93,6 +93,8 @@ itest_manager:register_itest('play floor loop after won -> random fight',
   wait(2)
   short_press(button_ids.o)
   wait(2)
+  short_press(button_ids.o)
+  wait(2)
 
   -- check that we entered the fight state
   final_assert(function ()
@@ -119,6 +121,19 @@ itest_manager:register_itest('play floor loop at boss floor',
 
   -- skip enough dialogues to start next fight,
   --   but not too much to avoid finishing the fight already
+  -- dialogue with ceo is much longer
+  short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+  wait(2)
   short_press(button_ids.o)
   wait(2)
   short_press(button_ids.o)
