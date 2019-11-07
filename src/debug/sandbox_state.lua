@@ -33,7 +33,8 @@ function sandbox_state:update()
 end
 
 function sandbox_state:render()
-  self.hit_fx:render(vector(64, 64))
+  visual_data.sprites.hurt_character:render(vector(10, 30))
+  self.hit_fx:render(vector(10, 10))
 end
 
 function sandbox_state:go_back()

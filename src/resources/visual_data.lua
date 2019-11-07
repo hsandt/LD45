@@ -31,6 +31,7 @@ local sprites = {
     [12] = sprite_data(sprite_id_location(12, 0), tile_vector(2, 5), vector(9, 39), colors.pink),
     [13] = sprite_data(sprite_id_location(14, 0), tile_vector(2, 5), vector(9, 39), colors.black),
   },
+  hurt_character = sprite_data(sprite_id_location(10, 11), tile_vector(3, 5), vector(5, 33), colors.pink),
   -- fx
   hit_fx = {
     sprite_data(sprite_id_location(0, 12), tile_vector(2, 2), vector(6, 6), colors.pink),
