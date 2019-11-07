@@ -99,6 +99,8 @@ describe('fight_manager', function ()
       end)
 
       it('should call draw fighters, hud', function ()
+        fm.hit_fx_pos = vector(10, 10)
+
         fm:render()
 
         local s = assert.spy(fight_manager.draw_fighters)
@@ -107,7 +109,7 @@ describe('fight_manager', function ()
 
         s = assert.spy(animated_sprite.render)
         s.was_called(1)
-        s.was_called_with(match.ref(fm.hit_fx))
+        s.was_called_with(match.ref(fm.hit_fx), vector(10, 10))
 
         s = assert.spy(fight_manager.draw_hud)
         s.was_called(1)
