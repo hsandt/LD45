@@ -330,14 +330,54 @@ describe('fighter', function ()
 
   end)
 
+  describe('update', function ()
+
+    setup(function ()
+      stub(character, "update")
+    end)
+
+    teardown(function ()
+      character.update:revert()
+    end)
+
+    after_each(function ()
+      character.update:clear()
+    end)
+
+    it('should call animated sprite update', function ()
+      f:update()
+
+      local s = assert.spy(character.update)
+      s.was_called(1)
+      s.was_called_with(match.ref(f.character))
+    end)
+
+  end)
+
   -- render
 
   describe('draw', function ()
-    it('should not error', function ()
-      assert.has_no_errors(function ()
-        f:draw()
-      end)
+
+    setup(function ()
+      stub(character, "draw")
     end)
+
+    teardown(function ()
+      character.draw:revert()
+    end)
+
+    after_each(function ()
+      character.draw:clear()
+    end)
+
+    it('should call animated sprite draw', function ()
+      f:draw()
+
+      local s = assert.spy(character.draw)
+      s.was_called(1)
+      s.was_called_with(match.ref(f.character))
+    end)
+
   end)
 
 end)

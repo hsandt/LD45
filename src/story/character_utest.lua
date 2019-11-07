@@ -63,6 +63,30 @@ describe('character', function ()
 
   end)
 
+  describe('update', function ()
+
+    setup(function ()
+      stub(animated_sprite, "update")
+    end)
+
+    teardown(function ()
+      animated_sprite.update:revert()
+    end)
+
+    after_each(function ()
+      animated_sprite.update:clear()
+    end)
+
+    it('should call animated sprite update', function ()
+      c:update()
+
+      local s = assert.spy(animated_sprite.update)
+      s.was_called(1)
+      s.was_called_with(match.ref(c.sprite))
+    end)
+
+  end)
+
   describe('draw', function ()
 
     setup(function ()

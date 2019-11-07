@@ -214,6 +214,12 @@ function fighter:update_learned_quotes()
   self.fighter_progression:transfer_received_reply_id_count_map(self.received_reply_id_count_map)
 end
 
+-- update (for render)
+
+function fighter:update()
+  self.character:update()
+end
+
 -- render
 
 function fighter:draw()

@@ -47,7 +47,8 @@ function fight_manager:start()  -- override
 end
 
 function fight_manager:update()  -- override
-  -- we should have some fx manager updating all fx, but for now we do it ourselves
+  -- we should have some animated sprite manager updating all sprites, but for now we do it ourselves
+  self:update_fighters()
   self.hit_fx:update()
 end
 
@@ -431,6 +432,13 @@ end
 
 -- ui
 
+-- update (for render)
+
+function fight_manager:update_fighters()
+  for fighter in all(self.fighters) do
+    fighter:update()
+  end
+end
 
 -- render
 

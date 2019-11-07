@@ -54,6 +54,12 @@ function character:unregister_speaker(dialogue_mgr)
   dialogue_mgr:remove_speaker(self.speaker)
 end
 
+-- update
+
+function character:update()
+  self.sprite:update()
+end
+
 -- render
 
 function character:draw()

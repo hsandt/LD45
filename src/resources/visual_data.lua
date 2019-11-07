@@ -4,6 +4,8 @@ local animated_sprite_data = require("engine/render/animated_sprite_data")
 require("engine/render/color")
 
 local sprites = {
+  -- blank: don't put anything in the bottom-right 8x8 sprite location
+  blank = sprite_data(sprite_id_location(15, 15), tile_vector(1, 1), vector.zero(), colors.pink),
   -- ui
   cursor = sprite_data(sprite_id_location(1, 0)),
   bubble_tail = sprite_data(sprite_id_location(2, 0), nil, vector(3, 7), colors.pink),
@@ -42,67 +44,19 @@ local sprites = {
   }
 }
 
-local anim_sprites = {
-  character = {
-    -- pc
-    [0] = {
-      idle = animated_sprite_data.create_static(sprites.character[0]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
-    },
-    -- npc
-    [1] = {
-      idle = animated_sprite_data.create_static(sprites.character[1]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
-    },
-    [2] = {
-      idle = animated_sprite_data.create_static(sprites.character[2]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
-    },
-    [3] = {
-      idle = animated_sprite_data.create_static(sprites.character[3]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
-    },
-    [4] = {
-      idle = animated_sprite_data.create_static(sprites.character[4]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
-    },
-    [5] = {
-      idle = animated_sprite_data.create_static(sprites.character[5]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
-    },
-    [6] = {
-      idle = animated_sprite_data.create_static(sprites.character[6]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
-    },
-    [7] = {
-      idle = animated_sprite_data.create_static(sprites.character[7]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
-    },
-    [8] = {
-      idle = animated_sprite_data.create_static(sprites.character[8]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
-    },
-    [9] = {
-      idle = animated_sprite_data.create_static(sprites.character[9]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
-    },
-    [10] = {
-      idle = animated_sprite_data.create_static(sprites.character[10]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
-    },
-    [11] = {
-      idle = animated_sprite_data.create_static(sprites.character[11]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
-    },
-    [12] = {
-      idle = animated_sprite_data.create_static(sprites.character[12]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
-    },
-    [13] = {
-      idle = animated_sprite_data.create_static(sprites.character[13]),
-      hurt = animated_sprite_data.create_static(sprites.hurt_character)
+local function generate_character_anim_sprite_data_table()
+  local character_anim_sprite_data_table = {}
+  for i = 0, 13 do
+    character_anim_sprite_data_table[i] = {
+      idle = animated_sprite_data.create_static(sprites.character[i]),
+      hurt = animated_sprite_data({sprites.hurt_character, sprites.blank, sprites.hurt_character}, 3, anim_loop_modes.freeze_last)
     }
-  },
+  end
+  return character_anim_sprite_data_table
+end
+
+local anim_sprites = {
+  character = generate_character_anim_sprite_data_table(),
   hit_fx = {
     once = animated_sprite_data.create(sprites.hit_fx,
       {1, 2, 3, 4, 5}, 1, anim_loop_modes.clear)

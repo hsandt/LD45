@@ -15,10 +15,12 @@ function sandbox_state:_init()
   gamestate._init(self)
 
   self.hit_fx = animated_sprite(visual_data.anim_sprites.hit_fx)
+  self.fighter_sprite = animated_sprite(visual_data.anim_sprites.character[0])
 end
 
 function sandbox_state:on_enter()
   self.hit_fx:play('once')
+  self.fighter_sprite:play('idle')
 end
 
 function sandbox_state:on_exit()
@@ -26,6 +28,11 @@ end
 
 function sandbox_state:update()
   self.hit_fx:update()
+  self.fighter_sprite:update()
+
+  if input:is_just_pressed(button_ids.o) then
+    self.fighter_sprite:play('hurt')
+  end
 
   if input:is_just_pressed(button_ids.x) then
     self:go_back()
@@ -33,7 +40,7 @@ function sandbox_state:update()
 end
 
 function sandbox_state:render()
-  visual_data.sprites.hurt_character:render(vector(10, 30))
+  self.fighter_sprite:render(vector(10, 40))
   self.hit_fx:render(vector(10, 10))
 end
 
