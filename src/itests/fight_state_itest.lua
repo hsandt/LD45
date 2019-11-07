@@ -77,9 +77,16 @@ itest_manager:register_itest('#solo intermediate fight -> back to adv',
   setup_callback(function (app)
     local am = app.managers[':adventure']
     local fm = app.managers[':fight']
+    local pc_fighter_prog = app.game_session.pc_fighter_progression
 
-    -- make pc learn many attacks to test ai replies
-    app.game_session.pc_fighter_progression.known_attack_ids = {1, 2, 3, 4, 5, 6}
+    -- let ai control pc so we pick matching replies when possible
+    -- we'll still need to press confirm button to skip normal dialogues,
+    --   but quote bubbles should play automatically
+    pc_fighter_prog.control_type = control_types.ai
+
+    -- give more knowledge to pc fighter just to see good replies coming
+    pc_fighter_prog.known_reply_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+    pc_fighter_prog.known_quote_match_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
     -- fight rossmann
     fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]

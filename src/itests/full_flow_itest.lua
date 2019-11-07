@@ -362,14 +362,16 @@ itest_manager:register_itest('start -> end with ai control on pc',
 
   -- enter title menu
   setup_callback(function (app)
+    local pc_fighter_prog = app.game_session.pc_fighter_progression
+
     -- let ai control pc so we pick matching replies when possible
     -- we'll still need to press confirm button to skip normal dialogues,
     --   but quote bubbles should play automatically
-    app.game_session.pc_fighter_progression.control_type = control_types.ai
+    pc_fighter_prog.control_type = control_types.ai
 
     -- give more knowledge to pc fighter just to see good replies coming
-    app.game_session.pc_fighter_progression.known_reply_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-    app.game_session.pc_fighter_progression.known_quote_match_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+    pc_fighter_prog.known_reply_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+    pc_fighter_prog.known_quote_match_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
     flow:change_gamestate_by_type(':main_menu')
   end)
