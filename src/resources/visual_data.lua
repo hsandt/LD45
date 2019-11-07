@@ -45,7 +45,7 @@ local anim_sprites = {
   hit_fx = {
     once = animated_sprite_data.create(sprites.hit_fx,
       {1, 2, 3, 4, 5},
-      1, false)
+      1, anim_loop_modes.clear)
   }
 }
 
