@@ -230,11 +230,11 @@ function fighter:draw_health_bar()
     center_x_offset = - center_x_offset
   end
 
-  local center_x = self.character.pos.x + center_x_offset
+  local center_x = self.character.root_pos.x + center_x_offset
   local left = center_x - visual_data.health_bar_half_width
   local right = center_x + visual_data.health_bar_half_width
-  local top = self.character.pos.y + visual_data.health_bar_top_from_char
-  local bottom = self.character.pos.y + visual_data.health_bar_bottom_from_char
+  local top = self.character.root_pos.y + visual_data.health_bar_top_from_char
+  local bottom = self.character.root_pos.y + visual_data.health_bar_bottom_from_char
   local hp_ratio = self.hp / self.fighter_progression.max_hp
   ui.draw_gauge(left, top, right, bottom, hp_ratio, directions.up, colors.dark_blue, colors.white, colors.blue)
 end
@@ -248,8 +248,8 @@ function fighter:draw_name_label()
   if self.character.direction == horizontal_dirs.left  then
     center_x_offset = - center_x_offset
   end
-  local center_x = self.character.pos.x + center_x_offset
-  local center_y = self.character.pos.y + visual_data.fighter_name_label_center_offset_y
+  local center_x = self.character.root_pos.x + center_x_offset
+  local center_y = self.character.root_pos.y + visual_data.fighter_name_label_center_offset_y
   local box_left = flr(center_x - label_width / 2)
   local box_right = ceil(center_x + label_width / 2)
   local box_top = flr(center_y - label_height / 2)

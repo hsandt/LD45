@@ -19,7 +19,10 @@ local character = new_class()
 --   rel_bubble_tail_pos: vector       position of bubble tail relative to foot position
 --                                     (above head)
 -- state
---   pos: vector                       foot position on screen. only changes during animations
+--   root_pos: vector                  position from which HUD and sprites are deduced
+--                                       does not move during animations
+--   sprite_pos: vector                sprite foot position
+--                                       changes during animations
 
 -- after constructing a character, you should call register_speaker
 function character:_init(character_info, direction, pos)
@@ -37,7 +40,8 @@ function character:_init(character_info, direction, pos)
   self.speaker = speaker_component(pos + rel_bubble_tail_pos)
 
   -- state
-  self.pos = pos
+  self.root_pos = pos:copy()
+  self.sprite_pos = pos:copy()
 end
 
 -- call after construction
@@ -54,7 +58,7 @@ end
 
 function character:draw()
   local flip_x = self.direction == horizontal_dirs.left
-  self.sprite:render(self.pos, flip_x)
+  self.sprite:render(self.sprite_pos, flip_x)
 end
 
 return character
