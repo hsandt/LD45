@@ -35,6 +35,9 @@ main_menu._items = transform({
       app.game_session.fight_count = 10  -- high count to avoid unwanted tutorials
       app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.ceo_id]
       flow:query_gamestate_type(':fight')
+    end},
+    {"debug: sandbox", function(app)
+      flow:query_gamestate_type(':sandbox')
     end}
   }, unpacking(menu_item))
 
