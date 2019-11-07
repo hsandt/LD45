@@ -1,4 +1,5 @@
 require("engine/core/class")
+local animated_sprite = require("engine/render/animated_sprite")
 
 local speaker_component = require("dialogue/speaker_component")
 local visual_data = require("resources/visual_data")
@@ -12,7 +13,7 @@ local character = new_class()
 --   speaker: speaker_component
 -- parameters
 --   character_info: character_info    character info
---   sprite: sprite_data               sprite to render
+--   sprite: animated_sprite           animated sprite
 --   direction: horizontal_dirs        facing left or right?
 --
 --   rel_bubble_tail_pos: vector       position of bubble tail relative to foot position
@@ -24,9 +25,10 @@ local character = new_class()
 function character:_init(character_info, direction, pos)
   -- paremeters
   self.character_info = character_info
-  -- cache sprite data ref
-  self.sprite = visual_data.sprites.character[character_info.sprite_id]
-  assert(self.sprite, "no sprite found for id: "..character_info.sprite_id)
+  local sprite_data_table = visual_data.anim_sprites.character[character_info.sprite_id]
+  assert(sprite_data_table, "no anim sprite found for id: "..character_info.sprite_id)
+  self.sprite = animated_sprite(sprite_data_table)
+  self.sprite:play('idle')
   self.direction = direction
 
   -- components (inject relative position directly as currently,
@@ -51,7 +53,8 @@ end
 -- render
 
 function character:draw()
-  self.sprite:render(self.pos)
+  local flip_x = self.direction == horizontal_dirs.left
+  self.sprite:render(self.pos, flip_x)
 end
 
 return character
