@@ -386,10 +386,9 @@ function fight_manager:hit_fighter(some_fighter, damage)
   some_fighter:take_damage(damage)
 
   -- fx
-  local hit_fx_offset = visual_data.hit_fx_offset_right
+  local hit_fx_offset = visual_data.hit_fx_offset_right:copy()
   if some_fighter.direction == horizontal_dirs.left then
-    -- make sure to copy the vector not to modify visual data
-    hit_fx_offset = mirrored_x(hit_fx_offset)
+    hit_fx_offset:mirror_x()
   end
   -- use root_pos not sprite_pos, as the latter may change during _async_play_hurt_anim
   self.hit_fx_pos = some_fighter.character.root_pos + hit_fx_offset
@@ -403,10 +402,9 @@ function fight_manager:hit_fighter(some_fighter, damage)
 end
 
 function fight_manager:_async_play_hurt_anim(fighter_character)
-  local offset = visual_data.hurt_sprite_offset_right
+  local offset = visual_data.hurt_sprite_offset_right:copy()
   if fighter_character.direction == horizontal_dirs.left then
-    -- make sure to copy the vector not to modify visual data
-    offset = mirrored_x(offset)
+    offset:mirror_x()
   end
   -- original value was fighter_character.root_pos, so just add offset
   fighter_character.sprite_pos:add_inplace(offset)

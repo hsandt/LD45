@@ -98,27 +98,11 @@ itest_manager:register_itest('#solo intermediate fight -> back to adv',
 
   wait(2.0)
 
-  -- opponent should auto-attack
+  -- both player and opponent should auto-attack
+  -- so wait until someone dies
+  wait(15)
 
-  -- reply with first reply
-  short_press(button_ids.o)
-
-  wait(2.0)
-
-  -- attack with first attack
-  short_press(button_ids.o)
-
-  -- opponent should auto-reply
-  wait(2.0)
-
-  -- quote match resolution
-
-  -- continue until someone dies (pc attacks used disappear from the list,
-  --   so we'll automatically next the other attacks without even pressing down)
-  short_press(button_ids.o)
-  wait(2.0)
-  short_press(button_ids.o)
-  wait(2.0)
+  -- skip any remaining blocking dialogue to end the fight
   short_press(button_ids.o)
   wait(2.0)
 
