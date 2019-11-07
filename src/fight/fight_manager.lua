@@ -384,15 +384,33 @@ end
 function fight_manager:hit_fighter(some_fighter, damage)
   some_fighter:take_damage(damage)
 
+  -- anim
+  self.app:start_coroutine(self._async_play_hurt_anim, self, some_fighter.character)
+
   -- fx
   local hit_fx_offset = visual_data.hit_fx_offset_right
   if some_fighter.direction == horizontal_dirs.left then
-    hit_fx_offset.x = - hit_fx_offset.x
+    -- make sure to copy the vector not to modify visual data
+    hit_fx_offset = mirrored_x(hit_fx_offset)
   end
   self.hit_fx_pos = some_fighter.character.pos + hit_fx_offset
   self.hit_fx:play('once')
 
   -- todo: sfx
+end
+
+function fight_manager:_async_play_hurt_anim(fighter_character)
+  local original_pos = fighter_character.pos
+  local offset = visual_data.hurt_sprite_offset_right
+  if fighter_character.direction == horizontal_dirs.left then
+    -- make sure to copy the vector not to modify visual data
+    offset = mirrored_x(offset)
+  end
+  fighter_character.pos = original_pos + offset
+  fighter_character.sprite:play('hurt')
+  self.app:yield_delay_s(0.5)
+  fighter_character.pos = original_pos
+  fighter_character.sprite:play('idle')
 end
 
 function fight_manager:start_victory(some_fighter)

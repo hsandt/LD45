@@ -119,6 +119,9 @@ local visual_data = {
   pc_sprite_pos = vector(19, 85),
   npc_sprite_pos = vector(86, 85),
 
+  -- hurt sprite offset when facing right (flip x when facing left)
+  hurt_sprite_offset_right = vector(-5, 0),
+
   -- hit fx: offset from character position when facing right (flip x when facing left)
   hit_fx_offset_right = vector(4, -35),
 
