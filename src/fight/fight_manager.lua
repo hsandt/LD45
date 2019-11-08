@@ -21,14 +21,15 @@ fight_manager.initially_active = false
 
 --[[
 Dynamic parameters (fixed for a given fight)
-  next_opponent         (fighter_progression|nil)  next opponent to start fight with, if any
+  next_opponent         fighter_progression|nil    next opponent to start fight with, if any
   fighters              {fighter}                  current fighters. [1] is player, [2] is npc
 
 State
   active_fighter_index  int                        index of fighter currently selecting action / acting
-  won_last_fight        (bool|nil)                 true iff player won the last fight, if any
+  won_last_fight        bool|nil                   true iff player won the last fight, if any
   hit_fx                animated_sprite            hit fx animated sprite
-  hit_fx_pos            (vector|nil)               position of the hit fx animated sprite, if any
+  hit_fx_pos            vector|nil                 position of the hit fx animated sprite, if any
+  hit_feedback_label    ui.label|nil               label for hit feedback (set reference directly)
 --]]
 function fight_manager:_init()
   manager._init(self)
@@ -41,6 +42,8 @@ function fight_manager:_init()
 
   self.hit_fx = animated_sprite(visual_data.anim_sprites.hit_fx)
   self.hit_fx_pos = nil
+
+  self.hit_feedback_label = nil
 end
 
 function fight_manager:start()  -- override
@@ -311,8 +314,11 @@ function fight_manager:request_next_fighter_action()
   self:request_active_fighter_action()
 end
 
+-- todo: losing attack is not interesting, replace with "i give up" or allow fighter
+--   to reuse attacks already used after some turns
 function fight_manager:resolve_losing_attack(losing_attacker, passive_replier)
-  self:hit_fighter(losing_attacker, gameplay_data.losing_attack_penalty)
+  -- damage is not really due to attack or reply, but self failure, so pass quote_type = nil
+  self:hit_fighter(losing_attacker, nil, gameplay_data.losing_attack_penalty)
   self.app:wait_and_do(visual_data.check_exchange_result_delay,
     self.check_exchange_result, self, losing_attacker, passive_replier)
 end
@@ -333,7 +339,13 @@ function fight_manager:resolve_exchange(attacker, replier)
   if quote_match then
     -- reply worked
     -- don't use the reply level, but the match power to determine how good the counter is
-    self:hit_fighter(attacker, quote_match.power)
+    if quote_match.power > 0 then
+      self:hit_fighter(attacker, quote_types.reply, quote_match.power)
+    else
+      -- either cancel quote or a specific match has power 0, so don't hit
+      --   any character, but play neutralize feedback
+      self:play_neutralize_feedback(attacker)
+    end
 
     -- learning: both fighters witness quote match and can remember it
     --   (except cancel which automatically
@@ -349,7 +361,7 @@ function fight_manager:resolve_exchange(attacker, replier)
     end
   else
     -- reply failed, just use the attack level directly to deal damage
-    self:hit_fighter(replier, attacker_quote.level)
+    self:hit_fighter(replier, quote_types.attack, attacker_quote.level)
   end
 
   self.app:wait_and_do(visual_data.check_exchange_result_delay,
@@ -382,23 +394,29 @@ function fight_manager:clear_exchange()
   end
 end
 
-function fight_manager:hit_fighter(some_fighter, damage)
-  some_fighter:take_damage(damage)
+function fight_manager:hit_fighter(target_fighter, quote_type, damage)
+  target_fighter:take_damage(damage)
+
+  -- anim
+  self.app:start_coroutine(self._async_play_hurt_anim, self, target_fighter.character)
 
   -- fx
   local hit_fx_offset = visual_data.hit_fx_offset_right:copy()
-  if some_fighter.direction == horizontal_dirs.left then
+  if target_fighter.direction == horizontal_dirs.left then
     hit_fx_offset:mirror_x()
   end
   -- use root_pos not sprite_pos, as the latter may change during _async_play_hurt_anim
-  self.hit_fx_pos = some_fighter.character.root_pos + hit_fx_offset
-
-  -- anim
-  self.app:start_coroutine(self._async_play_hurt_anim, self, some_fighter.character)
-
+  self.hit_fx_pos = target_fighter.character.root_pos + hit_fx_offset
   self.hit_fx:play('once')
 
+  -- feedback message
+  self.app:start_coroutine(self._async_show_hit_feedback_label, self, target_fighter, quote_type, damage)
+
   -- todo: sfx
+end
+
+function fight_manager:play_neutralize_feedback(target_fighter)
+  -- todo
 end
 
 function fight_manager:_async_play_hurt_anim(fighter_character)
@@ -412,6 +430,20 @@ function fight_manager:_async_play_hurt_anim(fighter_character)
   self.app:yield_delay_s(0.5)
   fighter_character.sprite_pos:copy_assign(fighter_character.root_pos)
   fighter_character.sprite:play('idle')
+end
+
+function fight_manager:_async_show_hit_feedback_label(target_fighter, quote_type, damage)
+  -- losing attack has no hit feedback label
+  local repr_damage = min(damage, 3)
+  if quote_type then
+    self.hit_feedback_label = visual_data.hit_feedback_labels[target_fighter.fighter_progression.character_type][quote_type][repr_damage]
+--#if assert
+    assert(self.hit_feedback_label, "no hit feedback label for (character type, quote type, representative damage): "..
+      joinstr(", ", target_fighter.fighter_progression.character_type, quote_type, repr_damage))
+--#endif
+    self.app:yield_delay_s(1.0)
+    self.hit_feedback_label = nil
+  end
 end
 
 function fight_manager:start_victory(some_fighter)
@@ -447,7 +479,11 @@ function fight_manager:draw_fighters()
 end
 
 function fight_manager:draw_hud()
-  -- nothing for now, since health bars are part of fighters
+  -- don't draw health bars here, they are now part of fighters draw
+
+  if self.hit_feedback_label then
+    self.hit_feedback_label:draw()
+  end
 end
 
 return fight_manager

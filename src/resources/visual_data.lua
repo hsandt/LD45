@@ -2,6 +2,10 @@ require("engine/core/math")
 local sprite_data = require("engine/render/sprite_data")
 local animated_sprite_data = require("engine/render/animated_sprite_data")
 require("engine/render/color")
+local ui = require("engine/ui/ui")
+
+local quote_info = require("content/quote_info")  -- quote_types
+local fighter_progression = require("progression/fighter_progression")  -- character_types
 
 local sprites = {
   -- blank: don't put anything in the bottom-right 8x8 sprite location
@@ -78,6 +82,38 @@ local visual_data = {
 
   -- hit fx: offset from character position when facing right (flip x when facing left)
   hit_fx_offset_right = vector(4, -35),
+
+  -- hit feedback labels, indexed by:
+  --   hurt character type -> hitting quote type -> representative damage
+  hit_feedback_labels = {
+    [character_types.pc] = {
+      [quote_types.attack] = {
+        -- todo: support center mode in label to avoid changing x based on text length
+        [1] = ui.label("direct hit!", vector(32, 53), colors.orange),
+        [2] = ui.label("direct hit!", vector(32, 53), colors.orange),
+        [3] = ui.label("direct hit!", vector(32, 53), colors.red)
+      },
+      [quote_types.reply] = {
+        [0] = ui.label("neutralized!", vector(32, 53), colors.white),
+        [1] = ui.label("countered!", vector(32, 53), colors.orange),
+        [2] = ui.label("countered!", vector(32, 53), colors.orange),
+        [3] = ui.label("countered!", vector(32, 53), colors.red)
+      }
+    },
+    [character_types.npc] = {
+      [quote_types.attack] = {
+        [1] = ui.label("direct hit!", vector(32, 53), colors.brown),
+        [2] = ui.label("direct hit!", vector(32, 53), colors.brown),
+        [3] = ui.label("direct hit!", vector(32, 53), colors.yellow)
+      },
+      [quote_types.reply] = {
+        [0] = ui.label("neutralized!", vector(32, 53), colors.white),
+        [1] = ui.label("ok", vector(32, 53), colors.brown),
+        [2] = ui.label("smart!", vector(32, 53), colors.dark_green),
+        [3] = ui.label("witty!", vector(32, 53), colors.indigo)
+      }
+    }
+  },
 
   -- bubble text
   -- Margin-x from both screen edges
