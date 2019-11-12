@@ -88,4 +88,4 @@ fi
   -o "${cartridge_stem}_v${version}"                     \
   -c "$config"                                           \
   -s "$symbols"                                          \
-  --minify
+  --minify-level 2

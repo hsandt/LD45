@@ -26,7 +26,7 @@ symbols='assert,log,itest'
   -d "$data_path/data.p8" -M "$data_path/metadata.p8" \
   -a "$author" -t "$title"                            \
   -p "$build_output_path"                             \
-  -o "${cartridge_stem}_v${version}"                       \
+  -o "${cartridge_stem}_v${version}"                  \
   -c "$config"                                        \
   -s "$symbols"                                       \
-  --minify
+  --minify-level 2

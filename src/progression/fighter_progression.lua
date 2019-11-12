@@ -3,14 +3,14 @@ require("engine/core/helper")
 
 local gameplay_data = require("resources/gameplay_data")
 
-character_types = enum {
-  'pc',
-  'npc'
+character_types = {
+  pc = 1,
+  npc = 2
 }
 
-control_types = enum {
-  'human',
-  'ai'
+control_types = {
+  human = 1,
+  ai = 2
 }
 
 -- class holding persistent information on the fighter, pc or npc

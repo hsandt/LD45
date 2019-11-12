@@ -1,9 +1,9 @@
 require("engine/core/class")
 require("engine/core/helper")
 
-quote_types = enum {
-  "attack",
-  "reply"
+quote_types = {
+  attack = 1,
+  reply = 2
 }
 
 local quote_info = new_struct()

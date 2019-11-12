@@ -8,9 +8,9 @@ local ui = require("engine/ui/ui")
 local text_menu = require("menu/text_menu")
 local visual_data = require("resources/visual_data")
 
-speakers = enum {
-  'pc',
-  'npc'
+speakers = {
+  pc = 1,
+  npc = 2
 }
 
 -- index must match speakers enum

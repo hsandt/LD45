@@ -52,8 +52,8 @@ local function generate_character_anim_sprite_data_table()
   local character_anim_sprite_data_table = {}
   for i = 0, 13 do
     character_anim_sprite_data_table[i] = {
-      idle = animated_sprite_data.create_static(sprites.character[i]),
-      hurt = animated_sprite_data({sprites.hurt_character, sprites.blank, sprites.hurt_character}, 3, anim_loop_modes.freeze_last)
+      ["idle"] = animated_sprite_data.create_static(sprites.character[i]),
+      ["hurt"] = animated_sprite_data({sprites.hurt_character, sprites.blank, sprites.hurt_character}, 3, anim_loop_modes.freeze_last)
     }
   end
   return character_anim_sprite_data_table
@@ -62,7 +62,7 @@ end
 local anim_sprites = {
   character = generate_character_anim_sprite_data_table(),
   hit_fx = {
-    once = animated_sprite_data.create(sprites.hit_fx,
+    ["once"] = animated_sprite_data.create(sprites.hit_fx,
       {1, 2, 3, 4, 5}, 1, anim_loop_modes.clear)
   }
 }
