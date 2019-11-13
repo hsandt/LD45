@@ -29,7 +29,7 @@ local attacks = {
   quote_info(11, quote_types.attack, 2, to_big("You couldn't install an app if I gave you a setup.exe.")),
   quote_info(12, quote_types.attack, 2, to_big("Unlike you, I only buy reliable devices that last at least 20 years.")),
   quote_info(13, quote_types.attack, 2, to_big("Yesterday, I stayed focused six hours straight on my computer.")),
-  quote_info(14, quote_types.attack, 3, to_big("My shelves are so well organized I can find any book without lifting a finger.")),
+  quote_info(14, quote_types.attack, 3, to_big("I can find any book in my shelf without lifting a finger.")),
   quote_info(15, quote_types.attack, 3, to_big("I have so much charisma I'm getting paid just for being here.")),
   quote_info(16, quote_types.attack, 3, to_big("People like you can also get here now? They really lowered the bar.")),
   quote_info(17, quote_types.attack, 3, to_big("I'm sure your website is so unsafe it gets hacked every month!!")),
@@ -179,7 +179,7 @@ local npc_fighter_info_s = {
   fighter_info(13, 13, 2, 3, {1, 2, 5, 6}, {3, 7, 11, 13}, {2, 3, 11}), -- rossmann
   -- doesn't know match 13: 6 -> 11, but can learn it from pc later
 --#if debug
-  fighter_info(14, 14, 99, 10, {14, 18}, {13, 15, 17}, {}), -- debug man (longest quotes)
+  fighter_info(14, 14, 99, 10, {8, 9, 14, 18, 19}, {13, 15, 17}, {}), -- debug man (longest quotes)
 --#endif
 }
 
