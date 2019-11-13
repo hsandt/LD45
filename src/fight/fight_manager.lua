@@ -376,6 +376,18 @@ function fight_manager:check_exchange_result(attacker, replier)
   if is_attacker_alive and is_replier_alive then
     -- in our rules, replying fighter keeps control whatever the result of the exchange,
     --   but becomes attacker, so just continue to next action
+    local active_fighter = self.fighters[self.active_fighter_index]
+    if active_fighter == attacker then
+      -- attacker ended this turn, must be a losing attack
+      -- passive replier should now play
+      self:give_control_to_next_fighter()
+    else
+      assert(active_fighter == replier)
+      -- replier ended this turn as in a usual exchange
+      -- replier should play again, so don't change active fighter
+    end
+
+    -- now wait to request action for appropriate fighter
     self.app:wait_and_do(visual_data.request_active_fighter_action_delay,
       self.request_active_fighter_action, self)
   elseif is_attacker_alive then
