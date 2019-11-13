@@ -23,17 +23,17 @@ local attacks = {
   quote_info( 5, quote_types.attack, 1, to_big("You couldn't write a sum formula in Excel.")),
   quote_info( 6, quote_types.attack, 1, to_big("Yesterday I completed all my tasks for the day under 3 hours.")),
   quote_info( 7, quote_types.attack, 2, to_big("Unlike you, all my neurons still work after 6pm.")),
-  quote_info( 8, quote_types.attack, 2, to_big("I'm so good at networking that I doubled the number of my contacts in the course of a single event.")),
+  quote_info( 8, quote_types.attack, 2, to_big("I'm so good at networking I doubled the number of my contacts in a single event.")),
   quote_info( 9, quote_types.attack, 2, to_big("It was raining, you saw some light... This is how you landed here, right?")),
   quote_info(10, quote_types.attack, 2, to_big("It took me only thirty minutes to build a website for my portfolio.")),
   quote_info(11, quote_types.attack, 2, to_big("You couldn't install an app if I gave you a setup.exe.")),
   quote_info(12, quote_types.attack, 2, to_big("Unlike you, I only buy reliable devices that last at least 20 years.")),
   quote_info(13, quote_types.attack, 2, to_big("Yesterday, I stayed focused six hours straight on my computer.")),
-  quote_info(14, quote_types.attack, 3, to_big("My shelves are so well organized I can find any book, eyes closed/without lifting a finger.")),
+  quote_info(14, quote_types.attack, 3, to_big("My shelves are so well organized I can find any book without lifting a finger.")),
   quote_info(15, quote_types.attack, 3, to_big("I have so much charisma I'm getting paid just for being here.")),
   quote_info(16, quote_types.attack, 3, to_big("People like you can also get here now? They really lowered the bar.")),
   quote_info(17, quote_types.attack, 3, to_big("I'm sure your website is so unsafe it gets hacked every month!!")),
-  quote_info(18, quote_types.attack, 3, to_big("No idea for your speech with the boss, uh? You should watch me and take some notes.")),
+  quote_info(18, quote_types.attack, 3, to_big("Don't know what to say to the boss? Just watch me and take some notes.")),
   quote_info(19, quote_types.attack, 3, to_big("A rookie like you has no chance; leave it to a pro with hands-on experience.")),
   quote_info(20, quote_types.attack, 3, to_big("I was so good at my previous job that they didn't want to let me go.")),
 }
@@ -51,7 +51,7 @@ local replies = {
   quote_info( 4, quote_types.reply,  1, to_big("I see you spent time with the coffee machine.")),
   quote_info( 5, quote_types.reply,  1, to_big("Oh, I'm pretty sure you made some contributions toward this.")),
   quote_info( 6, quote_types.reply,  1, to_big("Well, it's about time you went to the gym for some exercise.")),
-  quote_info( 7, quote_types.reply,  2, to_big("At least I don't pretend I came here by foot after taking the elevator through most of the floors.")),
+  quote_info( 7, quote_types.reply,  2, to_big("At least I didn't take the elevator, then pretend I climbed up to here.")),
   quote_info( 8, quote_types.reply,  2, to_big("I see you enjoyed your time on Discord.")),
   quote_info( 9, quote_types.reply,  2, to_big("So, do you use a plugin for that, too?")),
   quote_info(10, quote_types.reply,  2, to_big("Well, we don't all browse at 56kbps.")),
@@ -150,6 +150,9 @@ local npc_info_s = {
   character_info(11, "senior marketing", 11),
   character_info(12, "ceo", 12),
   character_info(13, "rossmann", 13),
+--#if debug
+  character_info(14, "debug man", 13),  -- reuse rossmann sprite
+--#endif
 }
 
 -- "start with nothing" -> no known quotes to start with
@@ -175,6 +178,9 @@ local npc_fighter_info_s = {
   -- no quotes yet... I need to invent unique level 4 quotes for the boss
   fighter_info(13, 13, 2, 3, {1, 2, 5, 6}, {3, 7, 11, 13}, {2, 3, 11}), -- rossmann
   -- doesn't know match 13: 6 -> 11, but can learn it from pc later
+--#if debug
+  fighter_info(14, 14, 99, 10, {14, 18}, {13, 15, 17}, {}), -- debug man (longest quotes)
+--#endif
 }
 
 local gameplay_data = {

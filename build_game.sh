@@ -72,9 +72,9 @@ symbols=''
 if [[ $config == 'debug' ]]; then
   # symbols='assert,log,visual_logger,tuner,profiler,mouse'
   # lighter config
-  symbols='assert,log'
+  symbols='assert,log,debug'
 elif [[ $config == 'debug-ultrafast' ]]; then
-  symbols='assert,log,ultrafast'
+  symbols='assert,log,debug,ultrafast'
 elif [[ $config == 'ultrafast' ]]; then
   symbols='ultrafast'
 fi

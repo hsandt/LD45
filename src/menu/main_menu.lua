@@ -20,6 +20,7 @@ main_menu._items = transform({
       app.managers[':adventure'].next_step = 'intro'
       flow:query_gamestate_type(':adventure')
     end},
+--#if debug
     {"debug: 1st fight", function(app)
       app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
       flow:query_gamestate_type(':fight')
@@ -32,13 +33,29 @@ main_menu._items = transform({
     end},
     {"debug: boss fight", function(app)
       app.game_session.floor_number = 11
-      app.game_session.fight_count = 10  -- high count to avoid unwanted tutorials
+      app.game_session.fight_count = 10
+      local pc_fighter_prog = app.game_session.pc_fighter_progression
+      pc_fighter_prog.known_attack_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+      pc_fighter_prog.known_reply_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+      pc_fighter_prog.known_quote_match_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
       app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.ceo_id]
+      flow:query_gamestate_type(':fight')
+    end},
+    {"debug man fight", function(app)
+      app.game_session.floor_number = 5
+      app.game_session.fight_count = 10
+      local pc_fighter_prog = app.game_session.pc_fighter_progression
+      pc_fighter_prog.max_hp = 10
+      pc_fighter_prog.known_attack_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+      pc_fighter_prog.known_reply_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+      pc_fighter_prog.known_quote_match_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+      app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[14]
       flow:query_gamestate_type(':fight')
     end},
     {"debug: sandbox", function(app)
       flow:query_gamestate_type(':sandbox')
     end}
+--#endif
   }, unpacking(menu_item))
 
 -- text_menu: text_menu    component handling menu display and selection
@@ -80,7 +97,7 @@ function main_menu:draw_instructions()
   y = y + 15
   ui.print_centered(wwrap("win to reach the top!", 25), 64, y, colors.white)
 
-  y = 100
+  y = 110
   api.print("arrows: navigate", 33, y, colors.white)
   y = y + 6
   api.print("z/c/n: confirm", 33, y, colors.white)

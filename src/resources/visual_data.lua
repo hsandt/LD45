@@ -124,7 +124,7 @@ local visual_data = {
   --   forward direction, without having to pass the faced direction to
   --   the speaker component so the dialogue manager can compute appropriate bounds.
   bubble_screen_margin_x = 4,
-  bubble_line_max_chars = 24,   -- maximum chars per line in bubble text
+  bubble_line_max_chars = 27,   -- maximum chars per line in bubble text
   bubble_min_width = 12,
   bubble_tail_height = 3,
   rel_bubble_tail_pos_by_horizontal_dir = {
