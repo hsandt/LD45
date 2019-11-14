@@ -26,7 +26,9 @@ local vlogger = require("engine/debug/visual_logger")
 local ui = require("engine/ui/ui")
 --#endif
 
+--#if debug
 local sandbox_state = require("debug/sandbox_state")
+--#endif
 local dialogue_manager = require("dialogue/dialogue_manager")
 local game_session = require("progression/game_session")
 local main_menu = require("menu/main_menu")
@@ -51,7 +53,9 @@ end
 
 function wit_fighter_app:instantiate_gamestates() -- override
   return {main_menu(), adventure_state(), fight_state(),
-    sandbox_state()  -- comment out for final release (or add some --#if sandbox)
+--#if debug
+    sandbox_state()
+--#endif
   }
 end
 
