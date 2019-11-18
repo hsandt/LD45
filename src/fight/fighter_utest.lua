@@ -148,6 +148,32 @@ describe('fighter', function ()
 
   end)
 
+   describe('preview_quote', function ()
+
+     setup(function ()
+       stub(speaker_component, "think")
+     end)
+
+     teardown(function ()
+       speaker_component.think:revert()
+     end)
+
+     after_each(function ()
+       speaker_component.think:clear()
+     end)
+
+     it('should call think on character speaker component', function ()
+       local q = quote_info(3, quote_types.attack, 1, "attack 3")
+
+       f:preview_quote(q)
+
+       local s = assert.spy(speaker_component.think)
+       s.was_called(1)
+       s.was_called_with(match.ref(f.character.speaker), "attack 3", false, true)
+     end)
+
+  end)
+
   describe('say_quote', function ()
 
     setup(function ()
@@ -360,14 +386,20 @@ describe('fighter', function ()
 
     setup(function ()
       stub(character, "draw")
+      stub(fighter, "draw_health_bar")
+      stub(fighter, "draw_name_label")
     end)
 
     teardown(function ()
       character.draw:revert()
+      fighter.draw_health_bar:revert()
+      fighter.draw_name_label:revert()
     end)
 
     after_each(function ()
       character.draw:clear()
+      fighter.draw_health_bar:clear()
+      fighter.draw_name_label:clear()
     end)
 
     it('should call animated sprite draw', function ()
@@ -376,6 +408,14 @@ describe('fighter', function ()
       local s = assert.spy(character.draw)
       s.was_called(1)
       s.was_called_with(match.ref(f.character))
+
+      s = assert.spy(fighter.draw_health_bar)
+      s.was_called(1)
+      s.was_called_with(match.ref(f))
+
+      s = assert.spy(fighter.draw_name_label)
+      s.was_called(1)
+      s.was_called_with(match.ref(f))
     end)
 
   end)

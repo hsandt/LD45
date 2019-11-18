@@ -245,7 +245,10 @@ function fight_manager:generate_quote_menu_items(human_fighter, quote_type, avai
     local say_quote_callback = function ()
       self:say_quote(human_fighter, quote)
     end
-    return menu_item(quote.text, say_quote_callback)
+    local select_quote_callback = function ()
+      self:preview_quote(human_fighter, quote)
+    end
+    return menu_item(quote.text, say_quote_callback, select_quote_callback)
   end)
 end
 
@@ -275,6 +278,10 @@ function fight_manager:auto_pick_quote(fighter, quote_type)
     assert(attack)
     return fighter:auto_pick_reply(attack.id)
   end
+end
+
+function fight_manager:preview_quote(active_fighter, quote)
+  active_fighter:preview_quote(quote)
 end
 
 function fight_manager:say_quote(active_fighter, quote)

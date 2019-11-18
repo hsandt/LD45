@@ -134,6 +134,11 @@ function fighter:auto_pick_reply(attack_id)
   return reply
 end
 
+function fighter:preview_quote(quote)
+  local is_attacking = quote.type == quote_types.attack
+  self.character.speaker:think(quote.text, false, is_attacking)
+end
+
 function fighter:say_quote(quote)
   local is_attacking = quote.type == quote_types.attack
 
