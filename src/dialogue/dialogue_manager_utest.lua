@@ -5,11 +5,28 @@ require("engine/application/constants")
 local manager = require("engine/application/manager")
 local input = require("engine/input/input")
 
+local character_info = require("content/character_info")
 local speaker_component = require("dialogue/speaker_component")
 local text_menu = require("menu/text_menu")
 local visual_data = require("resources/visual_data")
+local character = require("story/character")
 
 describe('dialogue_manager', function ()
+
+  local mock_character_info1 = character_info(1, "employee1", 5)
+  local mock_character_info2 = character_info(2, "employee2", 6)
+
+  local c1
+  local c2
+  local s1
+  local s2
+
+  before_each(function ()
+    c1 = character(mock_character_info1, horizontal_dirs.right, vector(20, 60))
+    c2 = character(mock_character_info2, horizontal_dirs.right, vector(20, 60))
+    s1 = speaker_component(c1)
+    s2 = speaker_component(c2)
+  end)
 
   describe('static members', function ()
 
@@ -100,8 +117,6 @@ describe('dialogue_manager', function ()
         end)
 
         it('(2 speakers) should update speakers', function ()
-          local s1 = speaker_component(vector(1, 0))
-          local s2 = speaker_component(vector(2, 0))
           d.speakers = {s1, s2}
 
           d:update()
@@ -147,8 +162,6 @@ describe('dialogue_manager', function ()
         end)
 
         it('(2 speakers) should update speakers', function ()
-          local s1 = speaker_component(vector(1, 0))
-          local s2 = speaker_component(vector(2, 0))
           d.speakers = {s1, s2}
 
           d:render()
@@ -213,9 +226,6 @@ describe('dialogue_manager', function ()
       describe('add_speaker', function ()
 
         it('should add a speaker component to the speakers', function ()
-
-          local s1 = speaker_component(vector(1, 0))
-          local s2 = speaker_component(vector(2, 0))
           d:add_speaker(s1)
           d:add_speaker(s2)
 
@@ -227,9 +237,6 @@ describe('dialogue_manager', function ()
       describe('remove_speaker', function ()
 
         it('should remove a speaker component to the speakers', function ()
-
-          local s1 = speaker_component(vector(1, 0))
-          local s2 = speaker_component(vector(2, 0))
           d.speakers = {s1, s2}
 
           d:remove_speaker(s1)
@@ -288,81 +295,94 @@ describe('dialogue_manager', function ()
     end)
 
     it('(some speaker waiting for input, but no confirm) should not stop speaker', function ()
-      local speaker = speaker_component(vector(1, 0))
-      speaker.wait_for_input = true
+      s1.wait_for_input = true
 
-      dialogue_manager.update_speaker(speaker)
+      dialogue_manager.update_speaker(s1)
 
       local s = assert.spy(speaker_component.stop)
       s.was_not_called()
     end)
 
     it('(some speaker waiting for input and confirm input) should stop speaker', function ()
-      local speaker = speaker_component(vector(1, 0))
-      speaker.wait_for_input = true
+      s1.wait_for_input = true
       input.players_btn_states[0][button_ids.o] = btn_states.just_pressed
 
-      -- normally d.speakers = {speaker} but we can test by passing directly s
-      dialogue_manager.update_speaker(speaker)
+      -- normally d.speakers = {speaker} but we can test by passing directly s1
+      dialogue_manager.update_speaker(s1)
 
       local s = assert.spy(speaker_component.stop)
       s.was_called(1)
-      s.was_called_with(match.ref(speaker))
+      s.was_called_with(match.ref(s1))
     end)
 
   end)
 
   describe('render_speaker', function ()
 
-    it('should not error', function ()
-      local speaker = speaker_component(vector(1, 0))
-
-      assert.has_no_errors(function ()
-        dialogue_manager.render_speaker(speaker)
-      end)
+    setup(function ()
+      stub(dialogue_manager, "draw_bubble_with_text")
     end)
 
-    it('(speaker has current text) should not error', function ()
-      local speaker = speaker_component(vector(1, 0))
-      speaker.current_text = "hello"
+    teardown(function ()
+      dialogue_manager.draw_bubble_with_text:revert()
+    end)
 
-      assert.has_no_errors(function ()
-        dialogue_manager.render_speaker(speaker)
-      end)
+    after_each(function ()
+      dialogue_manager.draw_bubble_with_text:clear()
+    end)
+
+    it('(no current text) should do nothing', function ()
+      s1.current_text = nil
+
+      dialogue_manager.render_speaker(s1)
+
+      local s = assert.spy(dialogue_manager.draw_bubble_with_text)
+      s.was_not_called()
+    end)
+
+    it('(some current text) should call draw_bubble_with_text', function ()
+      s1.current_text = "hello"
+
+      dialogue_manager.render_speaker(s1)
+
+      local s = assert.spy(dialogue_manager.draw_bubble_with_text)
+      s.was_called(1)
     end)
 
   end)
 
   describe('compute_bubble_bounds', function ()
 
+    -- we test for speech only, expecting thought to work as it's only a change of data
+
     it('(anchor far from both edges enough) should return bubble bounds', function ()
       -- longest line has 12 characters
       assert.are_same({30-(12*4+2)/2, 19, 30+(12*4+2)/2, 27},
-        {dialogue_manager.compute_bubble_bounds("hello world!", vector(30, 30))})
+        {dialogue_manager.compute_bubble_bounds(bubble_types.speech, "hello world!", vector(30, 30))})
     end)
 
     it('(anchor close to left) should return bubble bounds clamped on left', function ()
       -- longest line has 19 characters
       assert.are_same({4, 7, 4+(19*4+2), 27},
-        {dialogue_manager.compute_bubble_bounds("hello world!\nmy name is girljpeg\nfourswords", vector(10, 30))})
+        {dialogue_manager.compute_bubble_bounds(bubble_types.speech, "hello world!\nmy name is girljpeg\nfourswords", vector(10, 30))})
     end)
 
     it('(anchor close to right) should return bubble bounds clamped on right', function ()
       -- longest line has 19 characters
       assert.are_same({124-(19*4+2), 7, 124, 27},
-        {dialogue_manager.compute_bubble_bounds("hello world!\nmy name is girljpeg\nfourswords", vector(100, 30))})
+        {dialogue_manager.compute_bubble_bounds(bubble_types.speech, "hello world!\nmy name is girljpeg\nfourswords", vector(100, 30))})
     end)
 
     it('(text is too long for anything, anchor on left side) should return bubble bounds clamped on both sides', function ()
       -- longest line has 30 characters... too many to fit, it's really just to cover the weird cases
       assert.are_same({4, 19, 124, 27},
-        {dialogue_manager.compute_bubble_bounds("123456789012345678901234567890", vector(20, 30))})
+        {dialogue_manager.compute_bubble_bounds(bubble_types.speech, "123456789012345678901234567890", vector(20, 30))})
     end)
 
     it('(text is too long for anything, anchor on right side) should return bubble bounds clamped on both sides', function ()
       -- longest line has 30 characters... too many to fit, it's really just to cover the weird cases
       assert.are_same({4, 19, 124, 27},
-        {dialogue_manager.compute_bubble_bounds("123456789012345678901234567890", vector(100, 30))})
+        {dialogue_manager.compute_bubble_bounds(bubble_types.speech, "123456789012345678901234567890", vector(100, 30))})
     end)
 
   end)

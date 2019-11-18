@@ -13,18 +13,6 @@ speakers = {
   npc = 2
 }
 
--- index must match speakers enum
-local bubble_min_widths = {
-  visual_data.bubble_min_width_pc,
-  visual_data.bubble_min_width_npc
-}
-
--- index must match speakers enum
-local bubble_tail_positions = {
-  visual_data.bubble_tail_pos_pc,
-  visual_data.bubble_tail_pos_npc
-}
-
 local dialogue_manager = derived_class(manager)
 
 dialogue_manager.type = ':dialogue'
@@ -104,20 +92,20 @@ end
 -- static
 function dialogue_manager.render_speaker(speaker)
   if speaker.current_text then
-    dialogue_manager.draw_bubble_with_text(speaker.current_text, speaker:get_final_bubble_tail_pos())
+    dialogue_manager.draw_bubble_with_text(speaker.bubble_type, speaker.current_text, speaker:get_final_bubble_tail_pos())
   end
 end
 
 -- static
-function dialogue_manager.draw_bubble_with_text(text, bubble_tail_pos)
+function dialogue_manager.draw_bubble_with_text(bubble_type, text, bubble_tail_pos)
   local wrapped_text = wwrap(text, visual_data.bubble_line_max_chars)
-  local bubble_left, bubble_top, bubble_right, bubble_bottom = dialogue_manager.compute_bubble_bounds(wrapped_text, bubble_tail_pos)
-  dialogue_manager.draw_bubble(bubble_left, bubble_top, bubble_right, bubble_bottom, bubble_tail_pos)
+  local bubble_left, bubble_top, bubble_right, bubble_bottom = dialogue_manager.compute_bubble_bounds(bubble_type, wrapped_text, bubble_tail_pos)
+  dialogue_manager.draw_bubble(bubble_type, bubble_left, bubble_top, bubble_right, bubble_bottom, bubble_tail_pos)
   dialogue_manager.draw_text(wrapped_text, bubble_left, bubble_top)
 end
 
 -- static
-function dialogue_manager.compute_bubble_bounds(text, bubble_tail_pos)
+function dialogue_manager.compute_bubble_bounds(bubble_type, text, bubble_tail_pos)
   -- compute bubble size to wrap around text, while respecting minimum for this character
   local text_width, text_height = compute_size(text)
   -- add border of 1px for the bubble (actually 2px with left+right, top+bottom,
@@ -125,7 +113,7 @@ function dialogue_manager.compute_bubble_bounds(text, bubble_tail_pos)
   local bubble_width, bubble_height = text_width + 1, text_height + 1
   bubble_width = max(visual_data.bubble_min_width, bubble_width)
 
-  local bubble_bottom = bubble_tail_pos.y - visual_data.bubble_tail_height
+  local bubble_bottom = bubble_tail_pos.y - visual_data.bubble_tail_height_by_bubble_type[bubble_type]
   local bubble_top = bubble_bottom - bubble_height
   local bubble_left
   local bubble_right
@@ -164,9 +152,9 @@ function dialogue_manager.compute_bubble_bounds(text, bubble_tail_pos)
 end
 
 -- static
-function dialogue_manager.draw_bubble(bubble_left, bubble_top, bubble_right, bubble_bottom, bubble_tail_pos)
+function dialogue_manager.draw_bubble(bubble_type, bubble_left, bubble_top, bubble_right, bubble_bottom, bubble_tail_pos)
   ui.draw_rounded_box(bubble_left, bubble_top, bubble_right, bubble_bottom, colors.black, colors.white)
-  visual_data.sprites.bubble_tail:render(bubble_tail_pos)
+  visual_data.sprites.bubble_tail_by_bubble_type[bubble_type]:render(bubble_tail_pos)
 end
 
 -- static

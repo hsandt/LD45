@@ -1,62 +1,144 @@
 require("engine/test/bustedhelper")
 local speaker_component = require("dialogue/speaker_component")
 
+local character_info = require("content/character_info")
 local visual_data = require("resources/visual_data")
+local character = require("story/character")
 
 require("engine/core/math")
 
 describe('speaker_component', function ()
 
-  local bubble_tail_pos = vector(-10, -30)
+  local mock_character_info = character_info(2, "employee", 5)
 
+  local c
   local s
 
   before_each(function ()
-    s = speaker_component(bubble_tail_pos)
+    c = character(mock_character_info, horizontal_dirs.right, vector(20, 60))
+    s = speaker_component(c)
   end)
 
   describe('_init', function ()
     it('should init a speaker_component', function ()
-      assert.are_same({bubble_tail_pos, nil, false, false},
-        {s.bubble_tail_pos, s.current_text, s.wait_for_input, s.higher_text})
+      assert.are_equal(c, s.entity)
+      assert.are_same({bubble_types.speech, nil, false, false},
+        {s.bubble_type, s.current_text, s.wait_for_input, s.higher_text})
     end)
   end)
 
   describe('get_final_bubble_tail_pos', function ()
 
-    it('should return the bubble tail pos if not saying higher text', function ()
+    it('(right, speech, not higher text) should return speech bubble tail pos', function ()
+      s.bubble_type = bubble_types.speech
       s.current_text = "hello"
       s.higher_text = false
 
-      assert.are_equal(bubble_tail_pos, s:get_final_bubble_tail_pos())
+      local expected_bubble_tail_pos = vector(20, 60) + visual_data.bubble_tail_offset_right_by_bubble_type[bubble_types.speech]
+      assert.are_equal(expected_bubble_tail_pos, s:get_final_bubble_tail_pos())
     end)
 
-    it('should return the bubble tail pos + first speaker offset if not saying higher text', function ()
+    it('(right, speech, higher text) should return speech bubble tail pos + first speaker offset', function ()
+      s.bubble_type = bubble_types.speech
       s.current_text = "hello"
       s.higher_text = true
 
-      assert.are_equal(bubble_tail_pos + vector(0, visual_data.first_speaker_tail_offset_y),
-        s:get_final_bubble_tail_pos())
+      local expected_bubble_tail_pos = vector(20, 60) + visual_data.bubble_tail_offset_right_by_bubble_type[bubble_types.speech]
+      expected_bubble_tail_pos = expected_bubble_tail_pos + vector(0, visual_data.first_speaker_tail_offset_y)
+      assert.are_equal(expected_bubble_tail_pos, s:get_final_bubble_tail_pos())
+    end)
+
+    it('(right, thought, not higher text) should return thought bubble tail pos', function ()
+      s.bubble_type = bubble_types.thought
+      s.current_text = "hello"
+      s.higher_text = false
+
+      local expected_bubble_tail_pos = vector(20, 60) + visual_data.bubble_tail_offset_right_by_bubble_type[bubble_types.thought]
+      assert.are_equal(expected_bubble_tail_pos, s:get_final_bubble_tail_pos())
+    end)
+
+    it('(left, speech, higher text) should return speech bubble tail pos (mirrored x) + first speaker offset', function ()
+      c.direction = horizontal_dirs.left
+      s.bubble_type = bubble_types.speech
+      s.current_text = "hello"
+      s.higher_text = true
+
+      local expected_bubble_tail_pos = vector(20, 60) + visual_data.bubble_tail_offset_right_by_bubble_type[bubble_types.speech]:mirrored_x()
+      expected_bubble_tail_pos = expected_bubble_tail_pos + vector(0, visual_data.first_speaker_tail_offset_y)
+      assert.are_equal(expected_bubble_tail_pos, s:get_final_bubble_tail_pos())
+    end)
+
+    it('(left, thought, not higher text) should return thought bubble tail pos (mirrored x)', function ()
+      c.direction = horizontal_dirs.left
+      s.bubble_type = bubble_types.thought
+      s.current_text = "hello"
+      s.higher_text = false
+
+      local expected_bubble_tail_pos = vector(20, 60) + visual_data.bubble_tail_offset_right_by_bubble_type[bubble_types.thought]:mirrored_x()
+      assert.are_equal(expected_bubble_tail_pos, s:get_final_bubble_tail_pos())
+    end)
+
+    it('(left, thought, higher text) should return thought bubble tail pos (mirrored x) + first speaker offset', function ()
+      c.direction = horizontal_dirs.left
+      s.bubble_type = bubble_types.thought
+      s.current_text = "hello"
+      s.higher_text = true
+
+      local expected_bubble_tail_pos = vector(20, 60) + visual_data.bubble_tail_offset_right_by_bubble_type[bubble_types.thought]:mirrored_x()
+      expected_bubble_tail_pos = expected_bubble_tail_pos + vector(0, visual_data.first_speaker_tail_offset_y)
+      assert.are_equal(expected_bubble_tail_pos, s:get_final_bubble_tail_pos())
     end)
 
   end)
 
-  describe('say', function ()
+  describe('say & think', function ()
 
-    it('should set the current speaker and the current text with wait_for_input = false and higher_text = false by default', function ()
-      s:say("hello")
+    setup(function ()
+      stub(speaker_component, "show_bubble")
+    end)
 
-      assert.are_same({"hello", false, false}, {s.current_text, s.wait_for_input, s.higher_text})
+    teardown(function ()
+      speaker_component.show_bubble:revert()
+    end)
+
+    after_each(function ()
+      speaker_component.show_bubble:clear()
+    end)
+
+    it('say should call show_bubble with speech bubble type', function ()
+      s:say("hello", false, true)
+
+      local spy = assert.spy(speaker_component.show_bubble)
+      spy.was_called(1)
+      spy.was_called_with(match.ref(s), bubble_types.speech, "hello", false, true)
+    end)
+
+    it('think should call show_bubble with speech bubble type', function ()
+      s:think("hello", false, true)
+
+      local spy = assert.spy(speaker_component.show_bubble)
+      spy.was_called(1)
+      spy.was_called_with(match.ref(s), bubble_types.thought, "hello", false, true)
+    end)
+
+  end)
+
+  describe('show_bubble', function ()
+
+    it('should set the bubble type and the current text with wait_for_input = false and higher_text = false by default', function ()
+      s:show_bubble(bubble_types.thought, "hello")
+
+      assert.are_same({bubble_types.thought, "hello", false, false}, {s.bubble_type, s.current_text, s.wait_for_input, s.higher_text})
     end)
 
     it('should set wait_for_input to the passed value', function ()
-      s:say("hello", true)
+      s:show_bubble(bubble_types.speech, "hello", true)
 
       assert.is_true(s.wait_for_input)
     end)
 
     it('should set higher_text to the passed value', function ()
-      s:say("hello", nil, true)
+      s:show_bubble(bubble_types.thought, "hello", nil, true)
 
       assert.is_true(s.higher_text)
     end)

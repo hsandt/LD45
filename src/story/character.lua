@@ -34,10 +34,8 @@ function character:_init(character_info, direction, pos)
   self.sprite:play('idle')
   self.direction = direction
 
-  -- components (inject relative position directly as currently,
-  --   a component cannot check the owning entity pos)
-  local rel_bubble_tail_pos = visual_data.rel_bubble_tail_pos_by_horizontal_dir[direction]
-  self.speaker = speaker_component(pos + rel_bubble_tail_pos)
+  -- components (inject entity)
+  self.speaker = speaker_component(self)
 
   -- state
   self.root_pos = pos:copy()

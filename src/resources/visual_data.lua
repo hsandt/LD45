@@ -12,7 +12,10 @@ local sprites = {
   blank = sprite_data(sprite_id_location(15, 15), tile_vector(1, 1), vector.zero(), colors.pink),
   -- ui
   cursor = sprite_data(sprite_id_location(1, 0)),
-  bubble_tail = sprite_data(sprite_id_location(2, 0), nil, vector(3, 7), colors.pink),
+  bubble_tail_by_bubble_type = {
+    sprite_data(sprite_id_location(2, 0), tile_vector(1, 1), vector(3, 7), colors.pink),  -- speech
+    sprite_data(sprite_id_location(2, 3), tile_vector(2, 1), vector(1, 6), colors.pink)   -- thought
+  },
   -- background
   upper_stairs_step1 = sprite_data(sprite_id_location(0, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
   upper_stairs_step2 = sprite_data(sprite_id_location(1, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
@@ -126,10 +129,13 @@ local visual_data = {
   bubble_screen_margin_x = 4,
   bubble_line_max_chars = 27,   -- maximum chars per line in bubble text
   bubble_min_width = 12,
-  bubble_tail_height = 3,
-  rel_bubble_tail_pos_by_horizontal_dir = {
-    vector(-2, -37),  -- horizontal_dirs.left  = 1
-    vector( 2, -37),  -- horizontal_dirs.right = 2
+  bubble_tail_height_by_bubble_type = {
+    3,  -- speech
+    6   -- thought
+  },
+  bubble_tail_offset_right_by_bubble_type = {
+    vector( 2, -37),  -- speech
+    vector( 9, -35)   -- thought
   },
   -- in fight, first speaker bubble is shown above second one to avoid overlapping
   first_speaker_tail_offset_y = -23,
