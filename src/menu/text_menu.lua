@@ -59,6 +59,7 @@ function text_menu:show_items(items)
   end
 
   self.selection_index = 1
+  self:on_selection_changed()
 end
 
 -- deactivate the menu and remove items

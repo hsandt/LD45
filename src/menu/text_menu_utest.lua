@@ -43,6 +43,18 @@ describe('text_menu', function ()
 
     describe('show_items', function ()
 
+      setup(function ()
+        stub(text_menu, "on_selection_changed")
+        end)
+
+      teardown(function ()
+        text_menu.on_selection_changed:revert()
+        end)
+
+      after_each(function ()
+        text_menu.on_selection_changed:clear()
+      end)
+
       it('should error with empty items', function ()
         assert.has_error(function ()
             menu.show_items({})
@@ -62,12 +74,20 @@ describe('text_menu', function ()
         assert.are_not_equal(mock_items, menu.items)
         assert.is_false(rawequal(mock_items[1], menu.items[1]))
         assert.is_false(rawequal(mock_items[2], menu.items[2]))
-      end)
+        end)
 
       it('should init the selection index', function ()
         menu:show_items(mock_items)
 
         assert.are_equal(1, menu.selection_index)
+        end)
+
+      it('should call on_selection_changed', function ()
+        menu:show_items(mock_items)
+
+        local s = assert.spy(text_menu.on_selection_changed)
+        s.was_called(1)
+        s.was_called_with(match.ref(menu))
       end)
 
     end)
@@ -207,7 +227,9 @@ describe('text_menu', function ()
             text_menu.on_selection_changed:revert()
             end)
 
-          after_each(function ()
+          -- before_each and not after_each as show_items in before_each above
+          --   calls on_selection_changed once already
+          before_each(function ()
             text_menu.on_selection_changed:clear()
           end)
 
@@ -268,13 +290,15 @@ describe('text_menu', function ()
 
           setup(function ()
             stub(text_menu, "on_selection_changed")
-            end)
+          end)
 
           teardown(function ()
             text_menu.on_selection_changed:revert()
           end)
 
-          after_each(function ()
+          -- before_each and not after_each as show_items in before_each above
+          --   calls on_selection_changed once already
+          before_each(function ()
             text_menu.on_selection_changed:clear()
           end)
 
