@@ -74,15 +74,15 @@ function adventure_state:_async_step_intro()
   self.app:yield_delay_s(2)
   dm.current_bottom_text = nil
   self.app:yield_delay_s(1)
-  pc_speaker:say_and_wait_for_input("ok, let's sum up")
-  pc_speaker:say_and_wait_for_input("1. i need funding to organize a hackathon")
-  pc_speaker:say_and_wait_for_input("2. my sister is the ceo of this company and could be my sponsor")
-  pc_speaker:say_and_wait_for_input("3. she's working at the 20th floor")
-  pc_speaker:say_and_wait_for_input("4. i don't want be to seen, so i'm avoiding the elevator, but those stairs seem endless")
-  pc_speaker:say_and_wait_for_input("seems good so far. what could go wrong?")
+  pc_speaker:think_and_wait_for_input("ok, let's sum up")
+  pc_speaker:think_and_wait_for_input("1. i need funding to organize a hackathon")
+  pc_speaker:think_and_wait_for_input("2. my sister is the ceo of this company and could be my sponsor")
+  pc_speaker:think_and_wait_for_input("3. she's working at the 20th floor")
+  pc_speaker:think_and_wait_for_input("4. i don't want be to seen, so i'm avoiding the elevator, but those stairs seem endless")
+  pc_speaker:think_and_wait_for_input("seems good so far. what could go wrong?")
   self.app:yield_delay_s(1)
 
-  pc_speaker:say_and_wait_for_input("wait, someone is coming!")
+  pc_speaker:think_and_wait_for_input("wait, someone is coming!")
   self.app:yield_delay_s(0.5)
 
   local next_npc_fighter_prog = self.app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]

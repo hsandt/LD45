@@ -89,6 +89,15 @@ function speaker_component:say_and_wait_for_input(text)
   end
 end
 
+-- same for thought bubble
+function speaker_component:think_and_wait_for_input(text)
+  self:think(text, true)
+
+  while self.wait_for_input do
+    yield()
+  end
+end
+
 function speaker_component:stop()
   self.current_text = nil
   self.wait_for_input = false
