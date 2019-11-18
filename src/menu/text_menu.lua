@@ -83,12 +83,25 @@ end
 
 function text_menu:select_previous()
   -- clamp selection
-  self.selection_index = max(self.selection_index - 1, 1)
+  if self.selection_index > 1 then
+    self.selection_index = self.selection_index - 1
+    self:on_selection_changed()
+  end
 end
 
 function text_menu:select_next()
   -- clamp selection
-  self.selection_index = min(self.selection_index + 1, #self.items)
+  if self.selection_index < #self.items then
+    self.selection_index = self.selection_index + 1
+    self:on_selection_changed()
+  end
+end
+
+function text_menu:on_selection_changed()
+  local select_callback = self.items[self.selection_index].select_callback
+  if select_callback then
+    select_callback(self.app)
+  end
 end
 
 function text_menu:confirm_selection()
