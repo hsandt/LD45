@@ -142,7 +142,8 @@ local visual_data = {
 
   -- bottom box
   bottom_box_topleft = vector(0, 89),
-  bottom_box_max_chars = 31,
+  bottom_box_max_chars_per_line = 31,
+  bottom_box_max_lines_count = 6,
 
   -- health bar
   health_bar_center_x_dist_from_char = 12,

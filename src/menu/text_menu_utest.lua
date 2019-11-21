@@ -15,30 +15,39 @@ describe('text_menu', function ()
   describe('init', function ()
 
     it('should set passed items, alignment and color, and set selection index to 0', function ()
-      local menu = text_menu(fake_app, alignments.left, colors.red)
+      local menu = text_menu(fake_app, 5, alignments.left, colors.red)
 
       assert.are_equal(fake_app, menu.app)
-      assert.are_same({alignments.left, colors.red, {}, false, 0},
-        {menu.alignment, menu.text_color, menu.items, menu.active, menu.selection_index})
+      assert.are_same({5, alignments.left, colors.red, {}, false, 0},
+        {menu.items_count_per_page, menu.alignment, menu.text_color, menu.items, menu.active, menu.selection_index})
     end)
 
   end)
 
-  describe('(with instance)', function ()
+  describe('(with instance, 2 items per page)', function ()
 
     local callback1 = function () end
     local callback2 = spy.new(function () end)
     local callback3 = spy.new(function () end)
+    local callback4 = spy.new(function () end)
 
     local mock_items = {
       menu_item("in-game", callback1),
       menu_item("credits", callback2, callback3)
     }
 
+    local mock_items_multipage = {
+      menu_item("in-game", callback1),
+      menu_item("credits", callback2, callback3),
+      menu_item("extra1", callback4),
+      menu_item("extra2", callback4),
+      menu_item("extra3", callback4)
+    }
+
     local menu
 
     before_each(function ()
-      menu = text_menu(fake_app, alignments.left, colors.red)
+      menu = text_menu(fake_app, 2, alignments.left, colors.red)
     end)
 
     describe('show_items', function ()
@@ -393,7 +402,7 @@ describe('text_menu', function ()
 
       end)
 
-      describe('(showing 2 items)', function ()
+      describe('(showing 2 items, below max items per page)', function ()
 
         before_each(function ()
           menu:show_items(mock_items)
@@ -423,7 +432,49 @@ describe('text_menu', function ()
           s.was_called_with("> credits <", 60, 54, alignments.center, colors.red)
         end)
 
-      end)  -- (showing 2 items)
+      end)  -- (showing 2 items, below max items per page)
+
+      describe('(showing 5 items, so 2 pages + 1 item)', function ()
+
+        before_each(function ()
+          menu:show_items(mock_items_multipage)
+        end)
+
+        it('(selection falls on page 1) should print item labels for page 1', function ()
+          menu.selection_index = 2  -- credits
+
+          menu:draw(60, 48)
+
+          local s = assert.spy(ui.print_aligned)
+          s.was_called(2)
+          -- non-selected item is offset to the right
+          s.was_called_with("in-game", 68, 48, alignments.left, colors.red)
+          s.was_called_with("> credits", 60, 54, alignments.left, colors.red)
+        end)
+
+        it('(selection falls on page 2) should print item labels for page 2', function ()
+          menu.selection_index = 3  -- extra1
+
+          menu:draw(60, 48)
+
+          local s = assert.spy(ui.print_aligned)
+          s.was_called(2)
+          s.was_called_with("> extra1", 60, 48, alignments.left, colors.red)
+          -- non-selected item is offset to the right
+          s.was_called_with("extra2", 68, 54, alignments.left, colors.red)
+        end)
+
+        it('(selection falls on page 3) should print item labels for page 2', function ()
+          menu.selection_index = 5  -- extra3
+
+          menu:draw(60, 48)
+
+          local s = assert.spy(ui.print_aligned)
+          s.was_called(1)
+          s.was_called_with("> extra3", 60, 48, alignments.left, colors.red)
+        end)
+
+      end)  -- (showing 5 items, so 2 pages + 1 item)
 
     end)  -- draw
 

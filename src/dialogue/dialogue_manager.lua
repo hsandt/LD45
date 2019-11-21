@@ -32,7 +32,8 @@ function dialogue_manager:_init()
 end
 
 function dialogue_manager:start()  -- override
-  self.text_menu = text_menu(self.app, alignments.left, colors.dark_blue)
+  self.text_menu = text_menu(self.app,
+    visual_data.bottom_box_max_lines_count, alignments.left, colors.dark_blue)
 end
 
 function dialogue_manager:update()  -- override
@@ -78,7 +79,7 @@ end
 -- draw text in bottom box for narration/notification/instruction
 function dialogue_manager:draw_bottom_text()
   local top_left = visual_data.bottom_box_topleft + vector(2, 2)  -- padding 2px
-  api.print(wwrap(self.current_bottom_text, visual_data.bottom_box_max_chars), top_left.x, top_left.y, colors.black)
+  api.print(wwrap(self.current_bottom_text, visual_data.bottom_box_max_chars_per_line), top_left.x, top_left.y, colors.black)
 end
 
 -- static

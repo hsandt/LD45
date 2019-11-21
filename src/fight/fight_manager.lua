@@ -252,7 +252,7 @@ function fight_manager:generate_quote_menu_items(human_fighter, quote_type, avai
 
     -- menu item prefixes choices with "> " (or blank with width of 2 chars)
     --   so we need to subtract 2 from the usually available string length
-    local clamped_text = menu_helper.clamp_text_with_ellipsis(quote.text, visual_data.bottom_box_max_chars - 2)
+    local clamped_text = menu_helper.clamp_text_with_ellipsis(quote.text, visual_data.bottom_box_max_chars_per_line - 2)
     return menu_item(clamped_text, say_quote_callback, select_quote_callback)
   end)
 end

@@ -6,14 +6,15 @@ local input = require("engine/input/input")
 local ui = require("engine/ui/ui")
 
 --[[
-Class representing a menu with labels and arrow-based navigation
+Class representing a menu with labels and arrow-based scrolling navigation
 
 External references
   app               gameapp       game app, provided to ease object access in item callbacks
 
 Instance parameters
-  alignment         alignments    text alignment to use for item display
-  text_color        colors        item text color
+  items_count_per_page  int         number of items displayed per page
+  alignment             alignments  text alignment to use for item display
+  text_color            colors      item text color
 
 Instance dynamic parameters
   items             {menu_item}   sequence of items to display
@@ -24,11 +25,12 @@ Instance state
 --]]
 
 local text_menu = new_class()
-function text_menu:_init(app, alignment, text_color)
+function text_menu:_init(app, items_count_per_page, alignment, text_color)
   -- external references
   self.app = app
 
   -- parameters
+  self.items_count_per_page = items_count_per_page
   self.alignment = alignment
   self.text_color = text_color
 
@@ -117,9 +119,20 @@ end
 
 -- render menu, starting at top y, with text centered on x
 function text_menu:draw(x, top)
+  if #self.items == 0 then
+    return
+  end
+
+  assert(self.selection_index > 0, "self.selection_index is "..self.selection_index..", should be > 0")
+
   local y = top
 
-  for i = 1, #self.items do
+  -- identify which page is currently shown from the current selection
+  -- unlike other indices in Lua, page starts at 0
+  local page_index0 = flr((self.selection_index - 1) / self.items_count_per_page)
+  local first_index0 = page_index0 * self.items_count_per_page
+  local last_index0 = min(first_index0 + self.items_count_per_page - 1, #self.items - 1)
+  for i = first_index0 + 1, last_index0 + 1 do
     -- for current selection, surround with "> <" like this: "> selected item <"
     local label = self.items[i].label
     local item_x = x

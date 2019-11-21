@@ -67,7 +67,7 @@ function main_menu:_init()
 end
 
 function main_menu:on_enter()
-  self.text_menu = text_menu(self.app, alignments.center, colors.white)
+  self.text_menu = text_menu(self.app, 5, alignments.center, colors.white)
   self.text_menu:show_items(main_menu._items)
 end
 
