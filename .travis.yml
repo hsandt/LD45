@@ -55,7 +55,7 @@ before_script:
   - ln -s "$(pwd)/tool/picotool-master/p8tool" "$HOME/.local/bin/p8tool"
 
 script:
-  # test (including rendered headless itests)
+  # test (including rendered headless itests thanks to ENABLE_RENDER=1)
   - ./test.sh -m all
   # coverage
   - bash <(curl -s https://codecov.io/bash)
