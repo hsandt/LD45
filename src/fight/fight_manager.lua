@@ -8,6 +8,7 @@ local animated_sprite = require("engine/render/animated_sprite")
 
 local quote_info = require("content/quote_info")
 local fighter = require("fight/fighter")
+local menu_helper = require("menu/menu_helper")
 local menu_item = require("menu/menu_item")
 local fighter_progression = require("progression/fighter_progression")
 local gameplay_data = require("resources/gameplay_data")
@@ -248,7 +249,11 @@ function fight_manager:generate_quote_menu_items(human_fighter, quote_type, avai
     local select_quote_callback = function ()
       self:preview_quote(human_fighter, quote)
     end
-    return menu_item(quote.text, say_quote_callback, select_quote_callback)
+
+    -- menu item prefixes choices with "> " (or blank with width of 2 chars)
+    --   so we need to subtract 2 from the usually available string length
+    local clamped_text = menu_helper.clamp_text_with_ellipsis(quote.text, visual_data.bottom_box_max_chars - 2)
+    return menu_item(clamped_text, say_quote_callback, select_quote_callback)
   end)
 end
 
