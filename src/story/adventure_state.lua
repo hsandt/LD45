@@ -9,6 +9,13 @@ local adventure_state = derived_class(gamestate)
 
 adventure_state.type = ':adventure'
 
+-- after [key] fights, we show tutorial [value]
+local fight_count_to_tutorial_map = {
+  [1] = 1,
+  [3] = 2,
+  [6] = 3
+}
+
 function adventure_state:_init()
   gamestate._init(self)
 
@@ -113,8 +120,10 @@ function adventure_state:_async_step_floor_loop()
   end
 
   -- after-fight tutorial if any
-  local play_method_name = '_async_tutorial'..self.app.game_session.fight_count
-  if self[play_method_name] then
+  local tutorial_number = fight_count_to_tutorial_map[self.app.game_session.fight_count]
+  if tutorial_number then
+    local play_method_name = '_async_tutorial'..tutorial_number
+    assert(self[play_method_name], "adventure_state has no method named: "..play_method_name)
     self[play_method_name](self)
   end
 
@@ -207,6 +216,7 @@ function adventure_state:_async_tutorial1()
   pc_speaker:say_and_wait_for_input("ok, that was harsh.")
   pc_speaker:say_and_wait_for_input("i should write down the attacks i've just received so i can reuse them")
   pc_speaker:say_and_wait_for_input("an attack may lose its effect once said, so i shouldn't reuse the same twice in the same fight")
+  self.app:yield_delay_s(1)
   pc_speaker:say_and_wait_for_input("ok, i'm done.")
   self.app:yield_delay_s(1)
 end
@@ -216,7 +226,12 @@ function adventure_state:_async_tutorial2()
   local pc_speaker = am.pc.speaker
 
   self.app:yield_delay_s(1)
-  pc_speaker:say_and_wait_for_input("[tuto 2]")
+  pc_speaker:say_and_wait_for_input("looks like some replies work better than others.")
+  pc_speaker:say_and_wait_for_input('normal replies are "ok"')
+  pc_speaker:say_and_wait_for_input('good replies are "smart"')
+  pc_speaker:say_and_wait_for_input('very good replies are "witty"')
+  pc_speaker:say_and_wait_for_input("the better the reply, the higher the damage. useful.")
+  pc_speaker:say_and_wait_for_input("let's go now.")
   self.app:yield_delay_s(1)
 end
 
@@ -225,7 +240,11 @@ function adventure_state:_async_tutorial3()
   local pc_speaker = am.pc.speaker
 
   self.app:yield_delay_s(1)
-  pc_speaker:say_and_wait_for_input("[tuto 3]")
+  pc_speaker:say_and_wait_for_input("i feel like my opponents are also learning my quotes.")
+  pc_speaker:say_and_wait_for_input("besides, if they randomly find a good reply they will probably reuse them later.")
+  pc_speaker:say_and_wait_for_input("i should be careful when exposing my opponents to new quotes.")
+  pc_speaker:say_and_wait_for_input("that said, newbies are probably not good enough to learn advanced quotes.")
+  pc_speaker:say_and_wait_for_input("fine, let's go on.")
   self.app:yield_delay_s(1)
 end
 
