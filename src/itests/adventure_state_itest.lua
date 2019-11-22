@@ -116,8 +116,7 @@ itest_manager:register_itest('play floor loop at boss floor',
   -- enter adventure state
   setup_callback(function (app)
     local am = app.managers[':adventure']
-    local fm = app.managers[':fight']
-
+    app.game_session.fight_count = 10  -- high count to avoid unwanted tutorials
     app.game_session.floor_number = 11
     am.next_step = 'floor_loop'
 
@@ -127,8 +126,6 @@ itest_manager:register_itest('play floor loop at boss floor',
   -- skip enough dialogues to start next fight,
   --   but not too much to avoid finishing the fight already
   -- dialogue with ceo is much longer
-  short_press(button_ids.o)
-  wait(2)
   short_press(button_ids.o)
   wait(2)
   short_press(button_ids.o)
