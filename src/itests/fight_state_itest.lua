@@ -75,7 +75,6 @@ itest_manager:register_itest('#solo intermediate fight -> back to adv',
 
   -- enter fight state
   setup_callback(function (app)
-    local am = app.managers[':adventure']
     local fm = app.managers[':fight']
     local pc_fighter_prog = app.game_session.pc_fighter_progression
 
