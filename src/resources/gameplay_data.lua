@@ -131,7 +131,7 @@ local floors = {
   floor_info( 8,  2,  3),
   floor_info( 9,  3,  3),
   floor_info(10,  3,  3),
-  floor_info(11,  4,  4),
+  floor_info(11,  0,  0),  -- ceo with fictive level 0 (maybe prefer flag can_learn: false)
 }
 
 -- character story and visual info
@@ -174,8 +174,8 @@ local npc_fighter_info_s = {
   fighter_info( 9,  9, 3, 5, { 4, 6, 9, 11, 12, 16, 17}, { 1, 3, 9, 10, 12, 15, 16, 19}, { 28, 40, 11, 45, 9, 22, 5, 27, 31, 24, 42, 23, 41, 6, 21, 39, 10, 25}), -- senior programmer
   fighter_info(10, 10, 3, 7, { 3, 8, 10, 13, 19, 20},    { 2, 4, 6, 8, 11, 18},          { 44, 47, 26, 34, 1, 32, 16, 30, 13, 15, 17, 33, 37}),                   -- senior qa
   fighter_info(11, 11, 3, 5, { 2, 4, 5, 8, 15, 18},      { 5, 7, 8, 17, 18},             { 12, 35, 2, 20, 16, 30, 43, 46, 37, 48}),                               -- senior marketing
-  fighter_info(12, 12, 4, 8, { },                        { },                            { }),                                                                    -- ceo/boss
-  -- no quotes yet... I need to invent unique level 4 quotes for the boss
+  fighter_info(12, 12, 0, 8, { },                        { },                            { }),                                                                    -- ceo/boss
+  -- low level to avoid final boss learning your quotes... she would become invincible
   fighter_info(13, 13, 2, 3, {1, 2, 5, 6}, {3, 7, 11, 13}, {2, 3, 11}),  -- rossmann
   -- doesn't know match 13: 6 -> 11, but can learn it from pc later
 -- #if debug
