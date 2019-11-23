@@ -3,6 +3,7 @@ local gamestate = require("engine/application/gamestate")
 local flow = require("engine/application/flow")
 
 local painter = require("render/painter")
+local audio_data = require("resources/audio_data")
 local gameplay_data = require("resources/gameplay_data")
 
 local adventure_state = derived_class(gamestate)
@@ -31,7 +32,7 @@ function adventure_state:on_enter()
   -- show bottom box immediately, otherwise we'll see that the lower stairs is not finished...
   dm.should_show_bottom_box = true
 
-  music(0)
+  music(audio_data.bgm.thinking)
 
   self:start_sequence()
 end
@@ -139,6 +140,8 @@ function adventure_state:async_encounter_npc(npc_fighter_prog)
   local fm = self.app.managers[':fight']
   local pc_speaker = am.pc.speaker
 
+  music(audio_data.bgm.encounter)
+
   -- show npc
   am:spawn_npc(npc_fighter_prog.fighter_info.character_info_id)
   local npc_speaker = am.npc.speaker
@@ -150,6 +153,8 @@ function adventure_state:async_encounter_npc(npc_fighter_prog)
   else
     npc_speaker:say_and_wait_for_input("en garde!")
   end
+
+  music(-1)
 
   -- start fight
   fm.next_opponent = npc_fighter_prog
