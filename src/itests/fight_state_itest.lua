@@ -25,7 +25,10 @@ itest_manager:register_itest('1st fight -> back to adv',
   setup_callback(function (app)
     local am = app.managers[':adventure']
     local fm = app.managers[':fight']
+    local pc_fighter_prog = app.game_session.pc_fighter_progression
 
+    -- cheat to have pc killed in 1 turn
+    pc_fighter_prog.max_hp = 1
     -- fight rossmann
     fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
 
@@ -43,24 +46,7 @@ itest_manager:register_itest('1st fight -> back to adv',
 
   wait(2.0)
 
-  -- attack with first attack
-  short_press(button_ids.o)
-
-  -- opponent should auto-reply
-  wait(2.0)
-
-  -- quote match resolution
-
-  -- continue until someone dies
-  short_press(button_ids.o)
-  wait(2.0)
-  short_press(button_ids.o)
-  wait(2.0)
-  short_press(button_ids.o)
-  wait(2.0)
-
-  -- opponent depends a bit on randomness, but after all these turns
-  --   we should have finished the fight and be back to the adventure for next step
+  -- quote match resolution: pc has only 1 hp, so dies immediately and fight ends
 
   final_assert(function ()
     return flow.curr_state.type == ':adventure', "current game state is not ':adventure', has instead type: '"..flow.curr_state.type.."'"
@@ -77,6 +63,9 @@ itest_manager:register_itest('#solo intermediate fight -> back to adv',
   setup_callback(function (app)
     local fm = app.managers[':fight']
     local pc_fighter_prog = app.game_session.pc_fighter_progression
+
+    -- cheat to have pc killed in 2 turns
+    pc_fighter_prog.max_hp = 2
 
     -- let ai control pc so we pick matching replies when possible
     -- we'll still need to press confirm button to skip normal dialogues,
