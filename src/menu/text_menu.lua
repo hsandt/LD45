@@ -105,6 +105,13 @@ function text_menu:on_selection_changed()
   if select_callback then
     select_callback(self.app)
   end
+
+  self:on_selection_changed_custom()
+end
+
+-- more convenient to override this than on_selection_changed,
+--   as you'd need to call base implementation
+function text_menu:on_selection_changed_custom()  -- virtual
 end
 
 function text_menu:confirm_selection()
@@ -115,6 +122,12 @@ function text_menu:confirm_selection()
   -- we must call the callback *after* deactivating the text_menu, in case it immediately
   -- shows new choices itself, so it is not hidden after filling the items
   self.items[self.selection_index].confirm_callback(self.app)
+
+  -- callback
+  self:on_confirm_selection_custom()
+end
+
+function text_menu:on_confirm_selection_custom()  -- virtual
 end
 
 -- render menu, starting at top y, with text centered on x

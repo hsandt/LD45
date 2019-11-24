@@ -212,17 +212,38 @@ describe('text_menu', function ()
 
       before_each(function ()
         menu:show_items(mock_items)
-      end)
+        end)
 
       describe('confirm_selection', function ()
+
+        setup(function ()
+          stub(text_menu, "on_confirm_selection_custom")
+        end)
+
+        teardown(function ()
+          text_menu.on_confirm_selection_custom:revert()
+        end)
+
+        after_each(function ()
+          text_menu.on_confirm_selection_custom:clear()
+        end)
 
         it('should deactivate the menu (keeping items)', function ()
           menu:confirm_selection()
 
           assert.is_false(menu.active)
-        end)
+          end)
 
-      end)
+        it('should call on_confirm_selection_custom', function ()
+
+          menu:confirm_selection()
+
+          local s = assert.spy(text_menu.on_confirm_selection_custom)
+          s.was_called(1)
+          s.was_called_with(match.ref(menu))
+          end)
+
+        end)
 
       describe('(when selection index is 1)', function ()
 
@@ -230,11 +251,11 @@ describe('text_menu', function ()
 
           setup(function ()
             stub(text_menu, "on_selection_changed")
-            end)
+          end)
 
           teardown(function ()
             text_menu.on_selection_changed:revert()
-            end)
+          end)
 
           -- before_each and not after_each as show_items in before_each above
           --   calls on_selection_changed once already
@@ -279,10 +300,32 @@ describe('text_menu', function ()
 
         describe('on_selection_changed', function ()
 
+          setup(function ()
+            stub(text_menu, "on_selection_changed_custom")
+          end)
+
+          teardown(function ()
+            text_menu.on_selection_changed_custom:revert()
+          end)
+
+          -- before_each and not after_each as show_items in before_each above
+          --   calls on_selection_changed once already
+          before_each(function ()
+            text_menu.on_selection_changed_custom:clear()
+          end)
+
           it('should not call any select callback if there is none', function ()
             local s = assert.has_no_errors(function ()
               menu:on_selection_changed()
             end)
+          end)
+
+          it('should call on_selection_changed_custom (in any case)', function ()
+            menu:on_selection_changed()
+
+            local s = assert.spy(text_menu.on_selection_changed_custom)
+            s.was_called(1)
+            s.was_called_with(match.ref(menu))
           end)
 
         end)
