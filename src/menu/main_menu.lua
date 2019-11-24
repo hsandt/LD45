@@ -10,7 +10,7 @@ local text_menu = require("menu/text_menu")
 local gameplay_data = require("resources/gameplay_data")
 
 -- main menu: gamestate for player navigating in main menu
-local main_menu = derived_class(gamestate)
+local main_menu = new_class(gamestate)
 
 main_menu.type = ':main_menu'
 

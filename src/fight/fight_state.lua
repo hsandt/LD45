@@ -5,7 +5,7 @@ local painter = require("render/painter")
 local visual_data = require("resources/visual_data")
 local audio_data = require("resources/audio_data")
 
-local fight_state = derived_class(gamestate)
+local fight_state = new_class(gamestate)
 
 fight_state.type = ':fight'
 

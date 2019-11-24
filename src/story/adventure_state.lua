@@ -6,7 +6,7 @@ local painter = require("render/painter")
 local audio_data = require("resources/audio_data")
 local gameplay_data = require("resources/gameplay_data")
 
-local adventure_state = derived_class(gamestate)
+local adventure_state = new_class(gamestate)
 
 adventure_state.type = ':adventure'
 

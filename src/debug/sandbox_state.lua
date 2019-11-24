@@ -7,7 +7,7 @@ local animated_sprite = require("engine/render/animated_sprite")
 local visual_data = require("resources/visual_data")
 
 -- sandbox: gamestate to test simple stuff actually running in PICO-8
-local sandbox_state = derived_class(gamestate)
+local sandbox_state = new_class(gamestate)
 
 sandbox_state.type = ':sandbox'
 
