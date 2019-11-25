@@ -115,6 +115,9 @@ function fight_manager:start_fight_with_next_opponent()
 end
 
 function fight_manager:start_fight_with(opponent_fighter_prog)
+  -- audio: start bgm
+  music(audio_data.bgm.fight_normal)
+
   self:spawn_fighters(self.app.game_session.pc_fighter_progression, opponent_fighter_prog)
 
   -- start battle flow (opponent starts)
@@ -134,6 +137,9 @@ function fight_manager:stop_fight()
   -- cleanup
   self.active_fighter_index = 0
   self:despawn_fighters()
+
+  -- audio: stop bgm
+  music(-1)
 end
 
 function fight_manager:spawn_fighters(pc_fighter_prog, npc_fighter_prog)

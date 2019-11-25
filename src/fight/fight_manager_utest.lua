@@ -13,6 +13,7 @@ local dialogue_manager = require("dialogue/dialogue_manager")
 local fighter = require("fight/fighter")
 local fighter_progression = require("progression/fighter_progression")
 local game_session = require("progression/game_session")
+local audio_data = require("resources/audio_data")
 local gameplay_data = require("resources/gameplay_data")
 local visual_data = require("resources/visual_data")
 local adventure_manager = require("story/adventure_manager")
@@ -348,6 +349,34 @@ describe('fight_manager', function ()
         local s = assert.spy(fight_manager.request_active_fighter_action)
         s.was_called(1)
         s.was_called_with(match.ref(fm))
+      end)
+
+      describe('(stubbing music)', function ()
+
+        setup(function ()
+          stub(_G, "music")
+        end)
+
+        teardown(function ()
+          music:revert()
+        end)
+
+        after_each(function ()
+          music:clear()
+        end)
+
+        describe('on_selection_changed', function ()
+
+          it('should play fight normal bgm', function ()
+            fm:start_fight_with(mock_npc_fighter_prog)
+
+            local s = assert.spy(music)
+            s.was_called(1)
+            s.was_called_with(audio_data.bgm.fight_normal)
+          end)
+
+        end)
+
       end)
 
     end)

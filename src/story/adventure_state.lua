@@ -32,6 +32,7 @@ function adventure_state:on_enter()
   -- show bottom box immediately, otherwise we'll see that the lower stairs is not finished...
   dm.should_show_bottom_box = true
 
+  -- audio: start bgm
   music(audio_data.bgm.thinking)
 
   self:start_sequence()
@@ -154,6 +155,7 @@ function adventure_state:async_encounter_npc(npc_fighter_prog)
     npc_speaker:say_and_wait_for_input("en garde!")
   end
 
+  -- audio: stop bgm
   music(-1)
 
   -- start fight
