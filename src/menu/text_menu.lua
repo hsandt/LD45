@@ -60,14 +60,14 @@ function text_menu:show_items(items)
     add(self.items, item:copy())
   end
 
-  self.selection_index = 1
-  self:on_selection_changed()
+  self:set_selection(1)
 end
 
 -- deactivate the menu and remove items
 function text_menu:clear(items)
   self.active = false
   clear_table(self.items)
+  -- raw set instead of self:set_selection/change_selection(0) which have side effects
   self.selection_index = 0
 end
 
@@ -84,34 +84,49 @@ function text_menu:update()
   end
 end
 
+-- almost a raw set, but apply any item callback (e.g. show hint for current selection)
+-- call this for initial selection or when you need to "teleport" cursor with no
+--   without calling on_selection_changed (e.g. to avoid unwanted sfx)
+function text_menu:set_selection(index)
+  if self.selection_index ~= index then
+    self.selection_index = index
+    self:try_select_callback(index)
+  end
+end
+
+-- like set_selection, but also calls on_selection_changed
+function text_menu:change_selection(index)
+  if self.selection_index ~= index then
+    self.selection_index = index
+    self:try_select_callback(index)
+    self:on_selection_changed()
+  end
+end
+
 function text_menu:select_previous()
   -- clamp selection
   if self.selection_index > 1 then
-    self.selection_index = self.selection_index - 1
-    self:on_selection_changed()
+    self:change_selection(self.selection_index - 1)
   end
 end
 
 function text_menu:select_next()
   -- clamp selection
   if self.selection_index < #self.items then
-    self.selection_index = self.selection_index + 1
-    self:on_selection_changed()
+    self:change_selection(self.selection_index + 1)
   end
 end
 
-function text_menu:on_selection_changed()
-  local select_callback = self.items[self.selection_index].select_callback
+-- apply select callback for this item if any
+-- unlike on_selection_changed, it is item-specific
+function text_menu:try_select_callback(index)
+  local select_callback = self.items[index].select_callback
   if select_callback then
     select_callback(self.app)
   end
-
-  self:on_selection_changed_custom()
 end
 
--- more convenient to override this than on_selection_changed,
---   as you'd need to call base implementation
-function text_menu:on_selection_changed_custom()  -- virtual
+function text_menu:on_selection_changed()  -- virtual
 end
 
 function text_menu:confirm_selection()
@@ -124,10 +139,10 @@ function text_menu:confirm_selection()
   self.items[self.selection_index].confirm_callback(self.app)
 
   -- callback
-  self:on_confirm_selection_custom()
+  self:on_confirm_selection()
 end
 
-function text_menu:on_confirm_selection_custom()  -- virtual
+function text_menu:on_confirm_selection()  -- virtual
 end
 
 -- render menu, starting at top y, with text centered on x

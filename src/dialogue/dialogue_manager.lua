@@ -5,7 +5,7 @@ require("engine/core/helper")
 local input = require("engine/input/input")
 local ui = require("engine/ui/ui")
 
-local text_menu = require("menu/text_menu")
+local text_menu = require("menu/text_menu_with_sfx")
 local visual_data = require("resources/visual_data")
 
 speakers = {

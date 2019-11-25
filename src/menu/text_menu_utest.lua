@@ -53,15 +53,15 @@ describe('text_menu', function ()
     describe('show_items', function ()
 
       setup(function ()
-        stub(text_menu, "on_selection_changed")
+        spy.on(text_menu, "set_selection")
         end)
 
       teardown(function ()
-        text_menu.on_selection_changed:revert()
+        text_menu.set_selection:revert()
         end)
 
       after_each(function ()
-        text_menu.on_selection_changed:clear()
+        text_menu.set_selection:clear()
       end)
 
       it('should error with empty items', function ()
@@ -83,20 +83,14 @@ describe('text_menu', function ()
         assert.are_not_equal(mock_items, menu.items)
         assert.is_false(rawequal(mock_items[1], menu.items[1]))
         assert.is_false(rawequal(mock_items[2], menu.items[2]))
-        end)
+      end)
 
-      it('should init the selection index', function ()
+      it('should call set_selection', function ()
         menu:show_items(mock_items)
 
-        assert.are_equal(1, menu.selection_index)
-        end)
-
-      it('should call on_selection_changed', function ()
-        menu:show_items(mock_items)
-
-        local s = assert.spy(text_menu.on_selection_changed)
+        local s = assert.spy(text_menu.set_selection)
         s.was_called(1)
-        s.was_called_with(match.ref(menu))
+        s.was_called_with(match.ref(menu), 1)
       end)
 
     end)
@@ -212,82 +206,134 @@ describe('text_menu', function ()
 
       before_each(function ()
         menu:show_items(mock_items)
+      end)
+
+      describe('try_select_callback', function ()
+
+        it('should not call any select callback if there is none at passed item index', function ()
+          local s = assert.has_no_errors(function ()
+            menu:try_select_callback(1)
+          end)
         end)
+
+        it('should call select callback if there is one at passed item index', function ()
+          menu:try_select_callback(2)
+
+          local s = assert.spy(callback3)
+          s.was_called(1)
+          s.was_called_with(match.ref(fake_app))
+        end)
+
+      end)
 
       describe('confirm_selection', function ()
 
         setup(function ()
-          stub(text_menu, "on_confirm_selection_custom")
+          stub(text_menu, "on_confirm_selection")
         end)
 
         teardown(function ()
-          text_menu.on_confirm_selection_custom:revert()
+          text_menu.on_confirm_selection:revert()
         end)
 
         after_each(function ()
-          text_menu.on_confirm_selection_custom:clear()
+          text_menu.on_confirm_selection:clear()
         end)
 
         it('should deactivate the menu (keeping items)', function ()
           menu:confirm_selection()
 
           assert.is_false(menu.active)
-          end)
+        end)
 
-        it('should call on_confirm_selection_custom', function ()
+        it('should call on_confirm_selection', function ()
 
           menu:confirm_selection()
 
-          local s = assert.spy(text_menu.on_confirm_selection_custom)
+          local s = assert.spy(text_menu.on_confirm_selection)
           s.was_called(1)
           s.was_called_with(match.ref(menu))
-          end)
-
         end)
+
+      end)
 
       describe('(when selection index is 1)', function ()
 
         describe('(stubbing on_selection_changed)', function ()
 
           setup(function ()
+            stub(text_menu, "try_select_callback")
             stub(text_menu, "on_selection_changed")
           end)
 
           teardown(function ()
+            text_menu.try_select_callback:revert()
             text_menu.on_selection_changed:revert()
           end)
 
           -- before_each and not after_each as show_items in before_each above
-          --   calls on_selection_changed once already
+          --   calls try_select_callback once already
+          -- (on_selection_changed is not called there, so could be in after_each)
           before_each(function ()
+            text_menu.try_select_callback:clear()
             text_menu.on_selection_changed:clear()
           end)
 
-          describe('select_previous', function ()
+          describe('set_selection', function ()
 
-            it('should not change selection index due to clamping', function ()
-              menu:select_previous()
-              assert.are_equal(1, menu.selection_index)
+            it('should set selection if new index', function ()
+              menu:set_selection(2)
+              assert.are_equal(2, menu.selection_index)
             end)
 
-            it('should not call on_selection_changed due to clamping', function ()
-              menu:select_previous()
+            it('should not call try_select_callback if no index change', function ()
+              menu:set_selection(1)
+
+              local s = assert.spy(text_menu.try_select_callback)
+              s.was_not_called()
+            end)
+
+            it('should call try_select_callback if index change', function ()
+              menu:set_selection(2)
+
+              local s = assert.spy(text_menu.try_select_callback)
+              s.was_called(1)
+              s.was_called_with(match.ref(menu), 2)
+            end)
+
+          end)
+
+          describe('change_selection', function ()
+
+            it('should set selection if new index', function ()
+              menu:change_selection(2)
+              assert.are_equal(2, menu.selection_index)
+            end)
+
+            it('should not call try_select_callback if no index change', function ()
+              menu:change_selection(1)
+
+              local s = assert.spy(text_menu.try_select_callback)
+              s.was_not_called()
+            end)
+
+            it('should call try_select_callback if index change', function ()
+              menu:change_selection(2)
+
+              local s = assert.spy(text_menu.try_select_callback)
+              s.was_called(1)
+              s.was_called_with(match.ref(menu), 2)
+            end)
+
+            it('should not call on_selection_changed if no index change', function ()
+              menu:change_selection(1)
 
               local s = assert.spy(text_menu.on_selection_changed)
               s.was_not_called()
             end)
 
-          end)
-
-          describe('select_next', function ()
-
-            it('should increment selection index', function ()
-              menu:select_next()
-              assert.are_equal(2, menu.selection_index)
-            end)
-
-            it('should call on_selection_changed', function ()
-              menu:select_next()
+            it('should call on_selection_changed if index change', function ()
+              menu:change_selection(2)
 
               local s = assert.spy(text_menu.on_selection_changed)
               s.was_called(1)
@@ -296,36 +342,43 @@ describe('text_menu', function ()
 
           end)
 
-        end)
+          describe('(spying change_selection)', function ()
 
-        describe('on_selection_changed', function ()
-
-          setup(function ()
-            stub(text_menu, "on_selection_changed_custom")
-          end)
-
-          teardown(function ()
-            text_menu.on_selection_changed_custom:revert()
-          end)
-
-          -- before_each and not after_each as show_items in before_each above
-          --   calls on_selection_changed once already
-          before_each(function ()
-            text_menu.on_selection_changed_custom:clear()
-          end)
-
-          it('should not call any select callback if there is none', function ()
-            local s = assert.has_no_errors(function ()
-              menu:on_selection_changed()
+            setup(function ()
+              spy.on(text_menu, "change_selection")
             end)
-          end)
 
-          it('should call on_selection_changed_custom (in any case)', function ()
-            menu:on_selection_changed()
+            teardown(function ()
+              text_menu.change_selection:revert()
+            end)
 
-            local s = assert.spy(text_menu.on_selection_changed_custom)
-            s.was_called(1)
-            s.was_called_with(match.ref(menu))
+            after_each(function ()
+              text_menu.change_selection:clear()
+            end)
+
+            describe('select_previous', function ()
+
+              it('should not call change_selection due to clamping', function ()
+                menu:select_previous()
+
+                local s = assert.spy(text_menu.change_selection)
+                s.was_not_called()
+              end)
+
+            end)
+
+            describe('select_next', function ()
+
+              it('should call change_selection', function ()
+                menu:select_next()
+
+                local s = assert.spy(text_menu.change_selection)
+                s.was_called(1)
+                s.was_called_with(match.ref(menu), 2)
+              end)
+
+            end)
+
           end)
 
         end)
@@ -354,49 +407,43 @@ describe('text_menu', function ()
             text_menu.on_selection_changed:clear()
           end)
 
-          describe('select_previous', function ()
+          describe('(spying change_selection)', function ()
 
-            it('should decrement selection index', function ()
-              menu:select_previous()
-              assert.are_equal(1, menu.selection_index)
+            setup(function ()
+              spy.on(text_menu, "change_selection")
             end)
 
-            it('should call on_selection_changed', function ()
-              menu:select_previous()
-
-              local s = assert.spy(text_menu.on_selection_changed)
-              s.was_called(1)
-              s.was_called_with(match.ref(menu))
+            teardown(function ()
+              text_menu.change_selection:revert()
             end)
 
-          end)
-
-          describe('select_next', function ()
-
-            it('should not change selection index due to clamping', function ()
-              menu:select_next()
-              assert.are_equal(2, menu.selection_index)
+            after_each(function ()
+              text_menu.change_selection:clear()
             end)
 
-            it('should not call on_selection_changed', function ()
-              menu:select_next()
+            describe('select_previous', function ()
 
-              local s = assert.spy(text_menu.on_selection_changed)
-              s.was_not_called(1)
+              it('should call change_selection', function ()
+                menu:select_previous()
+
+                local s = assert.spy(text_menu.change_selection)
+                s.was_called(1)
+                s.was_called_with(match.ref(menu), 1)
+              end)
+
             end)
 
-          end)
+            describe('select_next', function ()
 
-        end)
+              it('should not call change_selection due to clamping', function ()
+                menu:select_next()
 
-        describe('on_selection_changed', function ()
+                local s = assert.spy(text_menu.change_selection)
+                s.was_not_called(1)
+              end)
 
-          it('should call select callback', function ()
-            menu:on_selection_changed()
+            end)
 
-            local s = assert.spy(callback3)
-            s.was_called(1)
-            s.was_called_with(match.ref(fake_app))
           end)
 
         end)

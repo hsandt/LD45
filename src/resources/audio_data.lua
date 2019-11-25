@@ -3,6 +3,10 @@ local audio_data = {
     thinking = 0,
     encounter = 5,
     -- fight = ?
+  },
+  sfx = {
+    menu_select = 31,
+    menu_confirm = 32,
   }
 }
 
