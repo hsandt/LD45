@@ -438,7 +438,7 @@ function fight_manager:hit_fighter(target_fighter, quote_type, damage)
   -- feedback message
   self.app:start_coroutine(self._async_show_hit_feedback_label, self, target_fighter, quote_type, damage)
 
-  -- sfx
+  -- audio
   sfx(audio_data.sfx.fight_direct_hit)
 end
 
@@ -477,6 +477,9 @@ function fight_manager:start_victory(some_fighter)
   if some_fighter.fighter_progression.character_type == character_types.pc then
     log("player wins", 'itest')
     self.won_last_fight = true
+
+    -- audio
+    sfx(audio_data.jingle.fight_victory)
   else  -- some_fighter.fighter_progression.character_type == character_types.npc
     log("ai wins", 'itest')
     self.won_last_fight = false

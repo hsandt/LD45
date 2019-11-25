@@ -1,8 +1,13 @@
 local audio_data = {
+  -- bgm use the music system
   bgm = {
     thinking = 0,
     encounter = 5,
     -- fight = ?
+  },
+  -- jingle use the sfx system
+  jingle = {
+    fight_victory = 25,
   },
   sfx = {
     menu_select = 31,
