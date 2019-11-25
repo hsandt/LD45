@@ -7,6 +7,7 @@ local audio_data = {
   sfx = {
     menu_select = 31,
     menu_confirm = 32,
+    fight_direct_hit = 36,
   }
 }
 

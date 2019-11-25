@@ -11,6 +11,7 @@ local fighter = require("fight/fighter")
 local menu_helper = require("menu/menu_helper")
 local menu_item = require("menu/menu_item")
 local fighter_progression = require("progression/fighter_progression")
+local audio_data = require("resources/audio_data")
 local gameplay_data = require("resources/gameplay_data")
 local visual_data = require("resources/visual_data")
 local character = require("story/character")
@@ -175,6 +176,7 @@ function fight_manager:generate_npc_fighter(npc_fighter_prog)
   --   but it may not have been (e.g. in debug when starting a fight immediately),
   --   so lazily spawn character if needed
   if not am.npc then
+    printh("spawn npc for: "..npc_fighter_prog.fighter_info.character_info_id)
     am:spawn_npc(npc_fighter_prog.fighter_info.character_info_id)
   end
 
@@ -436,7 +438,8 @@ function fight_manager:hit_fighter(target_fighter, quote_type, damage)
   -- feedback message
   self.app:start_coroutine(self._async_show_hit_feedback_label, self, target_fighter, quote_type, damage)
 
-  -- todo: sfx
+  -- sfx
+  sfx(audio_data.sfx.fight_direct_hit)
 end
 
 function fight_manager:play_neutralize_feedback(target_fighter)
