@@ -48,6 +48,9 @@ itest_manager:register_itest('1st fight -> back to adv',
 
   -- quote match resolution: pc has only 1 hp, so dies immediately and fight ends
 
+  -- also wait for victory_anim_duration 
+  wait(2.0)
+
   final_assert(function ()
     return flow.curr_state.type == ':adventure', "current game state is not ':adventure', has instead type: '"..flow.curr_state.type.."'"
   end)
