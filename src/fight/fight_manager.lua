@@ -176,7 +176,6 @@ function fight_manager:generate_npc_fighter(npc_fighter_prog)
   --   but it may not have been (e.g. in debug when starting a fight immediately),
   --   so lazily spawn character if needed
   if not am.npc then
-    printh("spawn npc for: "..npc_fighter_prog.fighter_info.character_info_id)
     am:spawn_npc(npc_fighter_prog.fighter_info.character_info_id)
   end
 
@@ -480,11 +479,19 @@ function fight_manager:start_victory(some_fighter)
 
     -- audio
     sfx(audio_data.jingle.fight_victory)
+
+    self.app:wait_and_do(visual_data.victory_anim_duration,
+      self.stop_fight_and_return_to_adv, self)
   else  -- some_fighter.fighter_progression.character_type == character_types.npc
     log("ai wins", 'itest')
     self.won_last_fight = false
-  end
 
+    self.app:wait_and_do(visual_data.defeat_anim_duration,
+      self.stop_fight_and_return_to_adv, self)
+  end
+end
+
+function fight_manager:stop_fight_and_return_to_adv()
   self:stop_fight()  -- characters remember quotes here
   self.app.managers[':adventure'].next_step = 'floor_loop'
   flow:query_gamestate_type(':adventure')

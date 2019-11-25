@@ -163,6 +163,8 @@ local visual_data = {
   resolve_exchange_delay = 1,
   check_exchange_result_delay = 1,
   request_active_fighter_action_delay = 1,
+  victory_anim_duration = 2,
+  defeat_anim_duration = 2,
 }
 
 return visual_data
