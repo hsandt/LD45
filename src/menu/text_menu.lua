@@ -60,7 +60,11 @@ function text_menu:show_items(items)
     add(self.items, item:copy())
   end
 
-  self:set_selection(1)
+  -- we prefer direct calls to change_selection() because the latter would not call
+  --   try_select_callback if the index was already 1 on the previously shown items
+  --   (and we didn't clear), and we don't want to call on_selection_changed either
+  self.selection_index = 1
+  self:try_select_callback(1)
 end
 
 -- deactivate the menu and remove items
@@ -81,16 +85,6 @@ function text_menu:update()
     elseif input:is_just_pressed(button_ids.o) then
       self:confirm_selection()
     end
-  end
-end
-
--- almost a raw set, but apply any item callback (e.g. show hint for current selection)
--- call this for initial selection or when you need to "teleport" cursor with no
---   without calling on_selection_changed (e.g. to avoid unwanted sfx)
-function text_menu:set_selection(index)
-  if self.selection_index ~= index then
-    self.selection_index = index
-    self:try_select_callback(index)
   end
 end
 

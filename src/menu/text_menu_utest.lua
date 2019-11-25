@@ -53,15 +53,15 @@ describe('text_menu', function ()
     describe('show_items', function ()
 
       setup(function ()
-        spy.on(text_menu, "set_selection")
+        spy.on(text_menu, "try_select_callback")
         end)
 
       teardown(function ()
-        text_menu.set_selection:revert()
+        text_menu.try_select_callback:revert()
         end)
 
       after_each(function ()
-        text_menu.set_selection:clear()
+        text_menu.try_select_callback:clear()
       end)
 
       it('should error with empty items', function ()
@@ -85,10 +85,16 @@ describe('text_menu', function ()
         assert.is_false(rawequal(mock_items[2], menu.items[2]))
       end)
 
-      it('should call set_selection', function ()
+      it('should set selection index to 1', function ()
         menu:show_items(mock_items)
 
-        local s = assert.spy(text_menu.set_selection)
+        assert.are_equal(1, menu.selection_index)
+      end)
+
+      it('should call try_select_callback', function ()
+        menu:show_items(mock_items)
+
+        local s = assert.spy(text_menu.try_select_callback)
         s.was_called(1)
         s.was_called_with(match.ref(menu), 1)
       end)
@@ -277,30 +283,6 @@ describe('text_menu', function ()
           before_each(function ()
             text_menu.try_select_callback:clear()
             text_menu.on_selection_changed:clear()
-          end)
-
-          describe('set_selection', function ()
-
-            it('should set selection if new index', function ()
-              menu:set_selection(2)
-              assert.are_equal(2, menu.selection_index)
-            end)
-
-            it('should not call try_select_callback if no index change', function ()
-              menu:set_selection(1)
-
-              local s = assert.spy(text_menu.try_select_callback)
-              s.was_not_called()
-            end)
-
-            it('should call try_select_callback if index change', function ()
-              menu:set_selection(2)
-
-              local s = assert.spy(text_menu.try_select_callback)
-              s.was_called(1)
-              s.was_called_with(match.ref(menu), 2)
-            end)
-
           end)
 
           describe('change_selection', function ()
