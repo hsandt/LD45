@@ -180,7 +180,7 @@ local npc_fighter_info_s = {
   fighter_info(13, 13, 2, 3, {1, 2, 5, 6}, {3, 7, 11, 13}, {2, 3, 11}),  -- rossmann
   -- doesn't know match 13: 6 -> 11, but can learn it from pc later
 --//#if debug
-  fighter_info(14, 14, 99, 10, {8, 9, 14, 18, 19}, {13, 15, 17}, {}),  -- debug man (longest quotes)
+  fighter_info(14, 14, 99, 2, {8, 9, 14, 18, 19}, {13, 15, 17}, {}),  -- debug man (longest quotes)
 --//#endif
 }
 
