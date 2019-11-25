@@ -137,9 +137,6 @@ function fight_manager:stop_fight()
   -- cleanup
   self.active_fighter_index = 0
   self:despawn_fighters()
-
-  -- audio: stop bgm
-  music(-1)
 end
 
 function fight_manager:spawn_fighters(pc_fighter_prog, npc_fighter_prog)
@@ -483,7 +480,8 @@ function fight_manager:start_victory(some_fighter)
     log("player wins", 'itest')
     self.won_last_fight = true
 
-    -- audio
+    -- audio: stop bgm, play victory jingle
+    music(-1)
     sfx(audio_data.jingle.fight_victory)
 
     self.app:wait_and_do(visual_data.victory_anim_duration,
@@ -491,6 +489,9 @@ function fight_manager:start_victory(some_fighter)
   else  -- some_fighter.fighter_progression.character_type == character_types.npc
     log("ai wins", 'itest')
     self.won_last_fight = false
+
+    -- audio: stop bgm
+    music(-1)
 
     self.app:wait_and_do(visual_data.defeat_anim_duration,
       self.stop_fight_and_return_to_adv, self)
