@@ -32,13 +32,13 @@ local sprites = {
     [4]  = sprite_data(sprite_id_location(8, 6),  tile_vector(2, 5), vector(9, 39), colors.pink),
     [5]  = sprite_data(sprite_id_location(10, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
     [6]  = sprite_data(sprite_id_location(12, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
-    [7]  = sprite_data(sprite_id_location(14, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
-    [8]  = sprite_data(sprite_id_location(4, 0),  tile_vector(2, 5), vector(9, 39), colors.pink),
-    [9]  = sprite_data(sprite_id_location(6, 0),  tile_vector(2, 5), vector(9, 39), colors.pink),
-    [10] = sprite_data(sprite_id_location(8, 0),  tile_vector(2, 5), vector(9, 39), colors.pink),
-    [11] = sprite_data(sprite_id_location(10, 0), tile_vector(2, 5), vector(9, 39), colors.pink),
-    [12] = sprite_data(sprite_id_location(12, 0), tile_vector(2, 5), vector(9, 39), colors.pink),
-    [13] = sprite_data(sprite_id_location(14, 0), tile_vector(2, 5), vector(9, 39), colors.black),
+    -- [7]  = sprite_data(sprite_id_location(14, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
+    -- [8]  = sprite_data(sprite_id_location(4, 0),  tile_vector(2, 5), vector(9, 39), colors.pink),
+    -- [9]  = sprite_data(sprite_id_location(6, 0),  tile_vector(2, 5), vector(9, 39), colors.pink),
+    -- [10] = sprite_data(sprite_id_location(8, 0),  tile_vector(2, 5), vector(9, 39), colors.pink),
+    -- [11] = sprite_data(sprite_id_location(10, 0), tile_vector(2, 5), vector(9, 39), colors.pink),
+    -- [12] = sprite_data(sprite_id_location(12, 0), tile_vector(2, 5), vector(9, 39), colors.pink),
+    -- [13] = sprite_data(sprite_id_location(14, 0), tile_vector(2, 5), vector(9, 39), colors.black),
   },
   hurt_character = sprite_data(sprite_id_location(10, 11), tile_vector(3, 5), vector(5, 33), colors.pink),
   -- fx
@@ -53,7 +53,9 @@ local sprites = {
 
 local function generate_character_anim_sprite_data_table()
   local character_anim_sprite_data_table = {}
-  for i = 0, 13 do
+  -- note that the usage of # here is a bit tricky, since it counts all entries starting from 1, skipping 0
+  -- but it works for our purpose
+  for i = 0, #sprites.character do
     character_anim_sprite_data_table[i] = {
       ["idle"] = animated_sprite_data.create_static(sprites.character[i]),
       ["hurt"] = animated_sprite_data({sprites.hurt_character, sprites.blank, sprites.hurt_character}, 3, anim_loop_modes.freeze_last)
