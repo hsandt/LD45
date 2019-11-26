@@ -13,6 +13,7 @@ adventure_state.type = ':adventure'
 function adventure_state:_init()
   gamestate._init(self)
 
+  self.forced_next_floor_number = nil
   self.should_finish_game = false
 end
 
@@ -181,13 +182,6 @@ function adventure_state:async_fight_aftermath()
   local async_after_fight_method = adventure_state.async_after_fight_with_npcs[npc_fighter_id]
   if async_after_fight_method then
     async_after_fight_method(self, npc_fighter_id)
-    if self.should_finish_game then
-      -- avoid any extra events until we leave the game properly
-      -- note that we'll miss register_met_npc, but it's ok since we're gonna
-      --   clear the game session son anyway
-      -- despawn npc, stop music, etc. will be done in adventure_state:on_exit
-      return
-    end
   else
     if fm.won_last_fight then
       npc_speaker:say_and_wait_for_input("urg...")
@@ -199,28 +193,42 @@ function adventure_state:async_fight_aftermath()
   -- remember pc met that npc so you don't always play the same special dialogues twice
   self.app.game_session:register_met_npc(npc_fighter_id)
 
-  -- check if player lost or won previous fight
-  local floor_number = self.app.game_session.floor_number
-  if fm.won_last_fight then
-    -- remove existing npc first
+  if self.should_finish_game then
+    -- avoid any extra events until we leave the game properly
+    -- despawn npc, stop music, etc. will be done in adventure_state:on_exit
+    return
+  end
+
+  if self.forced_next_floor_number then
+    self.app.game_session.floor_number = self.forced_next_floor_number
+    log("go to forced floor: "..self.app.game_session.floor_number, 'adventure')
+
+    -- remove existing npc last (after fade-out), as he was blocking you
     am:despawn_npc()
-
-    -- player won, allow access to next floor
-    -- for now, auto go up 1 floor
-    pc_speaker:say_and_wait_for_input("fine, let's go to the next floor now.")
-
-    self.app.game_session.floor_number = min(floor_number + 1, #gameplay_data.floors)
-    log("go to next floor: "..self.app.game_session.floor_number, 'adventure')
   else
-    -- player lost, prevent access to next floor
-    -- for now, auto go down 1 floor
-    pc_speaker:say_and_wait_for_input("guess after my loss, i should go down one floor now.")
+    -- check if player lost or won previous fight
+    local floor_number = self.app.game_session.floor_number
+    if fm.won_last_fight then
+      -- remove existing npc first, as he lost
+      am:despawn_npc()
 
-    self.app.game_session.floor_number = max(1, floor_number - 1)
-    log("go to previous floor: "..self.app.game_session.floor_number, 'adventure')
+      -- player won, allow access to next floor
+      -- for now, auto go up 1 floor
+      pc_speaker:say_and_wait_for_input("fine, let's go to the next floor now.")
 
-    -- remove existing npc last, as he was blocking you (even after fade-out)
-    am:despawn_npc()
+      self.app.game_session.floor_number = min(floor_number + 1, #gameplay_data.floors)
+      log("go to next floor: "..self.app.game_session.floor_number, 'adventure')
+    else
+      -- player lost, prevent access to next floor
+      -- for now, auto go down 1 floor
+      pc_speaker:say_and_wait_for_input("guess after my loss, i should go down one floor now.")
+
+      self.app.game_session.floor_number = max(1, floor_number - 1)
+      log("go to previous floor: "..self.app.game_session.floor_number, 'adventure')
+
+    -- remove existing npc last (after fade-out), as he was blocking you
+      am:despawn_npc()
+    end
   end
 end
 
@@ -234,9 +242,11 @@ local function async_tutorial_learn_attacks(self)
   local pc_speaker = am.pc.speaker
 
   self.app:yield_delay_s(1)
-  pc_speaker:say_and_wait_for_input("ok, that was harsh.")
-  pc_speaker:say_and_wait_for_input("i should write down the attacks i've just received so i can reuse them")
-  pc_speaker:say_and_wait_for_input("an attack may lose its effect once said, so i shouldn't reuse the same twice in the same fight")
+  pc_speaker:say_and_wait_for_input("damn, here i start over from the first floor.")
+  self.app:yield_delay_s(0.5)
+  pc_speaker:say_and_wait_for_input("i need to go back there, but first i should think about how to beat those guys.")
+  pc_speaker:say_and_wait_for_input("i'll write down the attacks i've just received so i can reuse them.")
+  pc_speaker:say_and_wait_for_input("an attack may lose its effect once said, so i shouldn't reuse the same twice in the same fight.")
   self.app:yield_delay_s(1)
   pc_speaker:say_and_wait_for_input("ok, i'm done.")
   self.app:yield_delay_s(1)
@@ -373,6 +383,20 @@ local function async_after_fight_with_rossmann(self, npc_fighter_id)
     for attack_id in all(gameplay_data.rossmann_lv2_attack_ids) do
       add(fm.next_opponent.known_attack_ids, attack_id)
     end
+
+    pc_speaker:say_and_wait_for_input("damn...")
+    npc_speaker:say_and_wait_for_input("so, still want to see the boss? she's just upstairs, after all.")
+    pc_speaker:say_and_wait_for_input("...")
+    npc_speaker:say_and_wait_for_input("i guess you finally understood the difference of power.")
+    npc_speaker:say_and_wait_for_input("if you still hope to defeat us, you'd better start from the bottom of the hierarchy.")
+    npc_speaker:say_and_wait_for_input("see you, then!")
+
+    -- yup, we don't check if pc won last fight because he's not supposed to,
+    -- as in famous pre-story RPG fights. so if you cheat, you'll still have to go down!
+    self.forced_next_floor_number = 1
+
+    -- no further dialogues
+    return
   end
 
   if fm.won_last_fight then
