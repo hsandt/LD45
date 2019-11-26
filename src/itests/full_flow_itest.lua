@@ -4,6 +4,7 @@ local input = require("engine/input/input")
 local flow = require("engine/application/flow")
 
 local fighter_progression = require("progression/fighter_progression")
+local gameplay_data = require("resources/gameplay_data")
 
 local function short_press(button_id)
   act(function ()
@@ -258,3 +259,56 @@ itest_manager:register_itest('start -> end with ai control on pc',
   end)
 
 end)
+
+--#if cheat
+itest_manager:register_itest('insta-kill ceo',
+    -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
+    -- but without gamestate_proxy, not used
+    {':fight'}, function ()
+
+  -- enter fight state
+  setup_callback(function (app)
+    local am = app.managers[':adventure']
+    local fm = app.managers[':fight']
+
+    -- fight ceo
+    fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.ceo_fighter_id]
+
+    flow:change_gamestate_by_type(':fight')
+  end)
+
+  -- fight start
+
+  wait(2.0)
+
+  -- opponent should auto-attack
+
+  -- use insta-kill
+  short_press(button_ids.x)
+
+  -- wait for victory_anim_duration
+  wait(2.0)
+
+  -- skip any remaining blocking dialogue to end the fight
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  wait(0.5)
+  short_press(button_ids.o)
+  wait(0.5)
+  short_press(button_ids.o)
+  wait(0.5)
+  short_press(button_ids.o)
+  wait(0.5)
+  short_press(button_ids.o)
+  wait(0.5)
+  short_press(button_ids.o)
+  wait(3.0)
+
+  final_assert(function ()
+    -- we must have killed the opponent and be back to adventure
+    return flow.curr_state.type == ':main_menu', "current game state is not ':main_menu', has instead type: '"..flow.curr_state.type.."'"
+  end)
+
+end)
+--#endif

@@ -2,6 +2,7 @@ local gamestate = require("engine/application/gamestate")
 
 local flow = require("engine/application/flow")
 
+local game_session = require("progression/game_session")
 local painter = require("render/painter")
 local audio_data = require("resources/audio_data")
 local gameplay_data = require("resources/gameplay_data")
@@ -123,7 +124,7 @@ function adventure_state:_async_step_floor_loop()
 
     -- clear current progression completely, to avoid starting a new game already at the end
     -- for now, there is no notion of persistency (like "best score" stuff), so we clear everything
-    app.game_session = game_session()
+    self.app.game_session = game_session()
     return
   end
 
