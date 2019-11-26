@@ -1,11 +1,12 @@
 require("engine/core/math")
 
+local gameplay_data = require("resources/gameplay_data")
 local visual_data = require("resources/visual_data")
 
 local painter = {}
 
 function painter.draw_background(floor_number)
-  if floor_number < 11 then
+  if floor_number < #gameplay_data.floors then
     painter.draw_background_stairs()
   else
     painter.draw_background_ceo_room()
