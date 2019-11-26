@@ -104,7 +104,7 @@ local quote_matches = {
   quote_match_info(32, 14,  6, 1),
   quote_match_info(33, 14, 11, 3),
   quote_match_info(34, 15,  4, 1),
-  quote_match_info(35, 16,  5, 3),
+  quote_match_info(35, 16,  5, 3),  -- be careful, that's an unsorted 16
   quote_match_info(36, 15,  6, 1),
   quote_match_info(37, 15, 18, 3),
   quote_match_info(38, 16,  6, 2),
@@ -185,8 +185,8 @@ local npc_fighter_info_s = {
   fighter_info( 9,  9, 3, 5, {4, 6, 9, 11, 12, 16, 17}, {1, 3, 9, 10, 12, 15, 16, 19}, {28, 40, 11, 45, 9, 22, 5, 27, 31, 24, 42, 23, 41, 6, 21, 39, 10, 25}), -- senior programmer
   fighter_info(10, 10, 3, 7, {3, 8, 10, 13, 19, 20},    {2, 4, 6, 8, 11, 18},          {44, 47, 26, 34, 1, 32, 16, 30, 13, 15, 17, 33, 37}),                   -- senior qa
   fighter_info(11, 11, 3, 5, {2, 4, 5, 8, 15, 18},      {5, 7, 8, 17, 18},             {12, 35, 2, 20, 16, 30, 43, 46, 37, 48}),                               -- senior marketing
-  fighter_info(12, 12, 0, 8, {14, 15, 16, 17, 18, 19, 20}, {1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 14, 15, 18},
-    {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48}),                                                                    -- ceo/boss
+  fighter_info(12, 12, 0, 8, {12, 13, 14, 15, 17}, {1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 14, 15, 18},
+    {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48}),  -- ceo/boss
   -- low level to avoid final boss learning your quotes... she would become invincible
   fighter_info(13, 13, 2, 3, {1, 2, 5, 6}, {3, 7, 11, 13}, {2, 3, 11}),  -- rossmann
   -- doesn't know match 13: 6 -> 11, but can learn it from pc later
