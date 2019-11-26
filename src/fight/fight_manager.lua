@@ -58,12 +58,15 @@ function fight_manager:update()  -- override
   self.hit_fx:update()
 
 --#if cheat
-  if input:is_just_pressed(button_ids.x) then
-    -- todo: clear any coroutines to avoid conflict with running animations
-    -- clear any remaining hud (access supposedly private members until we have better interface)
-    self.app.managers[':dialogue'].text_menu.active = false
+  if input:is_just_pressed(button_ids.x) and self.fighters[2].hp > 0 then
+    -- clear any coroutines to avoid conflict with running animations and sequences about to prompt quotes
+    self.app:stop_all_coroutines()
 
-    -- (but as long as we apply the cheat during menu selection, we shouldn't have too many issues)
+    -- clear any remaining hud (access supposedly private members until we have better interface)
+    local dm = self.app.managers[':dialogue']
+    if dm and dm.text_menu then
+      dm.text_menu.active = false
+    end
 
     -- insta-kill
     log("insta-kill enemy")
