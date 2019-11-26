@@ -118,6 +118,17 @@ local quote_matches = {
   quote_match_info(46, 19, 17, 1),
   quote_match_info(47, 20,  2, 3),
   quote_match_info(48, 20, 18, 2),
+  -- Good matches added after playtest
+  quote_match_info(49,  3,  3, 3),
+  quote_match_info(50,  3,  5, 2),
+  quote_match_info(51,  4,  8, 2),
+  quote_match_info(52,  6,  8, 3),
+  quote_match_info(53,  6, 10, 1),
+  quote_match_info(54,  6, 14, 1),
+  quote_match_info(55, 10,  5, 1),
+  quote_match_info(56, 19,  4, 2),
+  -- Fun match added after playtest
+  quote_match_info(57, 18,  1, 2),
 }
 
 local floors = {
