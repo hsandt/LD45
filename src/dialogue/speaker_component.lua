@@ -53,11 +53,13 @@ end
 -- helper
 function speaker_component:say(text, wait_for_input, higher_text)
   self:show_bubble(bubble_types.speech, text, wait_for_input, higher_text)
+  log(self.entity.character_info.name.." says: \""..text.."\"", 'speaker')
 end
 
 -- helper
 function speaker_component:think(text, wait_for_input, higher_text)
   self:show_bubble(bubble_types.thought, text, wait_for_input, higher_text)
+  log(self.entity.character_info.name.." thinks: \""..text.."\"", 'speaker')
 end
 
 -- Set current text and wait_for_input flag

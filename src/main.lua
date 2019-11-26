@@ -42,6 +42,7 @@ function _init()
     ['fight'] = true,
     ['progression'] = true,
     ['adventure'] = true,
+    ['speaker'] = true,
   }
 --#endif
 

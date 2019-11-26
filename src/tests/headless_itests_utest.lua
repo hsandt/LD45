@@ -32,6 +32,7 @@ logging.logger.active_categories = {
   ['adventure'] = true,
   ['fight'] = true,
   ['progression'] = true,
+  ['speaker'] = true,
 }
 
 -- set app immediately so during itest registration by require,
