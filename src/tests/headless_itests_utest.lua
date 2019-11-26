@@ -15,6 +15,24 @@ logging.logger:register_stream(logging.console_log_stream)
 logging.logger:register_stream(logging.file_log_stream)
 logging.file_log_stream.file_prefix = "wit_fighter_headless_itests"
 
+-- clear log file on new itest session
+logging.file_log_stream:clear()
+
+logging.logger.active_categories = {
+  -- engine
+  ['default'] = true,
+  ['codetuner'] = nil,
+  ['flow'] = nil,
+  ['itest'] = nil,
+  ['log'] = nil,
+  ['ui'] = nil,
+  ['frame'] = nil,
+
+  -- game
+  ['adventure'] = true,
+  ['fight'] = true,
+  ['progression'] = true,
+}
 
 -- set app immediately so during itest registration by require,
 --   time_trigger can access app fps

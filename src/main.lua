@@ -4,7 +4,9 @@
 -- we must require engine/pico8/api at the top of our main.lua, so API bridges apply to all modules
 require("engine/pico8/api")
 
+--#if log
 local logging = require("engine/debug/logging")
+--#endif
 
 local codetuner = require("engine/debug/codetuner")
 
@@ -19,11 +21,28 @@ function _init()
   -- start logging before app in case we need to read logs about app start itself
   logging.logger:register_stream(logging.console_log_stream)
   logging.logger:register_stream(logging.file_log_stream)
+
   logging.file_log_stream.file_prefix = "wit_fighter"
 
   -- clear log file on new game session (or to preserve the previous log,
   -- you could add a newline and some "[SESSION START]" tag instead)
   logging.file_log_stream:clear()
+
+  logging.logger.active_categories = {
+    -- engine
+    ['default'] = true,
+    ['codetuner'] = true,
+    ['flow'] = true,
+    ['itest'] = true,
+    ['log'] = true,
+    ['ui'] = true,
+    -- ['frame'] = nil,
+
+    -- game
+    ['fight'] = true,
+    ['progression'] = true,
+    ['adventure'] = true,
+  }
 --#endif
 
 --#if profiler

@@ -153,9 +153,9 @@ end
 
 function fighter:take_damage(damage)
   self.hp = self.hp - damage
-  log("fighter '"..self:get_name().."' takes "..damage.." damage! => "..self.hp.." HP", "itest")
+  log("fighter '"..self:get_name().."' takes "..damage.." damage! => "..self.hp.." HP", 'fight')
   if self.hp <= 0 then
-    log("fighter '"..self:get_name().."' dies!", "itest")
+    log("fighter '"..self:get_name().."' dies!", 'fight')
     self.hp = 0
   end
 end

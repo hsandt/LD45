@@ -117,7 +117,7 @@ function fighter_progression:check_learn_quote(added_count_map, quote_type)
 --#if log
       local quote_type_name = quote_type == quote_types.attack and "attack" or "reply"
       log("fighter '"..self:get_name().."' learns "..quote_type_name.." quote "..quote_id..": \""..
-        gameplay_data:get_quote(quote_type, quote_id).text.."\"", "itest")
+        gameplay_data:get_quote(quote_type, quote_id).text.."\"", 'progression')
 --#endif
     end
   end
@@ -129,7 +129,7 @@ function fighter_progression:try_learn_quote_match(id)
   if not contains(self.known_quote_match_ids, id) then
     add(self.known_quote_match_ids, id)
 --#if log
-    log("fighter '"..self:get_name().."' learns "..gameplay_data.quote_matches[id], "itest")
+    log("fighter '"..self:get_name().."' learns "..gameplay_data.quote_matches[id], 'progression')
 --#endif
   end
 end

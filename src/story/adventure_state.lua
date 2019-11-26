@@ -203,14 +203,14 @@ function adventure_state:async_fight_aftermath()
     pc_speaker:say_and_wait_for_input("fine, let's go to the next floor now.")
 
     self.app.game_session.floor_number = min(floor_number + 1, #gameplay_data.floors)
-    log("go to next floor: "..self.app.game_session.floor_number, "flow")
+    log("go to next floor: "..self.app.game_session.floor_number, 'adventure')
   else
     -- player lost, prevent access to next floor
     -- for now, auto go down 1 floor
     pc_speaker:say_and_wait_for_input("guess after my loss, i should go down one floor now.")
 
     self.app.game_session.floor_number = max(1, floor_number - 1)
-    log("go to previous floor: "..self.app.game_session.floor_number, "flow")
+    log("go to previous floor: "..self.app.game_session.floor_number, 'adventure')
 
     -- remove existing npc last, as he was blocking you (even after fade-out)
     am:despawn_npc()

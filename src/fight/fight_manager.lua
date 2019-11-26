@@ -69,7 +69,7 @@ function fight_manager:update()  -- override
     end
 
     -- insta-kill
-    log("insta-kill enemy")
+    log("insta-kill enemy", 'fight')
     self.fighters[2]:take_damage(10)
     self:check_exchange_result(self.fighters[1], self.fighters[2])
   end
@@ -165,7 +165,7 @@ function fight_manager:spawn_fighters(pc_fighter_prog, npc_fighter_prog)
   local npc_fighter = self:generate_npc_fighter(npc_fighter_prog)
   self.fighters = {pc_fighter, npc_fighter}
 
-  log("loaded fighters: "..pc_fighter:get_name().." vs "..npc_fighter:get_name(), 'itest')
+  log("loaded fighters: "..pc_fighter:get_name().." vs "..npc_fighter:get_name(), 'fight')
 end
 
 -- pc_fighter_prog: fighter_progression
@@ -317,7 +317,7 @@ function fight_manager:say_quote(active_fighter, quote)
 
   -- don't wait for input, since either the quote menu (pc replying), the auto play (npc replying),
   --   or the quote match resolution (if saying a reply) will hide that text eventually
-  log("fighter '"..active_fighter:get_name().."' "..(is_attacking and "attacks" or "replies")..": ("..quote.id..") \""..quote.text.."\"", 'itest')
+  log("fighter '"..active_fighter:get_name().."' "..(is_attacking and "attacks" or "replies")..": ("..quote.id..") \""..quote.text.."\"", 'fight')
   active_fighter:say_quote(quote)  -- will set its last_quote
 
   if is_attacking then
@@ -496,7 +496,7 @@ end
 
 function fight_manager:start_victory(some_fighter)
   if some_fighter.fighter_progression.character_type == character_types.pc then
-    log("player wins", 'itest')
+    log("player wins", 'fight')
     self.won_last_fight = true
 
     -- audio: stop bgm, play victory jingle
@@ -506,7 +506,7 @@ function fight_manager:start_victory(some_fighter)
     self.app:wait_and_do(visual_data.victory_anim_duration,
       self.stop_fight_and_return_to_adv, self)
   else  -- some_fighter.fighter_progression.character_type == character_types.npc
-    log("ai wins", 'itest')
+    log("ai wins", 'fight')
     self.won_last_fight = false
 
     -- audio: stop bgm

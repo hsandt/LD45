@@ -32,8 +32,23 @@ function _init()
 
   -- clear log file on new itest session
   logging.file_log_stream:clear()
---#endif
 
+  logging.logger.active_categories = {
+    -- engine
+    ['default'] = true,
+    -- ['codetuner'] = nil,
+    -- ['flow'] = nil,
+    -- ['itest'] = nil,
+    -- ['log'] = nil,
+    -- ['ui'] = nil,
+    -- ['frame'] = nil,
+
+    -- game
+    ['adventure'] = true,
+    ['fight'] = true,
+    ['progression'] = true,
+  }
+--#endif
 
   app.initial_gamestate = ':main_menu'
 
