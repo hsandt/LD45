@@ -291,8 +291,8 @@ end
 -- after [key] fights, we show tutorial with sequence method [value]
 adventure_state.async_tutorials = {
   [1] = async_tutorial_learn_attacks,
-  [3] = async_tutorial_reply_power,
-  [6] = async_tutorial_npc_learning,
+  [2] = async_tutorial_reply_power,
+  [3] = async_tutorial_npc_learning,
 }
 
 -- before/after fight sequence methods
