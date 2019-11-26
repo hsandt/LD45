@@ -10,9 +10,10 @@ function game_session:_init()
   self.floor_number = gameplay_data.initial_floor
   -- number of fights already finished (used for tutorial steps)
   self.fight_count = 0
-  -- set of npc already met by the player character
-  -- format: {[met_npc_id] = true, ...}
-  self.met_npc_ids = {}
+  -- set of npc fighter ids (as opposed to character info id, in case they differ)
+  --   already met by the player character
+  -- format: {[met_npc_fighter_id] = true, ...}
+  self.met_npc_fighter_ids = {}
 
   -- fighter persistent progression statuses
   self.pc_fighter_progression = fighter_progression(character_types.pc, gameplay_data.pc_fighter_info)
@@ -23,13 +24,13 @@ function game_session:increment_fight_count()
   self.fight_count = min(self.fight_count + 1, 100)
 end
 
-function game_session:has_met_npc(npc_id)
+function game_session:has_met_npc(npc_fighter_id)
   -- equality test just to return false rather than nil
-  return self.met_npc_ids[npc_id] == true
+  return self.met_npc_fighter_ids[npc_fighter_id] == true
 end
 
-function game_session:register_met_npc(npc_id)
-  self.met_npc_ids[npc_id] = true
+function game_session:register_met_npc(npc_fighter_id)
+  self.met_npc_fighter_ids[npc_fighter_id] = true
 end
 
 function game_session:get_all_npc_fighter_progressions_with_level(level)

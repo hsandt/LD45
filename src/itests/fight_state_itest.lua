@@ -30,7 +30,7 @@ itest_manager:register_itest('1st fight -> back to adv',
     -- cheat to have pc killed in 1 turn
     pc_fighter_prog.max_hp = 1
     -- fight rossmann
-    fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
+    fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_fighter_id]
 
     flow:change_gamestate_by_type(':fight')
   end)
@@ -69,7 +69,7 @@ itest_manager:register_itest('#solo insta-kill',
     local fm = app.managers[':fight']
 
     -- fight rossmann
-    fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
+    fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_fighter_id]
 
     flow:change_gamestate_by_type(':fight')
   end)
@@ -122,7 +122,7 @@ itest_manager:register_itest('#solo intermediate fight -> back to adv',
     pc_fighter_prog.known_quote_match_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
     -- fight rossmann
-    fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
+    fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_fighter_id]
 
     flow:change_gamestate_by_type(':fight')
   end)

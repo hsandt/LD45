@@ -134,35 +134,31 @@ local quote_matches = {
 local floors = {
   floor_info( 1,  1,  1),
   floor_info( 2,  1,  1),
-  floor_info( 3,  1,  2),
-  floor_info( 4,  1,  2),
-  floor_info( 5,  2,  2),
-  floor_info( 6,  2,  2),
-  floor_info( 7,  2,  3),
-  floor_info( 8,  2,  3),
-  floor_info( 9,  3,  3),
-  floor_info(10,  3,  3),
-  floor_info(11,  0,  0),  -- ceo with fictive level 0 (maybe prefer flag can_learn: false)
+  floor_info( 3,  2,  2),
+  floor_info( 4,  2,  2),
+  floor_info( 5,  3,  3),  -- rossmann
+  floor_info( 6,  0,  0),  -- ceo with fictive level 0 (maybe prefer flag can_learn: false)
 }
 
 -- character story and visual info
 local pc_info = character_info(0, "you", 0)
 local npc_info_s = {
-  character_info(1, "junior designer", 1),
-  character_info(2, "junior programmer", 2),
-  character_info(3, "junior qa", 3),
-  character_info(4, "junior marketing", 4),
-  character_info(5, "designer", 5),
-  character_info(6, "programmer", 6),
-  character_info(7, "manager", 7),
-  character_info(8, "senior designer", 8),
-  character_info(9, "senior programmer", 9),
-  character_info(10, "senior qa", 10),
-  character_info(11, "senior marketing", 11),
-  character_info(12, "ceo", 12),
-  character_info(13, "rossmann", 13),
+  -- character_info(1, "old junior designer", 1),
+  -- character_info(2, "junior programmer", 2),
+  -- character_info(3, "junior qa", 3),
+  -- character_info(4, "junior marketing", 4),
+  character_info(1, "junior accountant", 1),
+  character_info(2, "junior designer", 2),
+  character_info(3, "programmer", 3),
+  character_info(4, "manager", 4),
+  -- character_info(8, "senior designer", 8),
+  -- character_info(9, "senior programmer", 9),
+  -- character_info(10, "senior qa", 10),
+  -- character_info(11, "senior marketing", 11),
+  character_info(5, "rossmann", 5),
+  character_info(6, "ceo", 6),
 --#if sandbox
-  character_info(14, "debug man", 13),  -- reuse rossmann sprite
+  character_info(7, "debug man", 5),  -- reuse rossmann sprite
 --#endif
 }
 
@@ -174,24 +170,32 @@ local pc_fighter_info = fighter_info(0, 0, 10, 4, {}, {}, {})
 --   in case we have a non-fighting npc
 local npc_fighter_info_s = {
   -- id, character_info_id, initial_level, initial_max_hp, initial_attack_ids, initial_reply_ids, initial_quote_match_ids
-  fighter_info( 1,  1, 1, 4, {1, 2, 5},                 {6, 13, 14},                   {7, 29, 3, 18, 8, 19}),                                                 -- junior designer (good at attacks and communication topics)
-  fighter_info( 2,  2, 1, 3, {4, 6},                    {1, 3, 9, 10},                 {11, 9, 22, 5}),                                                        -- junior programmer (good at replies and tech topics)
-  fighter_info( 3,  3, 1, 5, {3, 8},                    {2, 4, 6, 11},                 {14, 1, 13, 17}),                                                       -- junior qa (tank character, good at planning topics)
-  fighter_info( 4,  4, 1, 3, {2, 4, 5},                 {5, 7, 8},                     {12, 35, 2, 20, 16, 30}),                                               -- junior marketing (good at matching quotes)
-  fighter_info( 5,  5, 2, 5, {1, 5, 7, 10},             {6, 7, 11, 13, 14},            {1, 7, 29, 2, 33, 3, 18, 8, 19}),                                       -- designer
-  fighter_info( 6,  6, 2, 4, {4, 6, 9, 11, 12},         {1, 3, 9, 10, 12},             {28, 40, 11, 9, 22, 5, 27, 31, 24}),                                    -- programmer
-  fighter_info( 7,  7, 2, 6, {3, 8, 10, 13},            {2, 4, 6, 8, 11},              {44, 14, 26, 1, 16, 13, 15, 17}),                                       -- manager (tank and planning topics, replaces qa at level 2)
-  fighter_info( 8,  8, 3, 6, {1, 5, 7, 10, 14, 15},     {6, 7, 11, 13, 14, 15, 17},    {1, 7, 29, 36, 38, 2, 20, 33, 3, 18, 8, 19, 4, 46}),                    -- senior designer
-  fighter_info( 9,  9, 3, 5, {4, 6, 9, 11, 12, 16, 17}, {1, 3, 9, 10, 12, 15, 16, 19}, {28, 40, 11, 45, 9, 22, 5, 27, 31, 24, 42, 23, 41, 6, 21, 39, 10, 25}), -- senior programmer
-  fighter_info(10, 10, 3, 7, {3, 8, 10, 13, 19, 20},    {2, 4, 6, 8, 11, 18},          {44, 47, 26, 34, 1, 32, 16, 30, 13, 15, 17, 33, 37}),                   -- senior qa
-  fighter_info(11, 11, 3, 5, {2, 4, 5, 8, 15, 18},      {5, 7, 8, 17, 18},             {12, 35, 2, 20, 16, 30, 43, 46, 37, 48}),                               -- senior marketing
-  fighter_info(12, 12, 0, 8, {12, 13, 14, 15, 17}, {1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 14, 15, 18},
+  -- fighter_info( 1,  1, 1, 4, {1, 2, 5},                 {6, 13, 14},                   {7, 29, 3, 18, 8, 19}),                                                 -- old junior designer (good at attacks and communication topics)
+  -- fighter_info( 2,  2, 1, 3, {4, 6},                    {1, 3, 9, 10},                 {11, 9, 22, 5}),                                                        -- junior programmer (good at replies and tech topics)
+  -- fighter_info( 3,  3, 1, 5, {3, 8},                    {2, 4, 6, 11},                 {14, 1, 13, 17}),                                                       -- junior qa (tank character, good at planning topics)
+  -- fighter_info( 4,  4, 1, 3, {2, 4, 5},                 {5, 7, 8},                     {12, 35, 2, 20, 16, 30}),                                               -- junior marketing (good at matching quotes)
+  -- fighter_info( 5,  5, 2, 5, {1, 5, 7, 10},             {6, 7, 11, 13, 14},            {1, 7, 29, 2, 33, 3, 18, 8, 19}),                                       -- designer
+  fighter_info( 1,  1, 1, 3, {3, 8},                    {2, 4, 6, 11},                 {14, 1, 13, 17}),                                                       -- junior accountant (good at planning topics)
+  fighter_info( 2,  2, 1, 3, {1, 2, 5},                 {6, 13, 14},                   {7, 29, 3, 18, 8, 19}),                                                 -- junior designer (good at attacks and communication topics)
+  fighter_info( 3,  3, 2, 4, {4, 6, 9, 11, 12},         {1, 3, 9, 10, 12},             {28, 40, 11, 9, 22, 5, 27, 31, 24}),                                    -- programmer
+  fighter_info( 4,  4, 2, 5, {3, 8, 10, 13},            {2, 4, 6, 8, 11},              {44, 14, 26, 1, 16, 13, 15, 17}),                                       -- manager (tank and planning topics, replaces qa at level 2)
+  -- fighter_info( 8,  8, 3, 6, {1, 5, 7, 10, 14, 15},     {6, 7, 11, 13, 14, 15, 17},    {1, 7, 29, 36, 38, 2, 20, 33, 3, 18, 8, 19, 4, 46}),                    -- senior designer
+  -- fighter_info( 9,  9, 3, 5, {4, 6, 9, 11, 12, 16, 17}, {1, 3, 9, 10, 12, 15, 16, 19}, {28, 40, 11, 45, 9, 22, 5, 27, 31, 24, 42, 23, 41, 6, 21, 39, 10, 25}), -- senior programmer
+  -- fighter_info(10, 10, 3, 7, {3, 8, 10, 13, 19, 20},    {2, 4, 6, 8, 11, 18},          {44, 47, 26, 34, 1, 32, 16, 30, 13, 15, 17, 33, 37}),                   -- senior qa
+  -- fighter_info(11, 11, 3, 5, {2, 4, 5, 8, 15, 18},      {5, 7, 8, 17, 18},             {12, 35, 2, 20, 16, 30, 43, 46, 37, 48}),                               -- senior marketing
+
+  -- make sure that this index and id matches with gameplay_data.rossmann_fighter_id
+  fighter_info(5, 5, 3, 6, {1, 2, 5, 6}, {3, 7, 11, 13}, {2, 3, 11}),  -- rossmann
+  -- doesn't know match 13: 6 -> 11, but can learn it from pc later
+  -- learns rossmann_lv2_attack_ids immediately after tutorial fight
+
+  -- make sure that this index and id matches with gameplay_data.ceo_fighter_id
+  fighter_info(6, 6, 0, 8, {12, 13, 14, 15, 17}, {1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 14, 15, 18},
     {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48}),  -- ceo/boss
   -- low level to avoid final boss learning your quotes... she would become invincible
-  fighter_info(13, 13, 2, 3, {1, 2, 5, 6}, {3, 7, 11, 13}, {2, 3, 11}),  -- rossmann
-  -- doesn't know match 13: 6 -> 11, but can learn it from pc later
+
 --#if sandbox
-  fighter_info(14, 14, 99, 2, {8, 9, 14, 18, 19}, {13, 15, 17}, {}),  -- debug man (longest quotes)
+  fighter_info(7, 7, 99, 2, {8, 9, 14, 18, 19}, {13, 15, 17}, {}),  -- debug man (longest quotes)
 --#endif
 }
 
@@ -207,11 +211,12 @@ local gameplay_data = {
   npc_fighter_info_s = npc_fighter_info_s,
 
   -- game session
-  initial_floor = 3,
+  -- this is to show rossmann where he should be, but pc will drop to floor 1 after forced defeat anyway
+  initial_floor = 5,
 
   -- rossmann lv2 attack ids unlocked after the 1st encounter
-  rossmann_id = 13,
-  ceo_id = 12,
+  rossmann_fighter_id = 5,
+  ceo_fighter_id = 6,
   rossmann_lv2_attack_ids = {7, 10, 11},
 
   -- fight
@@ -255,6 +260,7 @@ function gameplay_data:get_quote_match(attack_info, reply_info)
 end
 
 function gameplay_data:get_floor_info(floor_number)
+  assert(self.floors[floor_number], "no floor info found at number: "..floor_number)
   return self.floors[floor_number]
 end
 

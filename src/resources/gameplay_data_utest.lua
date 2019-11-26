@@ -52,10 +52,10 @@ describe('gameplay_data', function ()
 
   describe('get_all_npc_fighter_info_with_level', function ()
     it('should return info for all npcs of a given level', function ()
-      local npc_info_s_level3 = gameplay_data:get_all_npc_fighter_info_with_initial_level(3)
+      local npc_info_s_level3 = gameplay_data:get_all_npc_fighter_info_with_initial_level(1)
 
       -- very simple and incomplete test, but enough for this case
-      assert.are_equal(4, #npc_info_s_level3)
+      assert.are_equal(2, #npc_info_s_level3)
     end)
   end)
 

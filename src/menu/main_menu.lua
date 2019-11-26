@@ -22,23 +22,23 @@ main_menu._items = transform({
     end},
 --#if cheat
     {"debug: 1st fight", function(app)
-      app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
+      app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_fighter_id]
       flow:query_gamestate_type(':fight')
     end},
     {"debug: boss floor", function(app)
-      app.game_session.floor_number = 11
+      app.game_session.floor_number = #gameplay_data.floors  -- last floor
       app.game_session.fight_count = 10  -- high count to avoid unwanted tutorials
       app.managers[':adventure'].next_step = 'floor_loop'
       flow:query_gamestate_type(':adventure')
     end},
     {"debug: boss fight", function(app)
-      app.game_session.floor_number = 11
+      app.game_session.floor_number = #gameplay_data.floors  -- last floor
       app.game_session.fight_count = 10
       local pc_fighter_prog = app.game_session.pc_fighter_progression
       pc_fighter_prog.known_attack_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
       pc_fighter_prog.known_reply_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
       pc_fighter_prog.known_quote_match_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-      app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.ceo_id]
+      app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.ceo_fighter_id]
       flow:query_gamestate_type(':fight')
     end},
 --#endif

@@ -3,6 +3,8 @@ local itest_manager = integrationtest.itest_manager
 local input = require("engine/input/input")
 local flow = require("engine/application/flow")
 
+local gameplay_data = require("resources/gameplay_data")
+
 local function short_press(button_id)
   act(function ()
     input.simulated_buttons_down[0][button_id] = true
@@ -117,7 +119,7 @@ itest_manager:register_itest('play floor loop at boss floor',
   setup_callback(function (app)
     local am = app.managers[':adventure']
     app.game_session.fight_count = 10  -- high count to avoid unwanted tutorials
-    app.game_session.floor_number = 11
+    app.game_session.floor_number = #gameplay_data.floors  -- last floor
     am.next_step = 'floor_loop'
 
     flow:change_gamestate_by_type(':adventure')
