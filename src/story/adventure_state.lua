@@ -202,7 +202,10 @@ function adventure_state:async_fight_aftermath()
   end
 
   if self.forced_next_floor_number then
+    -- assign forced floor and consume immediately
     gs.floor_number = self.forced_next_floor_number
+    self.forced_next_floor_number = nil
+
     log("go to forced floor: "..gs.floor_number, 'adventure')
 
     -- remove existing npc last (after fade-out), as he was blocking you
