@@ -10,13 +10,6 @@ local adventure_state = new_class(gamestate)
 
 adventure_state.type = ':adventure'
 
--- after [key] fights, we show tutorial [value]
-local fight_count_to_tutorial_map = {
-  [1] = 1,
-  [3] = 2,
-  [6] = 3
-}
-
 function adventure_state:_init()
   gamestate._init(self)
 
@@ -122,11 +115,9 @@ function adventure_state:_async_step_floor_loop()
   end
 
   -- after-fight tutorial if any
-  local tutorial_number = fight_count_to_tutorial_map[self.app.game_session.fight_count]
-  if tutorial_number then
-    local play_method_name = '_async_tutorial'..tutorial_number
-    assert(self[play_method_name], "adventure_state has no method named: "..play_method_name)
-    self[play_method_name](self)
+  local async_tutorial_method = adventure_state.async_tutorials[self.app.game_session.fight_count]
+  if async_tutorial_method then
+    async_tutorial_method(self)
   end
 
   pc_speaker:say_and_wait_for_input("someone is coming!")
@@ -148,9 +139,9 @@ function adventure_state:async_encounter_npc(npc_fighter_prog)
   local npc_speaker = am.npc.speaker
 
   -- before fight sequence
-  local before_fight_method_name = '_async_before_fight_with_npc'..npc_fighter_prog.fighter_info.id
-  if self[before_fight_method_name] then
-    self[before_fight_method_name](self)
+  local async_before_fight_method = adventure_state.async_before_fight_with_npcs[npc_fighter_prog.fighter_info.id]
+  if async_before_fight_method then
+    async_before_fight_method(self)
   else
     npc_speaker:say_and_wait_for_input("en garde!")
   end
@@ -174,9 +165,9 @@ function adventure_state:async_fight_aftermath()
   local npc_id = fm.next_opponent.fighter_info.id
 
   -- after fight sequence, specific to each npc
-  local after_fight_method_name = '_async_after_fight_with_npc'..npc_id
-  if self[after_fight_method_name] then
-    self[after_fight_method_name](self)
+  local async_after_fight_method = adventure_state.async_after_fight_with_npcs[npc_id]
+  if async_after_fight_method then
+    async_after_fight_method(self)
     if self.should_finish_game then
       -- avoid any extra events until we leave the game properly
       return
@@ -217,10 +208,15 @@ function adventure_state:async_fight_aftermath()
   end
 end
 
--- tutorial sequence methods
--- they all start with '_async_tutorial'
+-- dynamic access methods for content definition
+-- they all start with `async_`
+--   and take 1 param self: adventure_state (those functions are like method,
+--   except we must pass `self` manually as 1st param due to dynamic access of functions)
 
-function adventure_state:_async_tutorial1()
+-- tutorial sequence methods
+-- they all start with 'async_tutorial_'
+
+local function async_tutorial_learn_attacks(self)
   local am = self.app.managers[':adventure']
   local pc_speaker = am.pc.speaker
 
@@ -233,7 +229,7 @@ function adventure_state:_async_tutorial1()
   self.app:yield_delay_s(1)
 end
 
-function adventure_state:_async_tutorial2()
+local function async_tutorial_reply_power(self)
   local am = self.app.managers[':adventure']
   local pc_speaker = am.pc.speaker
 
@@ -247,7 +243,7 @@ function adventure_state:_async_tutorial2()
   self.app:yield_delay_s(1)
 end
 
-function adventure_state:_async_tutorial3()
+local function async_tutorial_npc_learning(self)
   local am = self.app.managers[':adventure']
   local pc_speaker = am.pc.speaker
 
@@ -255,16 +251,22 @@ function adventure_state:_async_tutorial3()
   pc_speaker:say_and_wait_for_input("i feel like my opponents are also learning my quotes.")
   pc_speaker:say_and_wait_for_input("besides, if they randomly find a good reply they will probably reuse them later.")
   pc_speaker:say_and_wait_for_input("i should be careful when exposing my opponents to new quotes.")
-  pc_speaker:say_and_wait_for_input("that said, newbies are probably not good enough to learn advanced quotes.")
+  pc_speaker:say_and_wait_for_input("that said, newbies are probably not good enough to learn selfanced quotes.")
   pc_speaker:say_and_wait_for_input("fine, let's go on.")
   self.app:yield_delay_s(1)
 end
 
--- before/after fight sequence methods
--- they all start with '_async_before/after_fight_with_npc'
+-- after [key] fights, we show tutorial with sequence method [value]
+adventure_state.async_tutorials = {
+  [1] = async_tutorial_learn_attacks,
+  [3] = async_tutorial_reply_power,
+  [6] = async_tutorial_npc_learning,
+}
 
--- before fight with ceo
-function adventure_state:_async_before_fight_with_npc12()
+-- before/after fight sequence methods
+-- they all start with 'async_before/after_fight_with_npc_'
+
+local function async_before_fight_with_ceo(self)
   local am = self.app.managers[':adventure']
   local pc_speaker = am.pc.speaker
   local npc_speaker = am.npc.speaker
@@ -286,8 +288,7 @@ function adventure_state:_async_before_fight_with_npc12()
   end
 end
 
--- after fight with ceo
-function adventure_state:_async_after_fight_with_npc12()
+local function async_after_fight_with_ceo(self)
   local am = self.app.managers[':adventure']
   local dm = self.app.managers[':dialogue']
   local fm = self.app.managers[':fight']
@@ -322,8 +323,7 @@ function adventure_state:_async_after_fight_with_npc12()
   end
 end
 
--- before fight with rossmann
-function adventure_state:_async_before_fight_with_npc13()
+local function async_before_fight_with_rossmann(self)
   local am = self.app.managers[':adventure']
   local pc_speaker = am.pc.speaker
   local npc_speaker = am.npc.speaker
@@ -344,7 +344,7 @@ function adventure_state:_async_before_fight_with_npc13()
 end
 
 -- after fight with rossmann
-function adventure_state:_async_after_fight_with_npc13()
+local function async_after_fight_with_rossmann(self)
   local am = self.app.managers[':adventure']
   local fm = self.app.managers[':fight']
   local pc_speaker = am.pc.speaker
@@ -366,5 +366,15 @@ function adventure_state:_async_after_fight_with_npc13()
     pc_speaker:say_and_wait_for_input("damn!")
   end
 end
+
+adventure_state.async_before_fight_with_npcs = {
+  [gameplay_data.ceo_id] = async_before_fight_with_ceo,
+  [gameplay_data.rossmann_id] = async_before_fight_with_rossman
+}
+
+adventure_state.async_after_fight_with_npcs = {
+  [gameplay_data.ceo_id] = async_after_fight_with_ceo,
+  [gameplay_data.rossmann_id] = async_after_fight_with_rossman
+}
 
 return adventure_state
