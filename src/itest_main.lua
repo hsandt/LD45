@@ -38,7 +38,7 @@ function _init()
     ['default'] = true,
     -- ['codetuner'] = nil,
     -- ['flow'] = nil,
-    -- ['itest'] = nil,
+    ['itest'] = true,
     -- ['log'] = nil,
     -- ['ui'] = nil,
     -- ['frame'] = nil,

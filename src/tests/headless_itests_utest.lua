@@ -21,12 +21,12 @@ logging.file_log_stream:clear()
 logging.logger.active_categories = {
   -- engine
   ['default'] = true,
-  ['codetuner'] = nil,
-  ['flow'] = nil,
-  ['itest'] = nil,
-  ['log'] = nil,
-  ['ui'] = nil,
-  ['frame'] = nil,
+  -- ['codetuner'] = nil,
+  -- ['flow'] = nil,
+  ['itest'] = true,
+  -- ['log'] = nil,
+  -- ['ui'] = nil,
+  -- ['frame'] = nil,
 
   -- game
   ['adventure'] = true,
