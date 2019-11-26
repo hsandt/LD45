@@ -126,6 +126,10 @@ end
 function text_menu:confirm_selection()
   -- just deactivate menu, so we can reuse the items later if menu is static
   -- (by setting self.active = true), else next time show_items to refill the items
+  
+  -- todo: not all menus should close after confirm! (think a sound test)
+  --   so this should be true for prompt menus only, and we should have a generic
+  --   confirm_selection method that only calls the callbacks
   self.active = false
 
   -- we must call the callback *after* deactivating the text_menu, in case it immediately

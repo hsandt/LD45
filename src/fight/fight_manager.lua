@@ -4,6 +4,7 @@ require("engine/render/color")
 
 local flow = require("engine/application/flow")
 local manager = require("engine/application/manager")
+local input = require("engine/input/input")
 local animated_sprite = require("engine/render/animated_sprite")
 
 local quote_info = require("content/quote_info")
@@ -55,6 +56,21 @@ function fight_manager:update()  -- override
   -- we should have some animated sprite manager updating all sprites, but for now we do it ourselves
   self:update_fighters()
   self.hit_fx:update()
+
+--#if cheat
+  if input:is_just_pressed(button_ids.x) then
+    -- todo: clear any coroutines to avoid conflict with running animations
+    -- clear any remaining hud (access supposedly private members until we have better interface)
+    self.app.managers[':dialogue'].text_menu.active = false
+
+    -- (but as long as we apply the cheat during menu selection, we shouldn't have too many issues)
+
+    -- insta-kill
+    log("insta-kill enemy")
+    self.fighters[2]:take_damage(10)
+    self:check_exchange_result(self.fighters[1], self.fighters[2])
+  end
+--#endif
 end
 
 function fight_manager:render()  -- override
@@ -233,7 +249,7 @@ function fight_manager:request_human_fighter_action(human_fighter)
     local items = self:generate_quote_menu_items(human_fighter, quote_type, available_quote_ids)
     self.app.managers[':dialogue']:prompt_items(items)
   else  -- control_types.ai
-    -- DEBUG
+    -- DEBUG for itests: human can be under AI control
     -- pick quote and say it automatically like an ai
     local next_quote = self:auto_pick_quote(human_fighter, quote_type)
     self.app:wait_and_do(visual_data.ai_say_quote_delay, self.say_quote, self, human_fighter, next_quote)

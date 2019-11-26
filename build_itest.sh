@@ -18,6 +18,8 @@ title="wit fighter itests (all)"
 cartridge_stem="wit_fighter_itest_all"
 version="0.1"
 config='debug'
+# for now, we don't set `cheat` symbol to make it lighter, but it's still possible
+# to test cheats in headless itests as busted preserves all (non-#pico8) code
 symbols='assert,log,itest'
 
 # Build from itest main for all itests

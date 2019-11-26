@@ -48,7 +48,7 @@ itest_manager:register_itest('1st fight -> back to adv',
 
   -- quote match resolution: pc has only 1 hp, so dies immediately and fight ends
 
-  -- also wait for victory_anim_duration 
+  -- also wait for victory_anim_duration
   wait(2.0)
 
   final_assert(function ()
@@ -56,6 +56,48 @@ itest_manager:register_itest('1st fight -> back to adv',
   end)
 
 end)
+
+--#if cheat
+itest_manager:register_itest('#solo insta-kill',
+    -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
+    -- but without gamestate_proxy, not used
+    {':fight'}, function ()
+
+  -- enter fight state
+  setup_callback(function (app)
+    local am = app.managers[':adventure']
+    local fm = app.managers[':fight']
+
+    -- fight rossmann
+    fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
+
+    flow:change_gamestate_by_type(':fight')
+  end)
+
+  -- fight start
+
+  wait(2.0)
+
+  -- opponent should auto-attack
+
+  -- use insta-kill
+  short_press(button_ids.x)
+
+  -- spam confirm button just to make sure we cleaned everything (esp. the quote menu)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+
+  -- wait for victory_anim_duration
+  wait(2.0)
+
+  final_assert(function ()
+    -- we must have killed the opponent and be back to adventure
+    return flow.curr_state.type == ':adventure', "current game state is not ':adventure', has instead type: '"..flow.curr_state.type.."'"
+  end)
+
+end)
+--#endif
 
 itest_manager:register_itest('#solo intermediate fight -> back to adv',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
