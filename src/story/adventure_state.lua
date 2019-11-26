@@ -133,7 +133,11 @@ function adventure_state:_async_step_floor_loop()
     async_tutorial_method(self)
   end
 
-  pc_speaker:say_and_wait_for_input("someone is coming!")
+  if gs.floor_number < #gameplay_data.floors then
+    -- non ceo room only
+    pc_speaker:say_and_wait_for_input("someone is coming!")
+  end
+
   self.app:yield_delay_s(0.5)
 
   local next_npc_fighter_prog = fm:pick_matching_random_npc_fighter_prog()
