@@ -35,9 +35,16 @@ function adventure_state:on_exit()
   local am = self.app.managers[':adventure']
   local dm = self.app.managers[':dialogue']
 
+  -- clear adventure manager (except persistent pc)
+  if am.npc then
+    am:despawn_npc()
+  end
   am.active = false
 
+  -- clear dialogue manager (except unregister speaker, which is done in despawn_npc,
+  --   although not pc since it is preserved)
   dm.should_show_bottom_box = false
+  dm.current_bottom_text = nil
 
   music(-1)
 end
@@ -111,6 +118,10 @@ function adventure_state:_async_step_floor_loop()
 
     -- back to main menu
     flow:query_gamestate_type(':main_menu')
+
+    -- clear current progression completely, to avoid starting a new game already at the end
+    -- for now, there is no notion of persistency (like "best score" stuff), so we clear everything
+    app.game_session = game_session()
     return
   end
 
@@ -170,6 +181,9 @@ function adventure_state:async_fight_aftermath()
     async_after_fight_method(self)
     if self.should_finish_game then
       -- avoid any extra events until we leave the game properly
+      -- note that we'll miss register_met_npc, but it's ok since we're gonna
+      --   clear the game session son anyway
+      -- despawn npc, stop music, etc. will be done in adventure_state:on_exit
       return
     end
   else
