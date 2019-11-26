@@ -107,23 +107,9 @@ end
 -- flow
 
 function fight_manager:pick_matching_random_npc_fighter_prog()
-  local candidate_npc_fighter_prog_s = self:get_all_candidate_npc_fighter_prog(self.app.game_session.floor_number)
+  local candidate_npc_fighter_prog_s = self.app.game_session:get_all_candidate_npc_fighter_prog()
   assert(#candidate_npc_fighter_prog_s > 0, "no candidate npc found at floor "..self.app.game_session.floor_number)
   return pick_random(candidate_npc_fighter_prog_s)
-end
-
-function fight_manager:get_all_candidate_npc_fighter_prog(floor_number)
-  local floor_info = gameplay_data:get_floor_info(floor_number)
-
-  local candidate_npc_fighter_prog_s = {}
-  for level = floor_info.npc_level_min, floor_info.npc_level_max do
-    local npc_info_s = self.app.game_session:get_all_npc_fighter_progressions_with_level(level)
-    for npc_info in all(npc_info_s) do
-      add(candidate_npc_fighter_prog_s, npc_info)
-    end
-  end
-
-  return candidate_npc_fighter_prog_s
 end
 
 function fight_manager:start_fight_with_next_opponent()
@@ -134,6 +120,9 @@ function fight_manager:start_fight_with_next_opponent()
 end
 
 function fight_manager:start_fight_with(opponent_fighter_prog)
+  -- track last opponent
+  self.app.game_session.last_opponent = opponent_fighter_prog
+
   -- audio: start bgm
   music(audio_data.bgm.fight_normal)
 

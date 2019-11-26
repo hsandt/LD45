@@ -100,12 +100,13 @@ function adventure_state:_async_step_intro()
 end
 
 function adventure_state:_async_step_floor_loop()
+  local gs = self.app.game_session
   local am = self.app.managers[':adventure']
   local fm = self.app.managers[':fight']
   local pc_speaker = am.pc.speaker
 
   -- if we have just exited a fight, play the aftermath sequence
-  if fm.next_opponent then
+  if gs.last_opponent then
     self:async_fight_aftermath()
   end
 
@@ -127,7 +128,7 @@ function adventure_state:_async_step_floor_loop()
   end
 
   -- after-fight tutorial if any
-  local async_tutorial_method = adventure_state.async_tutorials[self.app.game_session.fight_count]
+  local async_tutorial_method = adventure_state.async_tutorials[gs.fight_count]
   if async_tutorial_method then
     async_tutorial_method(self)
   end
@@ -169,14 +170,15 @@ function adventure_state:async_encounter_npc(npc_fighter_prog)
 end
 
 function adventure_state:async_fight_aftermath()
+  local gs = self.app.game_session
   local am = self.app.managers[':adventure']
   local fm = self.app.managers[':fight']
   local pc_speaker = am.pc.speaker
   local npc_speaker = am.npc.speaker
 
-  assert(fm.next_opponent, "no previous opponent, cannot play aftermath")
+  assert(gs.last_opponent, "no previous opponent, cannot play aftermath")
 
-  local npc_fighter_id = fm.next_opponent.fighter_info.id
+  local npc_fighter_id = gs.last_opponent.fighter_info.id
 
   -- after fight sequence, specific to each npc
   local async_after_fight_method = adventure_state.async_after_fight_with_npcs[npc_fighter_id]
@@ -191,7 +193,7 @@ function adventure_state:async_fight_aftermath()
   end
 
   -- remember pc met that npc so you don't always play the same special dialogues twice
-  self.app.game_session:register_met_npc(npc_fighter_id)
+  gs:register_met_npc(npc_fighter_id)
 
   if self.should_finish_game then
     -- avoid any extra events until we leave the game properly
@@ -200,14 +202,14 @@ function adventure_state:async_fight_aftermath()
   end
 
   if self.forced_next_floor_number then
-    self.app.game_session.floor_number = self.forced_next_floor_number
-    log("go to forced floor: "..self.app.game_session.floor_number, 'adventure')
+    gs.floor_number = self.forced_next_floor_number
+    log("go to forced floor: "..gs.floor_number, 'adventure')
 
     -- remove existing npc last (after fade-out), as he was blocking you
     am:despawn_npc()
   else
     -- check if player lost or won previous fight
-    local floor_number = self.app.game_session.floor_number
+    local floor_number = gs.floor_number
     if fm.won_last_fight then
       -- remove existing npc first, as he lost
       am:despawn_npc()
@@ -216,15 +218,15 @@ function adventure_state:async_fight_aftermath()
       -- for now, auto go up 1 floor
       pc_speaker:say_and_wait_for_input("fine, let's go to the next floor now.")
 
-      self.app.game_session.floor_number = min(floor_number + 1, #gameplay_data.floors)
-      log("go to next floor: "..self.app.game_session.floor_number, 'adventure')
+      gs.floor_number = min(floor_number + 1, #gameplay_data.floors)
+      log("go to next floor: "..gs.floor_number, 'adventure')
     else
       -- player lost, prevent access to next floor
       -- for now, auto go down 1 floor
       pc_speaker:say_and_wait_for_input("guess after my loss, i should go down one floor now.")
 
-      self.app.game_session.floor_number = max(1, floor_number - 1)
-      log("go to previous floor: "..self.app.game_session.floor_number, 'adventure')
+      gs.floor_number = max(1, floor_number - 1)
+      log("go to previous floor: "..gs.floor_number, 'adventure')
 
     -- remove existing npc last (after fade-out), as he was blocking you
       am:despawn_npc()
@@ -372,16 +374,17 @@ end
 
 -- after fight with rossmann
 local function async_after_fight_with_rossmann(self, npc_fighter_id)
+  local gs = self.app.game_session
   local am = self.app.managers[':adventure']
   local fm = self.app.managers[':fight']
   local pc_speaker = am.pc.speaker
   local npc_speaker = am.npc.speaker
 
-  if not self.app.game_session:has_met_npc(npc_fighter_id) then
+  if not gs:has_met_npc(npc_fighter_id) then
     -- rossmann had only level 1 attacks to avoid pc learning strong attacks too fast,
     --   but for next encounter, let rossmann learn the level 2 attacks he should have
     for attack_id in all(gameplay_data.rossmann_lv2_attack_ids) do
-      add(fm.next_opponent.known_attack_ids, attack_id)
+      add(gs.last_opponent.known_attack_ids, attack_id)
     end
 
     pc_speaker:say_and_wait_for_input("damn...")

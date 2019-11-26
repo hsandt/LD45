@@ -1,6 +1,7 @@
 require("engine/test/bustedhelper")
 local game_session = require("progression/game_session")
 
+local floor_info = require("content/floor_info")
 local fighter_progression = require("progression/fighter_progression")
 local gameplay_data = require("resources/gameplay_data")
 
@@ -95,6 +96,75 @@ describe('game_session', function ()
 
       assert.are_equal(1, #npc_fighter_progs_level3)
       assert.are_equal(fake_npc_fighter_prog3, npc_fighter_progs_level3[1])
+    end)
+
+  end)
+
+  describe('get_all_candidate_npc_fighter_prog', function ()
+
+    local fake_npc_fighter_prog_lv1a = {level = 1}
+    local fake_npc_fighter_prog_lv1b = {level = 1}
+    local fake_npc_fighter_prog_lv2a = {level = 2}
+    local fake_npc_fighter_prog_lv2b = {level = 2}
+    local fake_npc_fighter_prog_lv3 = {level = 3}
+
+    setup(function ()
+      stub(gameplay_data, "get_floor_info", function (self, floor_number)
+        -- hypothetical npc levels related to floor number
+        return floor_info(floor_number, max(1, floor_number - 1), min(floor_number + 1, 3))
+      end)
+      stub(game_session, "get_all_npc_fighter_progressions_with_level", function (self, level)
+        -- we are going to return different npcs with the same ids, but we don't care about ids in this test anyway
+        if level == 1 then
+          return {fake_npc_fighter_prog_lv1a, fake_npc_fighter_prog_lv1b}
+        elseif level == 2 then
+          return {fake_npc_fighter_prog_lv2a, fake_npc_fighter_prog_lv2b}
+        elseif level == 3 then
+          return {fake_npc_fighter_prog_lv3}
+        else
+          -- hypothetical level 0 or 4... no candidate (would error)
+          return {}
+        end
+      end)
+    end)
+
+    teardown(function ()
+      gameplay_data.get_floor_info:revert()
+      game_session.get_all_npc_fighter_progressions_with_level:revert()
+    end)
+
+    it('should pick a random npc info among the possible npc levels at the current floor', function ()
+      local gs = game_session()
+      gs.floor_number = 3
+
+      -- we pass floor number of 3, so npc levels should be 2 to 3
+      -- we don't go into details but we should have 3 mock npc infos now, spread on 2 levels
+      -- we just check that we have 4 of them
+      assert.are_equal(3, #gs:get_all_candidate_npc_fighter_prog())
+    end)
+
+    it('should pick a random npc info among the possible npc levels at the current floor, excluding the last opponent', function ()
+      local gs = game_session()
+      gs.last_opponent = fake_npc_fighter_prog_lv1a
+      gs.floor_number = 2
+
+      -- we pass floor number of 2, so npc levels should be 1 to 3
+      -- we don't go into details but we should have 5 mock npc infos now, spread on 3 levels
+      -- however, we have just met one of them, which makes 5 - 1 = 4 left
+      assert.are_equal(4, #gs:get_all_candidate_npc_fighter_prog())
+    end)
+
+    it('should repick the last opponent if there is really no other candidate', function ()
+      local gs = game_session()
+      gs.last_opponent = fake_npc_fighter_prog_lv3
+      gs.floor_number = 4
+
+      -- we pass floor number of 4, so npc levels should be 3 to 3
+      -- problem is, there is only one NPC at that level and we've just fought him
+      -- so no choice, we fight him again
+      local candidate_npc_fighter_prog_s = gs:get_all_candidate_npc_fighter_prog()
+      assert.are_equal(1, #candidate_npc_fighter_prog_s)
+      assert.are_equal(fake_npc_fighter_prog_lv3, candidate_npc_fighter_prog_s[1])
     end)
 
   end)
