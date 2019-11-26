@@ -171,8 +171,10 @@ function adventure_state:async_fight_aftermath()
 
   assert(fm.next_opponent, "no previous opponent, cannot play aftermath")
 
+  local npc_id = fm.next_opponent.fighter_info.id
+
   -- after fight sequence, specific to each npc
-  local after_fight_method_name = '_async_after_fight_with_npc'..fm.next_opponent.fighter_info.id
+  local after_fight_method_name = '_async_after_fight_with_npc'..npc_id
   if self[after_fight_method_name] then
     self[after_fight_method_name](self)
     if self.should_finish_game then
@@ -186,6 +188,9 @@ function adventure_state:async_fight_aftermath()
       npc_speaker:say_and_wait_for_input("ha! you won't go past me!")
     end
   end
+
+  -- remember pc met that npc so you don't always play the same special dialogues twice
+  self.app.game_session:register_met_npc(npc_id)
 
   -- check if player lost or won previous fight
   local floor_number = self.app.game_session.floor_number
@@ -264,15 +269,21 @@ function adventure_state:_async_before_fight_with_npc12()
   local pc_speaker = am.pc.speaker
   local npc_speaker = am.npc.speaker
 
-  npc_speaker:say_and_wait_for_input("you took your time.")
-  npc_speaker:say_and_wait_for_input("i was about to leave.")
-  pc_speaker:say_and_wait_for_input("this time, i won't leave without your sponsorship!")
-  npc_speaker:say_and_wait_for_input("why do you so much want the support of a corporation for an independent event?")
-  self.app:yield_delay_s(0.5)
-  pc_speaker:say_and_wait_for_input("we need funds.")
-  self.app:yield_delay_s(0.5)
-  npc_speaker:say_and_wait_for_input("you'll need better words than that to convince me.")
-  pc_speaker:say_and_wait_for_input("that's perfect, i've got exactly what you're asking for.")
+  if not self.app.game_session:has_met_npc(12) then
+    npc_speaker:say_and_wait_for_input("you took your time.")
+    npc_speaker:say_and_wait_for_input("i was about to leave.")
+    pc_speaker:say_and_wait_for_input("this time, i won't leave without your sponsorship!")
+    npc_speaker:say_and_wait_for_input("why do you so much want the support of a corporation for an independent event?")
+    self.app:yield_delay_s(0.5)
+    pc_speaker:say_and_wait_for_input("we need funds.")
+    self.app:yield_delay_s(0.5)
+    npc_speaker:say_and_wait_for_input("you'll need better words than that to convince me.")
+    pc_speaker:say_and_wait_for_input("that's perfect, i've got exactly what you're asking for.")
+  else
+    npc_speaker:say_and_wait_for_input("i'm glad you learned so well from me. you need persistence to succeed.")
+    self.app:yield_delay_s(1)
+    npc_speaker:say_and_wait_for_input("but sometimes, it's just not enough.")
+  end
 end
 
 -- after fight with ceo
@@ -317,23 +328,42 @@ function adventure_state:_async_before_fight_with_npc13()
   local pc_speaker = am.pc.speaker
   local npc_speaker = am.npc.speaker
 
-  npc_speaker:say_and_wait_for_input("well, well, well. see who's in here")
-  pc_speaker:say_and_wait_for_input("not you again! i failed to get the ceo's support last time because of you!")
-  npc_speaker:say_and_wait_for_input("not at all. you just messed up on your own.")
-  pc_speaker:say_and_wait_for_input("enough! you're going down!")
-  npc_speaker:say_and_wait_for_input("if you're so motivated, why not solve this with a wit fight?")
-  npc_speaker:say_and_wait_for_input("we exchange verbal attacks and replies, and see who has the best comeback")
-  pc_speaker:say_and_wait_for_input("er... okay.")
+  if not self.app.game_session:has_met_npc(13) then
+    npc_speaker:say_and_wait_for_input("well, well, well. see who's in here")
+    pc_speaker:say_and_wait_for_input("not you again! i failed to get the ceo's support last time because of you!")
+    npc_speaker:say_and_wait_for_input("not at all. you just messed up on your own.")
+    pc_speaker:say_and_wait_for_input("enough! you're going down!")
+    npc_speaker:say_and_wait_for_input("if you're so motivated, why not solve this with a wit fight?")
+    npc_speaker:say_and_wait_for_input("we exchange verbal attacks and replies, and see who has the best comeback")
+    pc_speaker:say_and_wait_for_input("er... okay.")
+  else
+    pc_speaker:say_and_wait_for_input("you again...")
+    npc_speaker:say_and_wait_for_input("ready for a re-match!")
+  end
+
 end
 
 -- after fight with rossmann
 function adventure_state:_async_after_fight_with_npc13()
+  local am = self.app.managers[':adventure']
   local fm = self.app.managers[':fight']
+  local pc_speaker = am.pc.speaker
+  local npc_speaker = am.npc.speaker
 
-  -- rossmann had only level 1 attacks to avoid pc learning strong attacks too fast,
-  --   but for next encounter, let rossmann learn the level 2 attacks he should have
-  for attack_id in all(gameplay_data.rossmann_lv2_attack_ids) do
-    add(fm.next_opponent.known_attack_ids, attack_id)
+  if not self.app.game_session:has_met_npc(13) then
+    -- rossmann had only level 1 attacks to avoid pc learning strong attacks too fast,
+    --   but for next encounter, let rossmann learn the level 2 attacks he should have
+    for attack_id in all(gameplay_data.rossmann_lv2_attack_ids) do
+      add(fm.next_opponent.known_attack_ids, attack_id)
+    end
+  end
+
+  if fm.won_last_fight then
+    npc_speaker:say_and_wait_for_input("can't believe i lost to a brat...")
+    pc_speaker:say_and_wait_for_input("ehe")
+  else
+    npc_speaker:say_and_wait_for_input("just as i expected.")
+    pc_speaker:say_and_wait_for_input("damn!")
   end
 end
 

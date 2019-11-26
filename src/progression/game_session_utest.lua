@@ -25,7 +25,7 @@ describe('game_session', function ()
 
     it('should init a game_session', function ()
       local gs = game_session()
-      assert.are_same({gameplay_data.initial_floor, 0}, {gs.floor_number, gs.fight_count})
+      assert.are_same({gameplay_data.initial_floor, 0, {}}, {gs.floor_number, gs.fight_count, gs.met_npc_ids})
       assert.are_same(fighter_progression(character_types.pc, gameplay_data.pc_fighter_info), gs.pc_fighter_progression)
       assert.are_equal(fake_npc_fighter_prog1, gs.npc_fighter_progressions[1])
       assert.are_equal(fake_npc_fighter_prog2, gs.npc_fighter_progressions[2])
@@ -46,6 +46,32 @@ describe('game_session', function ()
       gs.fight_count = 100
       gs:increment_fight_count()
       assert.are_equal(100, gs.fight_count)
+    end)
+
+  end)
+
+  describe('has_met_npc', function ()
+
+    it('should return true if npc was met', function ()
+      local gs = game_session()
+      gs.met_npc_ids = {[1] = true, [5] = true}
+      assert.is_true(gs:has_met_npc(5))
+    end)
+
+    it('should return true if npc was met', function ()
+      local gs = game_session()
+      gs.met_npc_ids = {[1] = true, [5] = true}
+      assert.is_false(gs:has_met_npc(4))
+    end)
+
+  end)
+
+  describe('register_met_npc', function ()
+
+    it('should add npc id to set of met npc ids', function ()
+      local gs = game_session()
+      gs:register_met_npc(5)
+      assert.is_true(gs.met_npc_ids[5])
     end)
 
   end)
