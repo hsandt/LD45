@@ -34,12 +34,28 @@
 			"variants":
 			[
 				{
+					"name": "debug",
+					"cmd": ["./build_game.sh debug"]
+				},
+				{
 					"name": "debug-ultrafast",
 					"cmd": ["./build_game.sh debug-ultrafast"]
 				},
 				{
+					"name": "cheat",
+					"cmd": ["./build_game.sh cheat"]
+				},
+				{
 					"name": "ultrafast",
 					"cmd": ["./build_game.sh ultrafast"]
+				},
+				{
+					"name": "cheat-ultrafast",
+					"cmd": ["./build_game.sh cheat-ultrafast"]
+				},
+				{
+					"name": "sandbox",
+					"cmd": ["./build_game.sh sandbox"]
 				},
 				{
 					"name": "release",
@@ -65,12 +81,28 @@
 			"variants":
 			[
 				{
+					"name": "debug",
+					"cmd": ["./build_game.sh debug && (./pico-boots/scripts/reload.sh || ./run_game.sh debug)"]
+				},
+				{
 					"name": "debug-ultrafast",
 					"cmd": ["./build_game.sh debug-ultrafast && (./pico-boots/scripts/reload.sh || ./run_game.sh debug-ultrafast)"]
 				},
 				{
+					"name": "cheat",
+					"cmd": ["./build_game.sh cheat && (./pico-boots/scripts/reload.sh || ./run_game.sh cheat)"]
+				},
+				{
 					"name": "ultrafast",
 					"cmd": ["./build_game.sh ultrafast && (./pico-boots/scripts/reload.sh || ./run_game.sh ultrafast)"]
+				},
+				{
+					"name": "cheat-ultrafast",
+					"cmd": ["./build_game.sh cheat-ultrafast && (./pico-boots/scripts/reload.sh || ./run_game.sh cheat-ultrafast)"]
+				},
+				{
+					"name": "sandbox",
+					"cmd": ["./build_game.sh sandbox && (./pico-boots/scripts/reload.sh || ./run_game.sh sandbox)"]
 				},
 				{
 					"name": "release",
@@ -95,12 +127,28 @@
 			"variants":
 			[
 				{
+					"name": "debug",
+					"cmd": ["./run_game.sh debug"]
+				},
+				{
 					"name": "debug-ultrafast",
 					"cmd": ["./run_game.sh debug-ultrafast"]
 				},
 				{
+					"name": "cheat",
+					"cmd": ["./run_game.sh cheat"]
+				},
+				{
 					"name": "ultrafast",
 					"cmd": ["./run_game.sh ultrafast"]
+				},
+				{
+					"name": "cheat-ultrafast",
+					"cmd": ["./run_game.sh cheat-ultrafast"]
+				},
+				{
+					"name": "sandbox",
+					"cmd": ["./run_game.sh sandbox"]
 				},
 				{
 					"name": "release",

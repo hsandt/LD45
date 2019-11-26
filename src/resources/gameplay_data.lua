@@ -150,9 +150,9 @@ local npc_info_s = {
   character_info(11, "senior marketing", 11),
   character_info(12, "ceo", 12),
   character_info(13, "rossmann", 13),
---//#if debug
+--#if sandbox
   character_info(14, "debug man", 13),  -- reuse rossmann sprite
---//#endif
+--#endif
 }
 
 -- "start with nothing" -> no known quotes to start with
@@ -179,9 +179,9 @@ local npc_fighter_info_s = {
   -- low level to avoid final boss learning your quotes... she would become invincible
   fighter_info(13, 13, 2, 3, {1, 2, 5, 6}, {3, 7, 11, 13}, {2, 3, 11}),  -- rossmann
   -- doesn't know match 13: 6 -> 11, but can learn it from pc later
---//#if debug
+--#if sandbox
   fighter_info(14, 14, 99, 2, {8, 9, 14, 18, 19}, {13, 15, 17}, {}),  -- debug man (longest quotes)
---//#endif
+--#endif
 }
 
 local gameplay_data = {

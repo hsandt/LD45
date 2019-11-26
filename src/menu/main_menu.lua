@@ -20,7 +20,7 @@ main_menu._items = transform({
       app.managers[':adventure'].next_step = 'intro'
       flow:query_gamestate_type(':adventure')
     end},
---//#if debug
+--#if cheat
     {"debug: 1st fight", function(app)
       app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_id]
       flow:query_gamestate_type(':fight')
@@ -41,6 +41,8 @@ main_menu._items = transform({
       app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.ceo_id]
       flow:query_gamestate_type(':fight')
     end},
+--#endif
+--#if sandbox
     {"debug man fight", function(app)
       app.game_session.floor_number = 5
       app.game_session.fight_count = 10
@@ -55,7 +57,7 @@ main_menu._items = transform({
     {"debug: sandbox", function(app)
       flow:query_gamestate_type(':sandbox')
     end}
---//#endif
+--#endif
   }, unpacking(menu_item))
 
 -- text_menu: text_menu    component handling menu display and selection

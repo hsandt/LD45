@@ -71,12 +71,18 @@ symbols=''
 
 if [[ $config == 'debug' ]]; then
   # symbols='assert,log,visual_logger,tuner,profiler,mouse'
-  # lighter config
-  symbols='assert,log,debug'
+  # lighter config (to remain under 65536 chars)
+  symbols='assert,log,cheat,sandbox'
 elif [[ $config == 'debug-ultrafast' ]]; then
-  symbols='assert,log,debug,ultrafast'
+  symbols='assert,log,cheat,sandbox,ultrafast'
+elif [[ $config == 'cheat' ]]; then
+  symbols='cheat'
 elif [[ $config == 'ultrafast' ]]; then
   symbols='ultrafast'
+elif [[ $config == 'cheat-ultrafast' ]]; then
+  symbols='cheat,ultrafast'
+elif [[ $config == 'sandbox' ]]; then
+  symbols='sandbox'
 fi
 
 # Build from main
