@@ -1,21 +1,9 @@
 local integrationtest = require("engine/test/integrationtest")
 local itest_manager = integrationtest.itest_manager
-local input = require("engine/input/input")
 local flow = require("engine/application/flow")
 
 local fighter_progression = require("progression/fighter_progression")
 local gameplay_data = require("resources/gameplay_data")
-
-local function short_press(button_id)
-  act(function ()
-    input.simulated_buttons_down[0][button_id] = true
-  end)
-  wait(1, true)
-  act(function ()
-    input.simulated_buttons_down[0][button_id] = false
-  end)
-  wait(1, true)
-end
 
 itest_manager:register_itest('start -> real fights loop',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
@@ -189,7 +177,6 @@ itest_manager:register_itest('start -> end with ai control on pc',
 
     -- give more knowledge to pc fighter just to see good replies coming
     pc_fighter_prog.known_reply_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-    pc_fighter_prog.known_quote_match_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
     flow:change_gamestate_by_type(':main_menu')
   end)

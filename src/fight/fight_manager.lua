@@ -358,8 +358,8 @@ function fight_manager:resolve_exchange(attacker, replier)
 
   local quote_match = gameplay_data:get_quote_match(attacker_quote, replier_quote)
 
-  -- cancel_quote_match is used to cancel an attack
-  -- a nil quote_match, however, means the reply failed completely
+  -- cancel_quote_match is used to cancel an attack, and has a power of 0
+  -- a nil quote_match, however, means the reply failed completely; so check for nil first
   if quote_match then
     -- reply worked
     -- don't use the reply level, but the match power to determine how good the counter is
@@ -495,7 +495,7 @@ function fight_manager:start_victory(some_fighter)
     self.app:wait_and_do(visual_data.victory_anim_duration,
       self.stop_fight_and_return_to_adv, self)
   else  -- some_fighter.fighter_progression.character_type == character_types.npc
-    log("ai wins", 'fight')
+    log("npc '"..some_fighter.character.character_info.name.."' wins", 'fight')
     self.won_last_fight = false
 
     -- audio: stop bgm

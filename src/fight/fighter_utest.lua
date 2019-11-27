@@ -124,11 +124,9 @@ describe('fighter', function ()
       pick_random:clear()
     end)
 
-    -- soon: return matching reply with highest power
-    it('should return a matching reply', function ()
-      -- this test dependson gameplay data for quote matches
-      -- we use quote match 2: 1 -> 7 (power 2)
-      -- f knows matches 2 and 4, so should be able to reply with 7
+    it('should return a random matching reply', function ()
+      -- ! test is gameplay_data-dependent for quote matches !
+      -- attack 1 can be replied with replies 6 or 7, but f only knows R7
       -- just add 13 at the end of the reply ids so we are sure
       --   that 7 is not picked just because it's last
       f.available_reply_ids = {2, 4, 7, 13}
@@ -136,7 +134,9 @@ describe('fighter', function ()
     end)
 
     it('should return a random available reply using pick_random when no matching reply is known', function ()
-      -- f doesn't know any matching reply for 10, so will return random one, stubbed to last
+      -- ! test is gameplay_data-dependent for quote matches !
+      -- f doesn't know any matching reply for 10 (neither R5, R9, R15),
+      -- so will return random one, stubbed to last
       f.available_reply_ids = {2, 4, 7, 13}
       assert.are_equal(gameplay_data.replies[13], f:auto_pick_reply(10))
     end)
@@ -311,8 +311,7 @@ describe('fighter', function ()
     end)
 
     it('should let fighter progression try to learn quote by id', function ()
-      f.fighter_progression.known_quote_match_ids = {3}
-      f:on_witness_quote_match(quote_match_info(11,  6,  3, 3))
+      f:on_witness_quote_match(quote_match_info(11, 6, 3, 3))
 
       local s = assert.spy(fighter_progression.try_learn_quote_match)
       s.was_called(1)

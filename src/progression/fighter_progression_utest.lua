@@ -11,7 +11,7 @@ describe('fighter_progression', function ()
   describe('_init', function ()
 
     it('should init a fighter_progression for an npc', function ()
-      local mock_fighter_info = fighter_info(4, 4, 2, 5, {11, 27}, {12, 28}, {2, 4})
+      local mock_fighter_info = fighter_info(4, 4, 2, 5, {11, 27}, {12, 28})
       local f_progression = fighter_progression(character_types.npc, mock_fighter_info)
       assert.are_same({
           character_types.npc,
@@ -20,7 +20,7 @@ describe('fighter_progression', function ()
           5,
           {11, 27},
           {12, 28},
-          {2, 4},
+          {},
           {},
           {}
         },
@@ -39,7 +39,7 @@ describe('fighter_progression', function ()
     end)
 
     it('should init a fighter_progression with pc_info for a pc', function ()
-      local mock_fighter_info = fighter_info(0, 0, 2, 5, {11, 27}, {12, 28}, {2, 4})
+      local mock_fighter_info = fighter_info(0, 0, 2, 5, {11, 27}, {12, 28})
       local f_progression = fighter_progression(character_types.pc, mock_fighter_info)
       assert.are_same({
           character_types.pc,
@@ -48,7 +48,7 @@ describe('fighter_progression', function ()
           5,
           {11, 27},
           {12, 28},
-          {2, 4},
+          {},
           {},
           {}
         },
@@ -258,18 +258,26 @@ describe('fighter_progression', function ()
 
     describe('try_learn_quote_match', function ()
 
-      it('should error if id <= 0 (like cancel quote)', function ()
+      it('(with npc) should do nothing (even with id <= 0)', function ()
+        f_progression.known_quote_match_ids = {1, 2, 3}
+
+        f_progression:try_learn_quote_match(0)
+
+        assert.are_same({1, 2, 3}, f_progression.known_quote_match_ids)
+      end)
+
+      it('(with pc) should error if id <= 0 (like cancel quote)', function ()
         assert.has_error(function ()
-          f_progression:try_learn_quote_match(0)
+          pc_f_progression:try_learn_quote_match(0)
         end)
       end)
 
-      it('should add quote id if not already known', function ()
-        f_progression.known_quote_match_ids = {1, 2, 3}
+      it('(with pc) should add quote id if not already known', function ()
+        pc_f_progression.known_quote_match_ids = {1, 2, 3}
 
-        f_progression:try_learn_quote_match(4)
+        pc_f_progression:try_learn_quote_match(4)
 
-        assert.are_same({1, 2, 3, 4}, f_progression.known_quote_match_ids)
+        assert.are_same({1, 2, 3, 4}, pc_f_progression.known_quote_match_ids)
       end)
 
     end)

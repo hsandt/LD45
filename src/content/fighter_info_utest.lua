@@ -5,9 +5,9 @@ describe('fighter_info', function ()
 
   describe('_init', function ()
     it('should init a fighter_info with id, name, level, initial quote ids', function ()
-      local f_info = fighter_info(8, 3, 4, 5, {11, 27}, {12, 28}, {2, 4})
-      assert.are_same({8, 3, 4, 5, {11, 27}, {12, 28}, {2, 4}},
-        {f_info.id, f_info.character_info_id, f_info.initial_level, f_info.initial_max_hp, f_info.initial_attack_ids, f_info.initial_reply_ids, f_info.initial_quote_match_ids})
+      local f_info = fighter_info(8, 3, 4, 5, {11, 27}, {12, 28})
+      assert.are_same({8, 3, 4, 5, {11, 27}, {12, 28}},
+        {f_info.id, f_info.character_info_id, f_info.initial_level, f_info.initial_max_hp, f_info.initial_attack_ids, f_info.initial_reply_ids})
     end)
   end)
 

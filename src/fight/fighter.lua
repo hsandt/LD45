@@ -9,23 +9,23 @@ local fighter = new_class()
 
 --[[
 Parameters
-  character_type: character_types  is the fighter controlled by the player or some ai?
-  npc: npc?                        if character_type is ai, npc instance that spawned this fighter
-                                   else, nil
-  max_hp: int                      initial hp
-  sprite: sprite_data              sprite to render
-  direction: horizontal_dirs       facing left or right?
+  character: character                      character associated to this fighter
+  fighter_progression: fighter_progression  progression status of this fighter
 
 State
   hp: int                                   current hp
   is_attacker: bool                         true iff fighter attacks this turn
-  last_quote: (quote_info|nil)              last quote said, if any
+  last_quote: quote_info?                   last quote said, if any
   received_attack_id_count_map: {int: int}  count of new attacks received during current fight,
                                             indexed by attack id (to measure exposure)
   received_reply_id_count_map: {int: int}   count of new replies received during current fight,
                                             indexed by attack id (to measure exposure)
   available_attack_ids: {int}               sequence of attacks that can still be used in this fight
   available_reply_ids: {int}                sequence of replies that can still be used in this fight
+                                            because normal replies are not consumed like attacks, this is almost
+                                            the same as the fighter progression known_reply_ids,
+                                            but not exactly (e.g. the cancel reply should be consumed,
+                                            and we may add dummies)
 --]]
 function fighter:_init(char, fighter_prog)
 --#if assert
@@ -103,35 +103,30 @@ function fighter:auto_pick_reply(attack_id)
     add(available_reply_ids, -1)
   end
 
-  local reply = nil
+  local attack_info = gameplay_data:get_quote(quote_types.attack, attack_id)
 
   -- pick matching reply if possible
-  -- v1: just pick first working match, ignoring power
-  for quote_match_id in all(self.fighter_progression.known_quote_match_ids) do
-    local quote_match = gameplay_data.quote_matches[quote_match_id]
-    if quote_match.attack_id == attack_id then
-      -- found a match, but it must also know the reply itself (it may be still in learning phase)
-      if contains(available_reply_ids, quote_match.reply_id) then
-        reply = gameplay_data:get_quote(quote_types.reply, quote_match.reply_id)
-        log("fighter \""..self:get_name().."\" found matching reply ("..reply.id..")", 'itest')
-      else
---#if log
-        log("fighter \""..self:get_name().."\" knowns about matching reply "..quote_match.reply_id..
-          " \""..gameplay_data:get_quote(quote_types.reply, quote_match.reply_id).text.."\" but hasn't finished learning it", 'itest')
---#endif
-      end
-    end
-  end
+  -- v2: pick random reply among matching replies (whatever their power is)
+  local candidate_replies = filter(available_reply_ids, function (reply_id)
+    local reply_info = gameplay_data:get_quote(quote_types.reply, reply_id)
+    local quote_match = gameplay_data:get_quote_match(attack_info, reply_info)
+    return quote_match ~= nil  -- power = 0 (cancel reply) is a valid candidate
+  end)
 
-  if not reply then
+  local picked_reply_id
+
+  if #candidate_replies > 0 then
+    picked_reply_id = pick_random(candidate_replies)
+    log("fighter \""..self:get_name().."\" picks randomly matching reply ("..picked_reply_id..")", 'itest')
+  else
     -- no matching quote found; pick a random reply instead
     -- remember we added a dummy quote above if needed, so sequence is never empty
-    local random_reply_id = pick_random(available_reply_ids)
-    reply = gameplay_data:get_quote(quote_type, random_reply_id)
-    log("fighter \""..self:get_name().."\" picks randomly reply ("..random_reply_id..")", 'itest')
+    picked_reply_id = pick_random(available_reply_ids)
+    log("fighter \""..self:get_name().."\" picks randomly some reply ("..picked_reply_id..")", 'itest')
   end
 
-  return reply
+  local picked_reply = gameplay_data:get_quote(quote_types.reply, picked_reply_id)
+  return picked_reply
 end
 
 function fighter:preview_quote(quote)
@@ -202,11 +197,8 @@ end
 
 function fighter:on_witness_quote_match(quote_match)
   -- Upon witnessing a quote match (as attacker or replier),
-  --   fighter *immediately* learns the match.
-  -- This allows for reactive fights where known replies can be reused in
-  --   different ways, learning from your opponent.
-  -- By the way, soon, replies will also be learned immediately
-  --   so we can do that for new replies too.
+  --   fighter *immediately* tries to learn the match
+  --   (used by PC only, see try_learn_quote_match)
   self.fighter_progression:try_learn_quote_match(quote_match.id)
 end
 
