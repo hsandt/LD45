@@ -13,6 +13,17 @@
 	"build_systems":
 	[
 		{
+			"name": "Debug: print data",
+			"shell": true,
+			"cmd": ["lua src/debug/print_data.lua"],
+			"file_regex": "((?:pico-boots/src|src)\\/[-\\w\\/]+\\.lua)(?:\\:| @ )([\\d]+)(?:\\:)?([\\d]+)?\\n?(.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax",
+			"working_dir": "${project_path}",
+			"env": {
+				"LUA_PATH": "pico-boots/src/?.lua;src/?.lua"
+			}
+		},
+		{
 			"name": "Game: edit data",
 			"shell": true,
 			"cmd": ["./edit_data.sh"],

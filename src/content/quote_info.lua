@@ -21,7 +21,7 @@ end
 
 --#if log
 function quote_info:_tostring()
-  return "quote_info("..joinstr(", ", self.id, self.type, self.level, dump(self.text))..")"
+  return "("..(self.type == quote_types.attack and "A" or "R")..self.id..") Lv"..self.level..": \""..self.text.."\""
 end
 --#endif
 
