@@ -117,12 +117,12 @@ function fighter:auto_pick_reply(attack_id)
 
   if #candidate_replies > 0 then
     picked_reply_id = pick_random(candidate_replies)
-    log("fighter \""..self:get_name().."\" picks randomly matching reply ("..picked_reply_id..")", 'itest')
+    log("fighter \""..self:get_name().."\" picks randomly matching reply ("..picked_reply_id..")", 'fight')
   else
     -- no matching quote found; pick a random reply instead
     -- remember we added a dummy quote above if needed, so sequence is never empty
     picked_reply_id = pick_random(available_reply_ids)
-    log("fighter \""..self:get_name().."\" picks randomly some reply ("..picked_reply_id..")", 'itest')
+    log("fighter \""..self:get_name().."\" picks randomly some reply ("..picked_reply_id..")", 'fight')
   end
 
   local picked_reply = gameplay_data:get_quote(quote_types.reply, picked_reply_id)

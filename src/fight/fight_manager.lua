@@ -485,7 +485,7 @@ end
 
 function fight_manager:start_victory(some_fighter)
   if some_fighter.fighter_progression.character_type == character_types.pc then
-    log("player wins", 'fight')
+    log("player WINS", 'fight')
     self.won_last_fight = true
 
     -- audio: stop bgm, play victory jingle
@@ -495,7 +495,7 @@ function fight_manager:start_victory(some_fighter)
     self.app:wait_and_do(visual_data.victory_anim_duration,
       self.stop_fight_and_return_to_adv, self)
   else  -- some_fighter.fighter_progression.character_type == character_types.npc
-    log("npc '"..some_fighter.character.character_info.name.."' wins", 'fight')
+    log("npc '"..some_fighter.character.character_info.name.."' WINS", 'fight')
     self.won_last_fight = false
 
     -- audio: stop bgm

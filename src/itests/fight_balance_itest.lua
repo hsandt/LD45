@@ -38,11 +38,10 @@ local function register_fight_balance_itest(opponent_id, initial_attack_ids, ini
     -- both player and opponent should auto-attack
     -- so wait until someone dies
     -- the factor is around 5 seconds per attack + reply round
-    -- so we can estimate the max time of the fight from the max number of attacks among both fighter
-    -- by multiplying that by 2 (as attackers switch turn), then by 5s
-    local max_attack_count_per_fighter = max(#initial_attack_ids, #opponent_info.initial_attack_ids)
-    printh("max_attack_count_per_fighter: "..dump(max_attack_count_per_fighter))
-    local estimated_fight_time = 5.0 * 2 * max_attack_count_per_fighter
+    -- so we can estimate the max time of the fight from the total hp among both fighters
+    -- assuming each attack deals at least 1 damage (cancel will be possible later, though)
+    local total_hp = gameplay_data.pc_fighter_info.initial_max_hp + opponent_info.initial_max_hp
+    local estimated_fight_time = 5.0 * total_hp
     wait(estimated_fight_time)
 
     final_assert(function ()
@@ -53,4 +52,9 @@ local function register_fight_balance_itest(opponent_id, initial_attack_ids, ini
 end
 
 -- junior accountant
-register_fight_balance_itest(1, {1, 2, 3}, {1, 4})
+register_fight_balance_itest(1, {}, {})
+register_fight_balance_itest(1, {1, 3, 5, 6}, {})  -- after rossmann, as in normal play
+
+-- junior designer
+register_fight_balance_itest(2, {}, {})
+register_fight_balance_itest(2, {1, 3, 5, 6}, {})  -- after rossmann, as in normal play
