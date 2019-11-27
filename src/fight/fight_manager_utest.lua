@@ -633,7 +633,7 @@ describe('fight_manager', function ()
       local mock_human_fighter
 
         -- set character_type just to pass the assertions
-      local fake_attack_items = {"attack1", "attack2", "attack3"}
+      local fake_attack_items = {[-1] = "dummy attack", "attack1", "attack2", "attack3"}
       local fake_reply_items = {[-1] = "dummy reply", [0] = "cancel reply", "reply1"}
 
       setup(function ()
@@ -728,14 +728,12 @@ describe('fight_manager', function ()
             fighter.get_available_quote_ids:revert()
           end)
 
-          it('should not prompt at all and skip to opponent\'s turn', function ()
+          it('should still prompt with a dummy attack', function ()
             fm:request_human_fighter_action(mock_human_fighter)
 
-            local s = assert.spy(fight_manager.request_next_fighter_action)
+            local s = assert.spy(dialogue_manager.prompt_items)
             s.was_called(1)
-            s.was_called_with(match.ref(fm))
-
-            assert.spy(dialogue_manager.prompt_items).was_not_called()
+            s.was_called_with(match.ref(dm), {"dummy attack"})
           end)
 
         end)
@@ -808,7 +806,6 @@ describe('fight_manager', function ()
               -- we assume quote_type == quote_types.reply here
               return {}
             end)
-            stub(fight_manager, "request_next_fighter_action")
           end)
 
           teardown(function ()

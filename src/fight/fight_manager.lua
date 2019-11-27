@@ -225,15 +225,8 @@ function fight_manager:request_human_fighter_action(human_fighter)
 
   if #available_quote_ids == 0 then
     -- no quotes left
-    if quote_type == quote_types.attack then
-      -- pc has nothing to say to attack, just skip this turn and let opponent attack
-      -- (last quotes have already been cleared at this point)
-      self:request_next_fighter_action()
-      return
-    else  -- quote_type == quote_types.reply
-      -- pc must still reply to close the exchange, give losing quote
-      add(available_quote_ids, -1)
-    end
+    -- pc has nothing to say, whether attack or reply, add losing quote
+    add(available_quote_ids, -1)
   end
 
   -- for debugging, allow ai control over pc
