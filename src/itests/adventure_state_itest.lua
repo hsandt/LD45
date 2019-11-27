@@ -1,20 +1,8 @@
 local integrationtest = require("engine/test/integrationtest")
 local itest_manager = integrationtest.itest_manager
-local input = require("engine/input/input")
 local flow = require("engine/application/flow")
 
 local gameplay_data = require("resources/gameplay_data")
-
-local function short_press(button_id)
-  act(function ()
-    input.simulated_buttons_down[0][button_id] = true
-  end)
-  wait(1, true)
-  act(function ()
-    input.simulated_buttons_down[0][button_id] = false
-  end)
-  wait(1, true)
-end
 
 itest_manager:register_itest('play intro -> 1st fight',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...

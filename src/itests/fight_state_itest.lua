@@ -1,20 +1,8 @@
 local integrationtest = require("engine/test/integrationtest")
 local itest_manager = integrationtest.itest_manager
-local input = require("engine/input/input")
 local flow = require("engine/application/flow")
 
 local gameplay_data = require("resources/gameplay_data")
-
-local function short_press(button_id)
-  act(function ()
-    input.simulated_buttons_down[0][button_id] = true
-  end)
-  wait(1, true)
-  act(function ()
-    input.simulated_buttons_down[0][button_id] = false
-  end)
-  wait(1, true)
-end
 
 itest_manager:register_itest('1st fight -> back to adv',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
@@ -99,7 +87,7 @@ itest_manager:register_itest('insta-kill',
 end)
 --#endif
 
-itest_manager:register_itest('#solo intermediate fight -> back to adv',
+itest_manager:register_itest('intermediate fight -> back to adv',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
     -- but without gamestate_proxy, not used
     {':fight'}, function ()
@@ -119,7 +107,6 @@ itest_manager:register_itest('#solo intermediate fight -> back to adv',
 
     -- give more knowledge to pc fighter just to see good replies coming
     pc_fighter_prog.known_reply_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
-    pc_fighter_prog.known_quote_match_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
     -- fight rossmann
     fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_fighter_id]
