@@ -9,9 +9,7 @@ local function register_fight_balance_itest(opponent_id, initial_attack_ids, ini
   --   used as fighter progression id, we should go through fighter info first
   local opponent_info = gameplay_data.npc_fighter_info_s[opponent_id]
   local opponent_name = gameplay_data.npc_info_s[opponent_info.character_info_id].name
-  local known_attack_ids_str = joinstr_table(', ', initial_attack_ids)
-  local known_reply_ids_str = joinstr_table(', ', initial_reply_ids)
-  itest_manager:register_itest('#solo vs '..opponent_name..' - knows A: {'..known_attack_ids_str..'}, R: {'..known_reply_ids_str..'}',
+  itest_manager:register_itest('#solo vs '..opponent_name..' - knows A: '..dump_sequence(initial_attack_ids)..', R: '..dump_sequence(initial_reply_ids),
     {':fight'}, function ()
 
     -- enter fight state
