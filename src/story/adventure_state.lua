@@ -221,6 +221,9 @@ function adventure_state:async_fight_aftermath()
       -- remove existing npc first, as he lost
       am:despawn_npc()
 
+      -- some floors "level up" the pc by increasing his max hp, so check that
+      self:async_check_max_hp_increase(floor_number)
+
       -- player won, allow access to next floor
       -- for now, auto go up 1 floor
       pc_speaker:say_and_wait_for_input("fine, let's go to the next floor now.")
@@ -241,12 +244,35 @@ function adventure_state:async_fight_aftermath()
   end
 end
 
+function adventure_state:async_check_max_hp_increase(floor_number)
+  local gs = self.app.game_session
+
+  local min_max_hp = gameplay_data.max_hp_after_win_by_floor_number[floor_number]
+  if min_max_hp and gs.pc_fighter_progression.max_hp < min_max_hp then
+    self:async_increase_pc_max_hp(gs.pc_fighter_progression, min_max_hp)
+  end
+end
+
+function adventure_state:async_increase_pc_max_hp(pc_fighter_prog, new_max_hp)
+  local dm = self.app.managers[':dialogue']
+
+  assert(pc_fighter_prog.max_hp < new_max_hp)
+  pc_fighter_prog.max_hp = new_max_hp
+  log("pc max hp increase to "..new_max_hp, 'progression')
+
+  dm.current_bottom_text = 'player character stamina increases to '..new_max_hp..'!'
+  self.app:yield_delay_s(2)
+  dm.current_bottom_text = nil
+  self.app:yield_delay_s(1)
+end
+
 -- tutorial sequence methods
 -- they all start with `async_tutorial_`
 --   and take 1 param self: adventure_state (those functions are like method,
 --   except we must pass `self` manually as 1st param due to dynamic access of functions)
 
 local function async_tutorial_learn_attacks(self)
+  local gs = self.app.game_session
   local am = self.app.managers[':adventure']
   local pc_speaker = am.pc.speaker
 
@@ -259,6 +285,18 @@ local function async_tutorial_learn_attacks(self)
   self.app:yield_delay_s(1)
   pc_speaker:say_and_wait_for_input("ok, i'm done.")
   self.app:yield_delay_s(1)
+  pc_speaker:say_and_wait_for_input("good, i feel a little more confident already.")
+  pc_speaker:say_and_wait_for_input("i should be more resilient to insults now.")
+
+  -- increase player stamina to 3 after tutorial (with safety check to avoid decreasing max hp when
+  --   debugging and teleporting the player to some floor from start)
+  -- usually we don't affect change gameplay values in tutorial, but here
+  --   it's convenient to do it here; just make sure that if you let the player
+  --   skip tutorials, you still call this block as part of the aftermath
+  local new_max_hp = gameplay_data.max_hp_after_first_tutorial
+  if gs.pc_fighter_progression.max_hp < new_max_hp then
+    self:async_increase_pc_max_hp(gs.pc_fighter_progression, new_max_hp)
+  end
 end
 
 local function async_tutorial_reply_power(self)

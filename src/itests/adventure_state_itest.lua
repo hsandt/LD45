@@ -59,10 +59,6 @@ itest_manager:register_itest('play floor loop after won -> random fight',
     local am = app.managers[':adventure']
     local fm = app.managers[':fight']
 
-    -- here we create a fictive npc fighter we have just beat
-    -- if you set next_opponent, you need an npc to despawn to avoid errors
-    am:spawn_npc(2)
-
     -- we supposedly beat npc 1
     fm.next_opponent = app.game_session.npc_fighter_progressions[1]
     fm.won_last_fight = true
@@ -97,6 +93,194 @@ itest_manager:register_itest('play floor loop after won -> random fight',
   end)
 
 end)
+
+--#if cheat
+itest_manager:register_itest('after first fight, pc max hp increase to 3', {':fight'}, function ()
+
+  -- enter fight state
+  setup_callback(function (app)
+    local am = app.managers[':adventure']
+    local fm = app.managers[':fight']
+
+    -- fight rossmann
+    fm.next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_fighter_id]
+
+    flow:change_gamestate_by_type(':fight')
+  end)
+
+  -- fight start
+
+  wait(2.0)
+
+  -- opponent should auto-attack
+
+  -- use insta-kill (of course we should lose,
+  --   but the aftermath/forced floor will trigger anyway)
+  short_press(button_ids.x)
+
+  -- wait for victory_anim_duration
+  wait(2.0)
+
+  -- skip dialogue
+  short_press(button_ids.o)
+  wait(2.0)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  wait(1.0)
+  short_press(button_ids.o)
+  wait(1.0)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  wait(1.0)
+  short_press(button_ids.o)
+  wait(1.0)
+  short_press(button_ids.o)
+  wait(1.0)
+  short_press(button_ids.o)
+  wait(1.0)
+  short_press(button_ids.o)
+
+  final_assert(function (app)
+    local gs = app.game_session
+    return gs.pc_fighter_progression.max_hp == 3, "pc max_hp is "..gs.pc_fighter_progression.max_hp..", expected 3"
+  end)
+
+end)
+--#endif
+
+--#if cheat
+itest_manager:register_itest('after fight leading to 3F for first time, pc max hp increase to 4', {':fight'}, function ()
+
+  -- enter fight state
+  setup_callback(function (app)
+    local gs = app.game_session
+    local am = app.managers[':adventure']
+    local fm = app.managers[':fight']
+
+    -- win at 2F to reach 3F
+    gs.floor_number = 2
+    -- high count to avoid unwanted tutorials (although tuto 1 has a safety check not to decrease max hp)
+    gs.fight_count = 10
+
+    -- fight junior accountant (doesn't matter)
+    fm.next_opponent = app.game_session.npc_fighter_progressions[1]
+
+    flow:change_gamestate_by_type(':fight')
+  end)
+
+  -- fight start
+
+  wait(2.0)
+
+  -- opponent should auto-attack
+
+  -- use insta-kill to win and go to next floor
+  short_press(button_ids.x)
+
+  -- wait for victory_anim_duration
+  wait(2.0)
+
+  -- skip dialogue
+  short_press(button_ids.o)
+
+  final_assert(function (app)
+    local gs = app.game_session
+    return gs.pc_fighter_progression.max_hp == 4, "pc max_hp is "..gs.pc_fighter_progression.max_hp..", expected 4"
+  end)
+
+end)
+--#endif
+
+--#if cheat
+itest_manager:register_itest('after fight leading to 3F after reaching 5F (max hp = 5), DO NOT reduce pc max hp back to 4', {':fight'}, function ()
+
+  -- enter fight state
+  setup_callback(function (app)
+    local gs = app.game_session
+    local am = app.managers[':adventure']
+    local fm = app.managers[':fight']
+
+    -- pc has already gone to 5F and got max hp = 5
+    gs.pc_fighter_progression.max_hp = 5
+    -- win at 2F to reach 3F
+    gs.floor_number = 2
+    -- high count to avoid unwanted tutorials (although tuto 1 has a safety check not to decrease max hp)
+    gs.fight_count = 10
+
+    -- fight junior accountant (doesn't matter)
+    fm.next_opponent = app.game_session.npc_fighter_progressions[1]
+
+    flow:change_gamestate_by_type(':fight')
+  end)
+
+  -- fight start
+
+  wait(2.0)
+
+  -- opponent should auto-attack
+
+  -- use insta-kill to win and go to next floor
+  short_press(button_ids.x)
+
+  -- wait for victory_anim_duration
+  wait(2.0)
+
+  -- skip dialogue
+  short_press(button_ids.o)
+
+  final_assert(function (app)
+    local gs = app.game_session
+    return gs.pc_fighter_progression.max_hp == 5, "pc max_hp is "..gs.pc_fighter_progression.max_hp..", expected 5"
+  end)
+
+end)
+--#endif
+
+--#if cheat
+itest_manager:register_itest('after fight leading to 5F for first time, pc max hp increase to 5', {':fight'}, function ()
+
+  -- enter fight state
+  setup_callback(function (app)
+    local gs = app.game_session
+    local am = app.managers[':adventure']
+    local fm = app.managers[':fight']
+
+    -- win at 3F to reach 4F
+    gs.floor_number = 4
+    -- high count to avoid unwanted tutorials (although tuto 1 has a safety check not to decrease max hp)
+    gs.fight_count = 10
+
+    -- fight junior accountant (doesn't matter)
+    fm.next_opponent = app.game_session.npc_fighter_progressions[1]
+
+    flow:change_gamestate_by_type(':fight')
+  end)
+
+  -- fight start
+
+  wait(2.0)
+
+  -- opponent should auto-attack
+
+  -- use insta-kill to win and go to next floor
+  short_press(button_ids.x)
+
+  -- wait for victory_anim_duration
+  wait(2.0)
+
+  -- skip dialogue
+  short_press(button_ids.o)
+
+  final_assert(function (app)
+    local gs = app.game_session
+    return gs.pc_fighter_progression.max_hp == 5, "pc max_hp is "..gs.pc_fighter_progression.max_hp..", expected 4"
+  end)
+
+end)
+--#endif
 
 itest_manager:register_itest('play floor loop at boss floor',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...

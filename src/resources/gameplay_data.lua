@@ -164,7 +164,9 @@ local npc_info_s = {
 
 -- "start with nothing" -> no known quotes to start with
 -- pc has level 10 so he's able to learn any quote in one hearing
-local pc_fighter_info = fighter_info(0, 0, 10, 4, {}, {}, {})
+-- initial stamina is 2, just so pc gets defeated by rossmann in 2 hits
+--   but it will increase after 1st tutorial
+local pc_fighter_info = fighter_info(0, 0, 10, 2, {}, {}, {})
 
 -- fighters are mostly mapped to characters 1:1, but storing characters separately is useful
 --   in case we have a non-fighting npc
@@ -212,9 +214,19 @@ local gameplay_data = {
   -- this is to show rossmann where he should be, but pc will drop to floor 1 after forced defeat anyway
   initial_floor = 5,
 
-  -- rossmann lv2 attack ids unlocked after the 1st encounter
+  -- special progression
+  max_hp_after_first_tutorial = 3,
+  max_hp_after_win_by_floor_number = {
+    -- at floor [index], if you win and reach floor [index + 1], your max hp
+    -- will become [value] unless they are already higher
+    [2] = 4,
+    [4] = 5
+  },
+
+  -- special npc data
   rossmann_fighter_id = 5,
   ceo_fighter_id = 6,
+  -- rossmann lv2 attack ids unlocked after the 1st encounter
   rossmann_lv2_attack_ids = {7, 10, 11, 13, 14, 15, 16, 18, 19, 20},
 
   -- fight
