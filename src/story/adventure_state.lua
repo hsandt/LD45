@@ -432,6 +432,7 @@ local function async_after_fight_with_rossmann(self, npc_fighter_id)
     for attack_id in all(gameplay_data.rossmann_lv2_attack_ids) do
       add(gs.last_opponent.known_attack_ids, attack_id)
     end
+    log("after tutorial, rossmann learned A: "..dump_sequence(gameplay_data.rossmann_lv2_attack_ids))
 
     pc_speaker:say_and_wait_for_input("damn...")
     npc_speaker:say_and_wait_for_input("so, still want to see the boss? she's just upstairs, after all.")
