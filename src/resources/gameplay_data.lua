@@ -91,15 +91,15 @@ local quote_matches = {
   quote_match_info(19,  8, 14, 2),
   quote_match_info(20,  9,  7, 2),
   quote_match_info(21,  9, 16, 1),
-  quote_match_info(22, 10,  9, 2),
-  quote_match_info(23, 10, 15, 1),
+  quote_match_info(22, 10,  9, 1),
+  quote_match_info(23, 10, 15, 2),
   quote_match_info(24, 11, 12, 1),
   quote_match_info(25, 11, 19, 2),
   quote_match_info(26, 12,  4, 1),
   quote_match_info(27, 12, 10, 2),
   quote_match_info(28, 13,  1, 1),
   quote_match_info(29, 13,  6, 2),
-  quote_match_info(30, 13,  8, 1),
+  quote_match_info(30, 13,  8, 3),
   quote_match_info(31, 13, 10, 3),
   quote_match_info(32, 14,  6, 1),
   quote_match_info(33, 14, 11, 3),
@@ -122,13 +122,24 @@ local quote_matches = {
   quote_match_info(49,  3,  3, 3),
   quote_match_info(50,  3,  5, 2),
   quote_match_info(51,  4,  8, 2),
-  quote_match_info(52,  6,  8, 3),
+  quote_match_info(52,  6,  8, 1),
   quote_match_info(53,  6, 10, 1),
   quote_match_info(54,  6, 14, 1),
   quote_match_info(55, 10,  5, 1),
   quote_match_info(56, 19,  4, 2),
   -- Fun match added after playtest
   quote_match_info(57, 18,  1, 2),
+  -- Second wave of added matches
+  quote_match_info(58,  1, 16, 3),
+  quote_match_info(59,  3, 15, 1),
+  quote_match_info(60,  4,  4, 2),
+  quote_match_info(61,  4,  9, 1),
+  quote_match_info(62,  7, 14, 1),
+  quote_match_info(63, 10,  1, 2),
+  quote_match_info(64, 11, 10, 1),
+  quote_match_info(65, 12, 11, 1),
+  quote_match_info(66, 12, 14, 1),
+  quote_match_info(67, 15,  8, 1),
 }
 
 local floors = {
@@ -164,9 +175,10 @@ local npc_info_s = {
 
 -- "start with nothing" -> no known quotes to start with
 -- pc has level 10 so he's able to learn any quote in one hearing
--- initial stamina is 2, just so pc gets defeated by rossmann in 2 hits
---   but it will increase after 1st tutorial
-local pc_fighter_info = fighter_info(0, 0, 10, 2, {}, {}, {})
+-- initial stamina is 3, just so pc gets defeated by rossmann in 2 hits including pc losing attack
+--   but it may increase after 1st tutorial, depending on data (if max_hp_after_first_tutorial is also 3,
+--   then we stay at 3)
+local pc_fighter_info = fighter_info(0, 0, 10, 3, {}, {}, {})
 
 -- fighters are mostly mapped to characters 1:1, but storing characters separately is useful
 --   in case we have a non-fighting npc
@@ -177,8 +189,8 @@ local npc_fighter_info_s = {
 --fighter_info( 3,  3, 1, 5, {3, 8},                    {2, 4, 6, 11},                 ), -- junior qa (tank character, good at planning topics)
 --fighter_info( 4,  4, 1, 3, {2, 4, 5},                 {5, 7, 8},                     ), -- junior marketing (good at matching quotes)
 --fighter_info( 5,  5, 2, 5, {1, 5, 7, 10},             {6, 7, 11, 13, 14},            ), -- designer
-  fighter_info( 1,  1, 1, 3, {3, 4, 8},                    {2, 4, 6, 11}),                  -- junior accountant (good at planning topics)
-  fighter_info( 2,  2, 1, 3, {1, 2, 5},                    {6, 13, 14}),                    -- junior designer (good at attacks and communication topics)
+  fighter_info( 1,  1, 1, 3, {4, 5, 7},                    {2, 3, 4}),                  -- junior accountant (good at planning topics)
+  fighter_info( 2,  2, 1, 3, {1, 3, 6},                    {6, 13, 14}),                    -- junior designer (good at attacks and communication topics)
   fighter_info( 3,  3, 2, 4, {1, 4, 6, 7, 9, 11, 12, 17},  {1, 3, 9, 10, 12, 19}),          -- programmer
   fighter_info( 4,  4, 2, 5, {2, 3, 8, 10, 13, 14, 15},    {2, 4, 5, 6, 7, 8, 11, 14, 15}), -- manager (tank and planning topics, replaces qa at level 2)
 --fighter_info( 8,  8, 3, 6, {1, 5, 7, 10, 14, 15},     {6, 7, 11, 13, 14, 15, 17}),      -- senior designer
@@ -188,7 +200,7 @@ local npc_fighter_info_s = {
 
   -- make sure that this index and id matches with gameplay_data.rossmann_fighter_id
   -- learns rossmann_lv2_attack_ids immediately after tutorial fight
-  fighter_info(5, 5, 3, 6, {1, 3, 5, 6}, {1, 2, 3, 7, 8, 9, 10, 11, 13, 15, 16, 17}),  -- rossmann
+  fighter_info(5, 5, 3, 6, {1, 7}, {1, 2, 3, 7, 8, 9, 10, 11, 13, 15, 16, 17}),  -- rossmann
 
   -- make sure that this index and id matches with gameplay_data.ceo_fighter_id
   -- low level to avoid final boss learning your quotes... she would become invincible
@@ -227,7 +239,7 @@ local gameplay_data = {
   rossmann_fighter_id = 5,
   ceo_fighter_id = 6,
   -- rossmann lv2 attack ids unlocked after the 1st encounter
-  rossmann_lv2_attack_ids = {7, 10, 11, 13, 14, 15, 16, 18, 19, 20},
+  rossmann_lv2_attack_ids = {3, 5, 6, 7, 10, 11, 13, 14, 15, 16, 18, 19, 20},
 
   -- fight
   losing_attack_penalty = 1,
