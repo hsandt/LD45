@@ -88,7 +88,7 @@ function adventure_state:_async_step_intro()
   pc_speaker:think_and_wait_for_input("ok, let's sum up")
   pc_speaker:think_and_wait_for_input("1. i need funding to organize a hackathon")
   pc_speaker:think_and_wait_for_input("2. my sister is the ceo of this company and could be my sponsor")
-  pc_speaker:think_and_wait_for_input("3. i contacted her and we should meet on 6F, so just upstairs")
+  pc_speaker:think_and_wait_for_input("3. i contacted her and we should meet on 6f, so just upstairs")
   pc_speaker:think_and_wait_for_input("seems good so far. what could go wrong?")
   self.app:yield_delay_s(1)
 
