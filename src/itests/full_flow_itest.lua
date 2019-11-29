@@ -61,98 +61,20 @@ itest_manager:register_itest('start -> real fights loop',
   short_press(button_ids.o)
   wait(2.0)
 
-  -- start 1st fight (under AI control)
-  wait(20.0)
+  -- repeat 10 fights
+  for i = 1, 10 do
+    -- start i-th fight (under AI control)
+    wait(20.0)
 
-  -- skip possible tutorial
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-
-  -- start next fight (under AI control)
-  wait(20.0)
-
-  -- skip possible tutorial
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-
-  -- start next fight (under AI control)
-  wait(20.0)
-
-  -- skip possible tutorial
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-
-  -- start next fight (under AI control)
-  wait(20.0)
-
-  -- skip possible tutorial
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-
-  -- start next fight (under AI control)
-  wait(20.0)
-
-  -- skip possible tutorial
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-
-  -- start next fight (under AI control)
-  wait(20.0)
-
-  -- skip possible tutorial
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-
-  -- start next fight (under AI control)
-  wait(20.0)
-
-  -- skip possible tutorial
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
-  short_press(button_ids.o)
+    -- skip possible tutorial
+    short_press(button_ids.o)
+    short_press(button_ids.o)
+    short_press(button_ids.o)
+    short_press(button_ids.o)
+    short_press(button_ids.o)
+    short_press(button_ids.o)
+    short_press(button_ids.o)
+  end
 
   -- too hard to assert after such a long test, we just run it to detect errors
   final_assert(function ()
