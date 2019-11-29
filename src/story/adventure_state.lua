@@ -386,7 +386,7 @@ local function async_after_fight_with_ceo(self, npc_fighter_id)
     pc_speaker:say_and_wait_for_input("what a day. i hope it was worth it.")
 
     self.app:yield_delay_s(0.5)
-    dm.current_bottom_text = 'GAME END'
+    dm.current_bottom_text = 'game end'
     self.app:yield_delay_s(2)
     dm.current_bottom_text = nil
 
