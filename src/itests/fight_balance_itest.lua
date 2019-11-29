@@ -4,12 +4,12 @@ local flow = require("engine/application/flow")
 
 local gameplay_data = require("resources/gameplay_data")
 
-local function register_fight_balance_itest(opponent_id, initial_attack_ids, initial_reply_ids)
+local function register_fight_balance_itest(opponent_id, pc_max_hp, initial_attack_ids, initial_reply_ids)
   -- character_info_id should match opponent_id, but to be exact, opponent_id being
   --   used as fighter progression id, we should go through fighter info first
   local opponent_info = gameplay_data.npc_fighter_info_s[opponent_id]
   local opponent_name = gameplay_data.npc_info_s[opponent_info.character_info_id].name
-  itest_manager:register_itest('vs '..opponent_name..' - knows A: '..dump_sequence(initial_attack_ids)..', R: '..dump_sequence(initial_reply_ids),
+  itest_manager:register_itest('#solo vs '..opponent_name..' - knows A: '..dump_sequence(initial_attack_ids)..', R: '..dump_sequence(initial_reply_ids),
     {':fight'}, function ()
 
     -- enter fight state
@@ -21,6 +21,7 @@ local function register_fight_balance_itest(opponent_id, initial_attack_ids, ini
       pc_fighter_prog.control_type = control_types.ai
 
       -- knowledge setup
+      pc_fighter_prog.max_hp = pc_max_hp
       pc_fighter_prog.known_attack_ids = initial_attack_ids
       pc_fighter_prog.known_reply_ids = initial_reply_ids
 
@@ -49,10 +50,36 @@ local function register_fight_balance_itest(opponent_id, initial_attack_ids, ini
   end)
 end
 
--- junior accountant
-register_fight_balance_itest(1, {}, {})
-register_fight_balance_itest(1, {1, 3, 5, 6}, {})  -- after rossmann, as in normal play
+-- first fight with rossmann
+register_fight_balance_itest(gameplay_data.rossmann_fighter_id, 3, {}, {})
 
--- junior designer
-register_fight_balance_itest(2, {}, {})
-register_fight_balance_itest(2, {1, 3, 5, 6}, {})  -- after rossmann, as in normal play
+-- -- jr accountant
+-- register_fight_balance_itest(1, 3, {1, 7}, {})  -- 1F: after rossmann, as in normal play
+-- register_fight_balance_itest(1, 3, {1, 7, 6, 3}, {6})  -- 1F: possible knowledge after vs jr designer (lose)
+-- register_fight_balance_itest(1, 3, {1, 7, 4, 5, 6}, {3, 6})  -- 2F: possible knowledge after vs jr accountant (lose) vs jr designer (win)
+
+-- -- jr designer
+-- register_fight_balance_itest(2, 3, {1, 7}, {})  -- 1F: after rossmann, as in normal play
+-- register_fight_balance_itest(2, 3, {1, 7, 4, 5}, {3})  -- 1F: possible knowledge after vs jr accountant (lose)
+-- register_fight_balance_itest(2, 3, {1, 7, 6, 3, 4, 5}, {6, 3})  -- 2F: possible knowledge after vs jr designer (lose) vs jr accountant (win)
+
+-- programmer
+-- register_fight_balance_itest(3, 4, {1, 7, 4, 5, 6}, {3, 6})  -- 3F: possible knowledge after path [A]: vs jr accountant (lose) vs jr designer (win) vs jr accountant (win)
+-- only possible if you let player stay on 3F after losing to manager on 3F
+register_fight_balance_itest(3, 4, {1, 7, 4, 5, 6, 8}, {3, 6, 7})  -- 3F: possible knowledge after path [A] + vs manager (lose)
+-- register_fight_balance_itest(3, 4, {1, 7, 6, 3, 4, 5}, {6, 3, 9})  -- 3F: possible knowledge after path [B]: vs jr designer (lose) vs jr accountant (win) vs jr designer (win)
+-- only possible if you let player stay on 3F after losing to manager on 3F
+register_fight_balance_itest(3, 4, {1, 7, 6, 3, 4, 5, 8, 10, 15}, {6, 3, 9, 8, 7})  -- 3F: possible knowledge after path [B] + vs manager (lose)
+register_fight_balance_itest(4, 4, {1, 7, 4, 5, 6, 11, 14}, {6, 3, 10, 19, 15})  -- 4F: possible knowledge after path [A] + vs programmer (lose) + vs manager (win)
+register_fight_balance_itest(4, 4, {1, 7, 6, 3, 4, 5, 11, 14}, {6, 3, 9, 5, 8})  -- 4F: possible knowledge after path [B] + vs programmer (lose) + vs manager (win)
+
+-- manager
+-- register_fight_balance_itest(4, 4, {1, 7, 4, 5, 6}, {3, 6})  -- 3F: possible knowledge after path [A]
+-- only possible if you let player stay on 3F after losing to programmer on 3F
+register_fight_balance_itest(4, 4, {1, 7, 4, 5, 6, 11}, {6, 3, 10, 19})  -- 3F: possible knowledge after path [A] + vs programmer (lose)
+-- register_fight_balance_itest(4, 4, {1, 7, 6, 3, 4, 5}, {6, 3, 9})  -- 3F: possible knowledge after path [B]
+-- only possible if you let player stay on 3F after losing to programmer on 3F
+register_fight_balance_itest(4, 4, {1, 7, 6, 3, 4, 5, 11}, {6, 3, 9, 5})  -- 3F: possible knowledge after path [B] + vs programmer (lose)
+register_fight_balance_itest(4, 4, {1, 7, 4, 5, 6, 8, 9}, {3, 6, 7, 10})  -- 4F: possible knowledge after path [A] + vs manager (lose) + vs programmer (win)
+-- only possible if you let player stay on 3F after losing to manager and programmer
+register_fight_balance_itest(4, 4, {1, 7, 6, 3, 4, 5, 8, 10, 15, 17}, {6, 3, 9, 8, 7, 10})  -- 3F: possible knowledge after path [B] + vs manager (lose) + vs programmer (lose)
