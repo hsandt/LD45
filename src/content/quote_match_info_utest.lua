@@ -13,7 +13,7 @@ describe('quote_match_info', function ()
   describe('_tostring', function ()
     it('quote_match_info(7, 2, 9, 1) => "quote_match_info(7, 2, 9, 1)"', function ()
       local q = quote_match_info(7, 2, 9, 1)
-      assert.are_equal("quote_match_info(7, 2, 9, 1)", q:_tostring())
+      assert.are_equal("quote_match_info(7): 2 => 9 (power: 1)", q:_tostring())
     end)
   end)
 

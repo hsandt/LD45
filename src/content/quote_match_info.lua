@@ -16,7 +16,7 @@ end
 
 --#if log
 function quote_match_info:_tostring()
-  return "quote_match_info("..joinstr(", ", self.id, self.attack_id, self.reply_id, self.power)..")"
+  return "quote_match_info("..self.id.."): "..self.attack_id.." => "..self.reply_id.." (power: "..self.power..")"
 end
 --#endif
 
