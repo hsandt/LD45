@@ -57,10 +57,16 @@ local function print_attack_and_counters_of(attack_id)
   local attack_info = gameplay_data:get_quote(quote_types.attack, attack_id)
   printh(stringify(attack_info).." =>")
   local matching_quotes_for_attack = get_matching_quotes_for_attack(attack_info)
+
+  local total_counter_vulnerability = 0
+
   for matching_quote_for_attack in all(matching_quotes_for_attack) do
     local reply_info = gameplay_data:get_quote(quote_types.reply, matching_quote_for_attack.reply_id)
+    total_counter_vulnerability = total_counter_vulnerability + matching_quote_for_attack.power + 1
     printh("  "..reply_info.." (power: "..matching_quote_for_attack.power..")")
   end
+
+  printh("total counter vulnerability: "..total_counter_vulnerability)
 end
 
 local function print_reply_and_attacks_countered_by(reply_id)
