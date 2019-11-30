@@ -13,7 +13,7 @@ describe('fighter_info', function ()
 
   describe('_tostring', function ()
     it('fighter_info(8, 3, 4, {11, 27}) => "fighter_info(8, 3)"', function ()
-      local f_info = fighter_info(8, 3, 4, 5, {11, 27}, {12, 28}, {2, 4})
+      local f_info = fighter_info(8, 3, 4, 5, {11, 27}, {12, 28})
       assert.are_equal("[fighter_info(8, 3)]", f_info:_tostring())
     end)
   end)

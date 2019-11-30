@@ -162,6 +162,14 @@ end
 -- learning
 
 function fighter:on_receive_quote(quote)
+  -- Battle rules v2: AI don't learn anymore
+  -- This means that learning is only for PC, and always instant since he's level 10
+  -- but we keep the reception count logic in case we want to re-enable progressive learning
+  -- (for either PC or NPC) later.
+  if self.fighter_progression.character_type == character_types.npc then
+    return
+  end
+
   -- Upon receiving an attack or reply the fighter doesn't know,
   --   he/she buffers it with a reception count.
   -- When the count has reached the required learning level threshold,

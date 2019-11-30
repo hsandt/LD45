@@ -12,25 +12,39 @@ local character = require("story/character")
 
 describe('fighter', function ()
 
-  local mock_character_info = character_info(2, "employee", 5)
+  local mock_pc_info = character_info(0, "you", 0)
+  local mock_npc_info = character_info(2, "employee", 2)
   local pos = vector(20, 60)
-  local mock_character = character(mock_character_info, horizontal_dirs.right, pos)
-  local mock_fighter_info = fighter_info(3, 3, 2, 5, {1, 3}, {2, 4}, {2, 4})
+  local mock_pc = character(mock_pc_info, horizontal_dirs.right, pos)
+  local mock_npc = character(mock_npc_info, horizontal_dirs.left, pos)
+  -- normally pc has level 10 to learn anything instantly, but since we deactivated
+  -- AI learning, we can nly test the feature on pc, so we set some mid-level to check
+  -- that progressive learning works correctly; but in practice, it's just instant
+  local mock_pc_fighter_info = fighter_info(0, 0, 2, 3, {1, 3}, {2, 4})
+  local mock_npc_fighter_info = fighter_info(3, 3, 2, 5, {1, 3}, {2, 4})
 
-  local mock_fighter_progression
+  local mock_pc_fighter_progression
+  local mock_npc_fighter_progression
+  local pcf
   local f
 
   before_each(function ()
-    mock_fighter_progression = fighter_progression(character_types.npc, mock_fighter_info)
-    add(mock_fighter_progression.known_attack_ids, 5)
-    add(mock_fighter_progression.known_reply_ids, 7)
-    f = fighter(mock_character, mock_fighter_progression)
+    mock_pc_fighter_progression = fighter_progression(character_types.pc, mock_pc_fighter_info)
+    add(mock_pc_fighter_progression.known_attack_ids, 5)
+    add(mock_pc_fighter_progression.known_reply_ids, 7)
+
+    mock_npc_fighter_progression = fighter_progression(character_types.npc, mock_npc_fighter_info)
+    add(mock_npc_fighter_progression.known_attack_ids, 5)
+    add(mock_npc_fighter_progression.known_reply_ids, 7)
+
+    pcf = fighter(mock_pc, mock_pc_fighter_progression)
+    f = fighter(mock_npc, mock_npc_fighter_progression)
   end)
 
   describe('_init', function ()
 
     it('should init a fighter with character and progression refs', function ()
-      assert.are_equal(mock_character, f.character)
+      assert.are_equal(mock_npc, f.character)
       assert.are_equal(mock_progression_info, f.progression_info)
     end)
 
@@ -256,46 +270,52 @@ describe('fighter', function ()
 
   describe('on_receive_quote', function ()
 
-    it('should not increment count for known quote', function ()
-      f.fighter_progression.known_attack_ids = {3}
-      f:on_receive_quote(quote_info(3, quote_types.attack, 1, "attack 3"))
+    it('npc should never increment count for even new quotes', function ()
+      -- level 2 quote can be learned
+      f:on_receive_quote(quote_info(6, quote_types.attack, 2, "attack 6"))
       assert.are_same({}, f.received_attack_id_count_map)
     end)
 
-    it('should not increment count for losing quote', function ()
-      f.fighter_progression.known_attack_ids = {}
-      f:on_receive_quote(quote_info(-1, quote_types.attack, 0, "losing attack"))
-      assert.are_same({}, f.received_attack_id_count_map)
+    it('pc should not increment count for known quote', function ()
+      pcf.fighter_progression.known_attack_ids = {3}
+      pcf:on_receive_quote(quote_info(3, quote_types.attack, 1, "attack 3"))
+      assert.are_same({}, pcf.received_attack_id_count_map)
     end)
 
-    it('should not increment count for quotes at 1+ levels above fighter level', function ()
-      f.fighter_progression.known_attack_ids = {}
+    it('pc should not increment count for losing quote', function ()
+      pcf.fighter_progression.known_attack_ids = {}
+      pcf:on_receive_quote(quote_info(-1, quote_types.attack, 0, "losing attack"))
+      assert.are_same({}, pcf.received_attack_id_count_map)
+    end)
+
+    it('pc should not increment count for quotes at 1+ levels above fighter level', function ()
+      pcf.fighter_progression.known_attack_ids = {}
       -- level 3 attack vs fighter level 2
-      f:on_receive_quote(quote_info(7, quote_types.attack, 3, "attack 7"))
-      assert.are_same({}, f.received_attack_id_count_map)
+      pcf:on_receive_quote(quote_info(7, quote_types.attack, 3, "attack 7"))
+      assert.are_same({}, pcf.received_attack_id_count_map)
     end)
 
     it('should initialize reception count of new learnable attack to 1', function ()
       -- level 2 quote can be learned
-      f:on_receive_quote(quote_info(6, quote_types.attack, 2, "attack 6"))
-      assert.are_same({[6] = 1}, f.received_attack_id_count_map)
+      pcf:on_receive_quote(quote_info(6, quote_types.attack, 2, "attack 6"))
+      assert.are_same({[6] = 1}, pcf.received_attack_id_count_map)
     end)
 
     it('should initialize reception count of new learnable reply to 1', function ()
-      f:on_receive_quote(quote_info(8, quote_types.reply, 1, "reply 8"))
-      assert.are_same({[8] = 1}, f.received_reply_id_count_map)
+      pcf:on_receive_quote(quote_info(8, quote_types.reply, 1, "reply 8"))
+      assert.are_same({[8] = 1}, pcf.received_reply_id_count_map)
     end)
 
     it('should increment reception count of received attack by 1', function ()
-      f.received_attack_id_count_map[8] = 10
-      f:on_receive_quote(quote_info(8, quote_types.attack, 1, "attack 8"))
-      assert.are_same({[8] = 11}, f.received_attack_id_count_map)
+      pcf.received_attack_id_count_map[8] = 10
+      pcf:on_receive_quote(quote_info(8, quote_types.attack, 1, "attack 8"))
+      assert.are_same({[8] = 11}, pcf.received_attack_id_count_map)
     end)
 
     it('should increment reception count of received reply by 1', function ()
-      f.received_reply_id_count_map[8] = 10
-      f:on_receive_quote(quote_info(8, quote_types.reply, 1, "reply 8"))
-      assert.are_same({[8] = 11}, f.received_reply_id_count_map)
+      pcf.received_reply_id_count_map[8] = 10
+      pcf:on_receive_quote(quote_info(8, quote_types.reply, 1, "reply 8"))
+      assert.are_same({[8] = 11}, pcf.received_reply_id_count_map)
     end)
 
   end)

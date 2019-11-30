@@ -70,8 +70,8 @@ describe('fighter_progression', function ()
 
   describe('(with instance)', function ()
 
-    local mock_pc_fighter_info = fighter_info(0, 0, 1, 3, {}, {}, {})
-    local mock_fighter_info = fighter_info(4, 4, 2, 5, {11, 27}, {12, 28}, {2, 4})
+    local mock_pc_fighter_info = fighter_info(0, 0, 1, 3, {}, {})
+    local mock_fighter_info = fighter_info(4, 4, 2, 5, {11, 27}, {12, 28})
 
     local pc_f_progression
     local f_progression

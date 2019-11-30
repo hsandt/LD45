@@ -364,7 +364,7 @@ describe('fight_manager', function ()
 
       -- depends slightly on visual data: spriteindex must not be greater than number of sprites
       local mock_npc_character_info = character_info(3, "npc", 3)
-      local mock_npc_fighter_info = fighter_info(3, 3, 4, 5, {11, 27}, {12, 28}, {2, 4})
+      local mock_npc_fighter_info = fighter_info(3, 3, 4, 5, {11, 27}, {12, 28})
       local mock_npc_fighter_prog = fighter_progression(character_types.npc, mock_npc_fighter_info)
 
       local mock_pc_character
