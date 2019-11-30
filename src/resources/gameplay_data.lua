@@ -24,7 +24,7 @@ local attacks = {
   quote_info( 6, quote_types.attack, 1, to_big("Yesterday I completed all my tasks for the day under 3 hours.")),
   quote_info( 7, quote_types.attack, 1, to_big("Unlike you, all my neurons still work at full throttle after 6pm.")),
   quote_info( 8, quote_types.attack, 2, to_big("I'm so good at networking I doubled the number of my contacts in a single event.")),
-  quote_info( 9, quote_types.attack, 2, to_big("DEPRECATED")),
+  quote_info( 9, quote_types.attack, 2, "DEPRECATED"),
   quote_info(10, quote_types.attack, 2, to_big("It took me only thirty minutes to build a website for my portfolio.")),
   quote_info(11, quote_types.attack, 2, to_big("You couldn't install an app if I gave you a setup.exe.")),
   quote_info(12, quote_types.attack, 2, to_big("Unlike you, I only buy reliable devices that last at least 20 years.")),
@@ -51,12 +51,12 @@ local replies = {
   quote_info( 4, quote_types.reply,  1, to_big("I see you spent time with the coffee machine.")),
   quote_info( 5, quote_types.reply,  1, to_big("Oh, I'm pretty sure you made some contributions toward this.")),
   quote_info( 6, quote_types.reply,  1, to_big("You really can't stand physical exercise, can you?")),
-  quote_info( 7, quote_types.reply,  2, to_big("DEPRECATED")),
+  quote_info( 7, quote_types.reply,  2, "DEPRECATED"),
   quote_info( 8, quote_types.reply,  2, to_big("I see you enjoyed your time on Discord.")),
   quote_info( 9, quote_types.reply,  2, to_big("So, do you use a plugin for that, too?")),
   quote_info(10, quote_types.reply,  2, to_big("Well, we don't all browse at 56kbps.")),
   quote_info(11, quote_types.reply,  2, to_big("Sounds easy when you've only got two of them.")),
-  quote_info(12, quote_types.reply,  2, to_big("I'd rather no take anything from *you*.")),
+  quote_info(12, quote_types.reply,  2, "DEPRECATED"),
   quote_info(13, quote_types.reply,  2, to_big("Ah, have I missed a carnival? Too bad I didn't come disguised.")),
   quote_info(14, quote_types.reply,  3, to_big("Too bad they don't mean anything to you.")),
   quote_info(15, quote_types.reply,  3, to_big("Too bad yours has so little content nobody ever cared about it.")),
@@ -103,7 +103,6 @@ local quote_matches = {
   quote_match_info(35, 10,  9, 1),
   quote_match_info(36, 10, 15, 1),
   quote_match_info(37, 11, 10, 1),
-  quote_match_info(38, 11, 12, 1),
   quote_match_info(39, 11, 19, 2),
   quote_match_info(40, 12,  4, 0),
   quote_match_info(41, 12, 10, 2),
@@ -125,7 +124,6 @@ local quote_matches = {
   quote_match_info(57, 17,  1, 2),
   quote_match_info(58, 17, 15, 2),
   quote_match_info(59, 18,  1, 2),
-  quote_match_info(60, 18, 12, 1),
   quote_match_info(61, 18, 17, 3),
   quote_match_info(62, 19,  2, 2),
   quote_match_info(63, 19,  3, 3),
@@ -197,11 +195,11 @@ local npc_fighter_info_s = {
 
   -- make sure that this index and id matches with gameplay_data.rossmann_fighter_id
   -- learns rossmann_lv2_attack_ids immediately after tutorial fight
-  fighter_info(5, 5, 3, 6, {1, 7}, {1, 3, 10, 12, 15, 16, 17, 19}),  -- rossmann (IT)
+  fighter_info(5, 5, 3, 6, {1, 7}, {1, 3, 10, 15, 16, 17, 19}),  -- rossmann (IT)
 
   -- make sure that this index and id matches with gameplay_data.ceo_fighter_id
   -- low level to avoid final boss learning your quotes... she would become invincible
-  fighter_info(6, 6, 0, 8, {1, 2, 7, 5, 11, 12, 13, 14, 15, 17}, {1, 5, 6, 8, 10, 11, 12, 14, 15, 18}),  -- ceo/boss
+  fighter_info(6, 6, 0, 8, {1, 2, 7, 5, 11, 12, 13, 14, 15, 17}, {1, 5, 6, 8, 10, 11, 14, 15, 18}),  -- ceo/boss
 
 --#if sandbox
   fighter_info(7, 7, 99, 2, {8, 14, 18, 19}, {13, 15, 17}),  -- debug man (longest quotes)
