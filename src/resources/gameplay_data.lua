@@ -202,7 +202,7 @@ local npc_fighter_info_s = {
 
   -- make sure that this index and id matches with gameplay_data.rossmann_fighter_id
   -- learns rossmann_lv2_attack_ids immediately after tutorial fight
-  fighter_info(5, 5, 3, 6, {1, 7}, {1, 2, 3, 7, 8, 9, 10, 11, 13, 15, 16, 17}),  -- rossmann
+  fighter_info(5, 5, 3, 6, {1, 7}, {1, 3, 5, 8, 9, 10, 12, 15, 16, 17, 19}),  -- rossmann (IT)
 
   -- make sure that this index and id matches with gameplay_data.ceo_fighter_id
   -- low level to avoid final boss learning your quotes... she would become invincible
@@ -241,7 +241,7 @@ local gameplay_data = {
   rossmann_fighter_id = 5,
   ceo_fighter_id = 6,
   -- rossmann lv2 attack ids unlocked after the 1st encounter
-  rossmann_lv2_attack_ids = {2, 5, 7, 8, 10, 11, 13, 14, 15, 16, 18, 19, 20},
+  rossmann_lv2_attack_ids = {--[[Lv2]] 8, 13, --[[Lv3]] 14, 16, 18, 19, 20},
 
   -- fight
   losing_attack_penalty = 1,
