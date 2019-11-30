@@ -202,11 +202,11 @@ local npc_fighter_info_s = {
 
   -- make sure that this index and id matches with gameplay_data.rossmann_fighter_id
   -- learns rossmann_lv2_attack_ids immediately after tutorial fight
-  fighter_info(5, 5, 3, 6, {1, 7}, {1, 3, 5, 8, 9, 10, 12, 15, 16, 17, 19}),  -- rossmann (IT)
+  fighter_info(5, 5, 3, 6, {1, 7}, {1, 3, 10, 12, 15, 16, 17, 19}),  -- rossmann (IT)
 
   -- make sure that this index and id matches with gameplay_data.ceo_fighter_id
   -- low level to avoid final boss learning your quotes... she would become invincible
-  fighter_info(6, 6, 0, 8, {1, 2, 7, 5, 11, 12, 13, 14, 15, 17}, {1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 14, 15, 18, 19}),  -- ceo/boss
+  fighter_info(6, 6, 0, 8, {1, 2, 7, 5, 11, 12, 13, 14, 15, 17}, {1, 5, 6, 8, 10, 11, 12, 14, 15, 18}),  -- ceo/boss
 
 --#if sandbox
   fighter_info(7, 7, 99, 2, {8, 9, 14, 18, 19}, {13, 15, 17}),  -- debug man (longest quotes)
