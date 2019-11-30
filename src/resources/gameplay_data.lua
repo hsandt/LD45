@@ -139,7 +139,6 @@ local quote_matches = {
   quote_match_info(67, 20, 18, 2),
   -- 3rd wave
   quote_match_info(68,  1, 14, 1),
-  quote_match_info(69,  7,  6, 1),
 }
 
 local floors = {
