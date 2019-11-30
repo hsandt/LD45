@@ -67,10 +67,17 @@ local function print_reply_and_attacks_countered_by(reply_id)
   local reply_info = gameplay_data:get_quote(quote_types.reply, reply_id)
   printh(stringify(reply_info).." <=")
   local matching_quotes_for_reply = get_matching_quotes_for_reply(reply_info)
+
+  local total_power = 0
+
   for matching_quote_for_reply in all(matching_quotes_for_reply) do
     local attack_info = gameplay_data:get_quote(quote_types.attack, matching_quote_for_reply.attack_id)
+    -- for total power estimation, always add 1 so "neutralized" power 0 is better than no match at all
+    total_power = total_power + matching_quote_for_reply.power + 1
     printh("  "..attack_info.." (power: "..matching_quote_for_reply.power..")")
   end
+
+  printh("total power: "..total_power)
 end
 
 local function print_attacks_working_against(npc_fighter_id)
@@ -112,9 +119,9 @@ for i = 1, #gameplay_data.npc_fighter_info_s do
   printh("")
 end
 
-printh("=== NPC COUNTERS ===\n")
+-- printh("=== NPC COUNTERS ===\n")
 
-for i = 1, #gameplay_data.npc_fighter_info_s do
-  print_attacks_countered_by(i)
-  printh("")
-end
+-- for i = 1, #gameplay_data.npc_fighter_info_s do
+--   print_attacks_countered_by(i)
+--   printh("")
+-- end
