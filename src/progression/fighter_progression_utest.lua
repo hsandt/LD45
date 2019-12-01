@@ -188,15 +188,17 @@ describe('fighter_progression', function ()
 
     describe('check_learn_quote', function ()
 
+      -- ! these tests depend on gameplay_data and may break during rebalancing !
+
       it('should not learn any quote staying below the required count threshold (attack of same level)', function ()
-        -- quote 7 is of level 2, mock fighter has level 2
+        -- quote 8 is of level 2, mock fighter has level 2
         -- so the threshold is exactly the base threshold
         -- which is gameplay_data.base_learning_repetition_threshold = 2
         -- (we hardcode counts for readability)
-        local added_count_map = {[7] = 1}
+        local added_count_map = {[8] = 1}
         -- required to simulate the previous action of add_received_quote_id_count_map
         -- and avoid nil value
-        f_progression.received_attack_id_count_persistent_map = {[7] = 1}
+        f_progression.received_attack_id_count_persistent_map = {[8] = 1}
 
         f_progression:check_learn_quote(added_count_map, quote_types.attack)
 
@@ -205,33 +207,33 @@ describe('fighter_progression', function ()
       end)
 
       it('should learn a quote just reaching the required count threshold (attack of same level)', function ()
-        -- quote 7 is of level 2, mock fighter has level 2
-        local added_count_map = {[7] = 1}  -- increase doesn't matter, only new count below does
-        f_progression.received_attack_id_count_persistent_map = {[7] = 2}
+        -- quote 8 is of level 2, mock fighter has level 2
+        local added_count_map = {[8] = 1}  -- increase doesn't matter, only new count below does
+        f_progression.received_attack_id_count_persistent_map = {[8] = 2}
 
         f_progression:check_learn_quote(added_count_map, quote_types.attack)
 
-        assert.are_same({11, 27, 7}, f_progression.known_attack_ids)
+        assert.are_same({11, 27, 8}, f_progression.known_attack_ids)
       end)
 
       it('should learn a quote just reaching the required count threshold (reply of same level)', function ()
         -- quote 7 is of level 2, mock fighter has level 2
-        local added_count_map = {[7] = 1}  -- increase doesn't matter, only new count below does
-        f_progression.received_reply_id_count_persistent_map = {[7] = 2}
+        local added_count_map = {[8] = 1}  -- increase doesn't matter, only new count below does
+        f_progression.received_reply_id_count_persistent_map = {[8] = 2}
 
         f_progression:check_learn_quote(added_count_map, quote_types.reply)
 
-        assert.are_same({12, 28, 7}, f_progression.known_reply_ids)
+        assert.are_same({12, 28, 8}, f_progression.known_reply_ids)
       end)
 
       it('should learn a quote going above the required count threshold (attack of same level)', function ()
         -- quote 7 is of level 2, mock fighter has level 2
-        local added_count_map = {[7] = 2}  -- increase doesn't matter, only new count below does
-        f_progression.received_attack_id_count_persistent_map = {[7] = 3}
+        local added_count_map = {[8] = 2}  -- increase doesn't matter, only new count below does
+        f_progression.received_attack_id_count_persistent_map = {[8] = 3}
 
         f_progression:check_learn_quote(added_count_map, quote_types.attack)
 
-        assert.are_same({11, 27, 7}, f_progression.known_attack_ids)
+        assert.are_same({11, 27, 8}, f_progression.known_attack_ids)
       end)
 
       it('should learn a quote just reaching the required count threshold (attack of lower level)', function ()
