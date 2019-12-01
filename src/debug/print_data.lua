@@ -103,6 +103,33 @@ local function get_attacks_countered_by(npc_fighter_info)
   end)
 end
 
+local function get_unused_attacks()
+  return filter(gameplay_data.attacks, function (attack_info)
+    if contains(gameplay_data.rossmann_lv2_attack_ids, attack_info.id) then
+      return false
+    end
+    for npc_fighter_info in all(gameplay_data.npc_fighter_info_s) do
+      if contains(npc_fighter_info.initial_attack_ids, attack_info.id) then
+        return false
+      end
+    end
+    -- no npc knew this attack from the start
+    return true
+  end)
+end
+
+local function get_unused_replies()
+  return filter(gameplay_data.replies, function (reply_info)
+    for npc_fighter_info in all(gameplay_data.npc_fighter_info_s) do
+      if contains(npc_fighter_info.initial_reply_ids, reply_info.id) then
+        return false
+      end
+    end
+    -- no npc knew this reply from the start or after rossmann level up
+    return true
+  end)
+end
+
 local function print_attack_and_counters_of(attack_id)
   local attack_info = gameplay_data:get_quote(quote_types.attack, attack_id)
   printh(stringify(attack_info).." =>")
@@ -165,6 +192,27 @@ local function print_npc_replies_total_power(npc_fighter_id)
   printh("NPC "..npc_fighter_id.." '"..gameplay_data.npc_info_s[npc_fighter_info.character_info_id].name.."' replies total power:")
   printh(get_npc_replies_total_power(npc_fighter_info))
 end
+
+local function print_unused_attacks()
+  local unused_attacks = get_unused_attacks()
+  printh("=== UNUSED ATTACKS ===")
+  for unused_attack in all(unused_attacks) do
+    printh(stringify(unused_attack))
+  end
+  printh("")
+end
+
+local function print_unused_replies()
+  local unused_replies = get_unused_replies()
+  printh("=== UNUSED REPLIES ===")
+  for unused_reply in all(unused_replies) do
+    printh(stringify(unused_reply))
+  end
+  printh("")
+end
+
+print_unused_attacks()
+print_unused_replies()
 
 printh("=== ATTACK => REPLY ===\n")
 
