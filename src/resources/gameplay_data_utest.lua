@@ -38,7 +38,8 @@ describe('gameplay_data', function ()
     it('should return match power if quotes are matching', function ()
       local attack = gameplay_data.attacks[8]
       local reply = gameplay_data.replies[11]
-      assert.are_equal(gameplay_data.quote_matches[17], gameplay_data:get_quote_match(attack, reply))
+      -- dependent on quote_matches content
+      assert.are_equal(gameplay_data.quote_matches[24], gameplay_data:get_quote_match(attack, reply))
     end)
 
   end)
