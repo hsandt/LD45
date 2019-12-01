@@ -17,7 +17,7 @@ local attacks = {
   [-1] = quote_info(-1, quote_types.attack, 0, to_big("Uh... I don't know what to say now.")),
   -- no [0] "cancel" entry for attacks
   quote_info( 1, quote_types.attack, 1, to_big("Already exhausted? You should really avoid staircases.")),
-  quote_info( 2, quote_types.attack, 1, to_big("I hope your personality is not as flat as your fashion sense.")),
+  quote_info( 2, quote_types.attack, 3, to_big("I hope your personality is not as flat as your fashion sense.")),
   quote_info( 3, quote_types.attack, 1, to_big("It took me a single day to find my job.")),
   quote_info( 4, quote_types.attack, 1, to_big("I can easily type 70 words per minute.")),
   quote_info( 5, quote_types.attack, 1, to_big("You couldn't write a sum formula in Excel.")),
@@ -26,16 +26,16 @@ local attacks = {
   quote_info( 8, quote_types.attack, 2, to_big("I'm so good at networking I doubled the number of my contacts in a single event.")),
   quote_info( 9, quote_types.attack, 2, "DEPRECATED"),
   quote_info(10, quote_types.attack, 2, to_big("It took me only thirty minutes to build a website for my portfolio.")),
-  quote_info(11, quote_types.attack, 2, to_big("You couldn't install an app if I gave you a setup.exe.")),
+  quote_info(11, quote_types.attack, 2, "DEPRECATED"),
   quote_info(12, quote_types.attack, 2, to_big("Unlike you, I only buy reliable devices that last at least 20 years.")),
   quote_info(13, quote_types.attack, 2, to_big("Yesterday, I stayed focused six hours straight on my computer.")),
   quote_info(14, quote_types.attack, 3, to_big("I can find any book in my shelf without lifting a finger.")),
   quote_info(15, quote_types.attack, 3, to_big("I have so much charisma I'm getting paid just for being here.")),
   quote_info(16, quote_types.attack, 3, to_big("People like you can also get here now? They really lowered the bar.")),
-  quote_info(17, quote_types.attack, 3, to_big("I'm sure your website is so unsafe it gets hacked every month!!")),
-  quote_info(18, quote_types.attack, 3, to_big("Don't know what to say to the boss? Just watch me and take some notes.")),
+  quote_info(17, quote_types.attack, 3, to_big("For my website, I set up a much better security system than yours.")),
+  quote_info(18, quote_types.attack, 3, to_big("You couldn't install an app if I gave you a setup.exe.")),
   quote_info(19, quote_types.attack, 3, to_big("Rookies like you should leave the task to pros with hands-on experience like me.")),
-  quote_info(20, quote_types.attack, 3, to_big("I was so good at my previous job that they didn't want to let me go.")),
+  quote_info(20, quote_types.attack, 3, "DEPRECATED"),
 }
 
 -- see doc/quote_graph.dot R nodes
@@ -46,23 +46,23 @@ local replies = {
   -- this is the cancel reply, that neutralizes any attack (should be available only once)
   [0] = quote_info(0, quote_types.reply, 0, to_big("Sorry, I didn't catch this one.")),
   quote_info( 1, quote_types.reply,  1, to_big("At least, mine is working.")),
-  quote_info( 2, quote_types.reply,  1, to_big("By that you mean you made some big blunder, uh?")),
+  quote_info( 2, quote_types.reply,  1, "DEPRECATED"),
   quote_info( 3, quote_types.reply,  1, to_big("I knew we could count on you to make photocopies.")),
   quote_info( 4, quote_types.reply,  1, to_big("I see you spent time with the coffee machine.")),
   quote_info( 5, quote_types.reply,  1, to_big("Oh, I'm pretty sure you made some contributions toward this.")),
   quote_info( 6, quote_types.reply,  1, to_big("You really can't stand physical exercise, can you?")),
   quote_info( 7, quote_types.reply,  2, "DEPRECATED"),
   quote_info( 8, quote_types.reply,  2, to_big("I see you enjoyed your time on Discord.")),
-  quote_info( 9, quote_types.reply,  2, to_big("So, do you use a plugin for that, too?")),
+  quote_info( 9, quote_types.reply,  2, to_big("Oh, I don't doubt you can. Using some third-party plugin.")),
   quote_info(10, quote_types.reply,  2, to_big("Well, we don't all browse at 56kbps.")),
   quote_info(11, quote_types.reply,  2, to_big("Sounds easy when you've only got two of them.")),
   quote_info(12, quote_types.reply,  2, "DEPRECATED"),
-  quote_info(13, quote_types.reply,  2, to_big("Ah, have I missed a carnival? Too bad I didn't come disguised.")),
+  quote_info(13, quote_types.reply,  2, "DEPRECATED"),
   quote_info(14, quote_types.reply,  3, to_big("Too bad they don't mean anything to you.")),
   quote_info(15, quote_types.reply,  3, to_big("Too bad yours has so little content nobody ever cared about it.")),
   quote_info(16, quote_types.reply,  3, to_big("And I see your relatives gave you a leg-up, uh?")),
-  quote_info(17, quote_types.reply,  3, to_big("Great idea. If I speak just after you I will sound competent.")),
-  quote_info(18, quote_types.reply,  3, to_big("I think that's called gardening leave.")),
+  quote_info(17, quote_types.reply,  3, "DEPRECATED"),
+  quote_info(18, quote_types.reply,  3, "DEPRECATED"),
   quote_info(19, quote_types.reply,  3, to_big("Probably. I'm working on Linux.")),
 }
 
@@ -71,68 +71,58 @@ local replies = {
 local quote_matches = {
   -- id, attack_id, reply_id, power
   quote_match_info( 1,  1,  6, 1),
-  quote_match_info( 3,  1, 16, 3),
-  quote_match_info( 4,  2, 13, 2),
-  quote_match_info( 5,  2, 15, 3),
-  quote_match_info( 6,  3,  3, 1),
-  quote_match_info( 7,  3,  5, 2),
-  quote_match_info( 8,  3, 10, 1),
-  quote_match_info( 9,  3, 15, 0),
-  quote_match_info(10,  3, 16, 3),
-  quote_match_info(11,  4,  4, 2),
-  quote_match_info(12,  4,  6, 0),
-  quote_match_info(13,  4,  8, 2),
-  quote_match_info(14,  4,  9, 1),
-  quote_match_info(15,  4, 14, 2),
-  quote_match_info(16,  5,  9, 2),
-  quote_match_info(17,  5, 19, 3),
-  quote_match_info(18,  6,  3, 3),
-  quote_match_info(19,  6,  5, 1),
-  quote_match_info(21,  6, 10, 1),
-  quote_match_info(22,  6, 11, 1),
-  quote_match_info(23,  6, 14, 0),
-  quote_match_info(24,  7,  4, 2),
-  quote_match_info(25,  7, 11, 2),
-  quote_match_info(26,  7, 14, 0),
-  quote_match_info(27,  8,  8, 2),
-  quote_match_info(28,  8, 11, 1),
-  quote_match_info(29,  8, 13, 1),
-  quote_match_info(30,  8, 14, 2),
-  quote_match_info(33, 10,  1, 2),
-  quote_match_info(34, 10,  5, 1),
-  quote_match_info(35, 10,  9, 1),
-  quote_match_info(36, 10, 15, 1),
-  quote_match_info(37, 11, 10, 1),
-  quote_match_info(39, 11, 19, 2),
-  quote_match_info(40, 12,  4, 0),
-  quote_match_info(41, 12, 10, 2),
-  quote_match_info(42, 12, 11, 0),
-  quote_match_info(43, 12, 14, 0),
-  quote_match_info(44, 13,  1, 1),
-  quote_match_info(45, 13,  6, 2),
-  quote_match_info(46, 13,  8, 3),
-  quote_match_info(47, 13, 10, 3),
-  quote_match_info(48, 14,  6, 1),
-  quote_match_info(49, 14, 11, 2),
-  quote_match_info(50, 15,  4, 1),
-  quote_match_info(51, 15,  6, 1),
-  quote_match_info(52, 15,  8, 0),
-  quote_match_info(53, 15, 18, 3),
-  quote_match_info(54, 16,  5, 3),
-  quote_match_info(55, 16,  6, 0),
-  quote_match_info(56, 16, 16, 1),
-  quote_match_info(57, 17,  1, 2),
-  quote_match_info(58, 17, 15, 2),
-  quote_match_info(59, 18,  1, 2),
-  quote_match_info(61, 18, 17, 3),
-  quote_match_info(62, 19,  2, 2),
-  quote_match_info(63, 19,  3, 3),
-  quote_match_info(64, 19,  4, 0),
-  quote_match_info(65, 19, 17, 1),
-  quote_match_info(66, 20,  2, 3),
-  quote_match_info(67, 20, 18, 2),
-  -- 3rd wave
-  quote_match_info(68,  1, 14, 0),
+  quote_match_info( 2,  1, 14, 0),
+  quote_match_info( 3,  1, 16, 2),
+  quote_match_info( 4,  2, 15, 3),
+  quote_match_info( 5,  3,  3, 1),
+  quote_match_info( 6,  3,  5, 0),
+  quote_match_info( 7,  3, 10, 0),
+  quote_match_info( 8,  3, 15, 0),
+  quote_match_info( 9,  3, 16, 2),
+  quote_match_info(10,  4,  4, 1),
+  quote_match_info(11,  4,  6, 0),
+  quote_match_info(12,  4,  8, 2),
+  quote_match_info(13,  4,  9, 0),
+  quote_match_info(14,  4, 14, 1),
+  quote_match_info(15,  5,  9, 1),
+  quote_match_info(16,  5, 19, 2),
+  quote_match_info(17,  6,  3, 3),
+  quote_match_info(18,  6,  5, 1),
+  quote_match_info(19,  6, 10, 1),
+  quote_match_info(20,  6, 11, 1),
+  quote_match_info(21,  6, 14, 0),
+  quote_match_info(22,  7,  4, 2),
+  quote_match_info(23,  7, 11, 2),
+  quote_match_info(24,  7, 14, 0),
+  quote_match_info(25,  8,  8, 2),
+  quote_match_info(26,  8, 11, 1),
+  quote_match_info(27,  8, 14, 2),
+  quote_match_info(28, 10,  1, 2),
+  quote_match_info(29, 10,  5, 1),
+  quote_match_info(30, 10,  9, 1),
+  quote_match_info(31, 10, 15, 1),
+  quote_match_info(32, 12,  4, 1),
+  quote_match_info(33, 12, 10, 2),
+  quote_match_info(34, 12, 11, 0),
+  quote_match_info(35, 12, 14, 1),
+  quote_match_info(36, 13,  1, 1),
+  quote_match_info(37, 13,  6, 1),
+  quote_match_info(38, 13,  8, 2),
+  quote_match_info(39, 13, 10, 2),
+  quote_match_info(40, 14,  6, 1),
+  quote_match_info(41, 14, 11, 2),
+  quote_match_info(42, 15,  4, 1),
+  quote_match_info(43, 15,  6, 1),
+  quote_match_info(44, 15,  8, 0),
+  quote_match_info(45, 16,  5, 3),
+  quote_match_info(46, 16,  6, 0),
+  quote_match_info(47, 16, 16, 1),
+  quote_match_info(48, 17,  1, 1),
+  quote_match_info(49, 17,  9, 1),
+  quote_match_info(50, 17, 15, 3),
+  quote_match_info(51, 18, 19, 2),
+  quote_match_info(52, 19,  3, 3),
+  quote_match_info(53, 19,  4, 0),
 }
 
 local floors = {
@@ -186,7 +176,7 @@ local npc_fighter_info_s = {
   fighter_info( 2,  2, 1, 3, {1, 3, 6},                    {5,  6,  9}),                    -- junior designer (good at attacks and communication topics)
   -- fighter_info( 3,  3, 2, 4, {4, 6, 7, 9, 11, 12, 13, 17},  {1, 3, 9, 10, 12, 19}),          -- programmer
   -- fighter_info( 4,  4, 2, 5, {2, 5, 10, 14, 15},    {2, 4, 5, 6, 7, 8, 11, 14, 15}), -- manager (tank and planning topics, replaces qa at level 2)
-  fighter_info( 3,  3, 2, 4, {3, 4, 7, --[[new attacks]] 11, 12, 17},    {5, --[[reply to new attacks]] 1, 9, 10, 19}),          -- programmer
+  fighter_info( 3,  3, 2, 4, {3, 4, 7, --[[new attacks]] 12, 17, 18},    {5, --[[reply to new attacks]] 1, 9, 10, 19}),          -- programmer
   fighter_info( 4,  4, 2, 5, {1, 5, 6, --[[new attacks]] 8, 10, 14, 15},    {3, --[[reply to new attacks]] 4, 6, 8}), -- manager (tank and planning topics, replaces qa at level 2)
 --fighter_info( 8,  8, 3, 6, {1, 5, 7, 10, 14, 15},     {6, 7, 11, 13, 14, 15, 17}),      -- senior designer
 --fighter_info( 9,  9, 3, 5, {4, 6, 9, 11, 12, 16, 17}, {1, 3, 9, 10, 12, 15, 16, 19}),   -- senior programmer
@@ -195,14 +185,14 @@ local npc_fighter_info_s = {
 
   -- make sure that this index and id matches with gameplay_data.rossmann_fighter_id
   -- learns rossmann_lv2_attack_ids immediately after tutorial fight
-  fighter_info(5, 5, 3, 6, {1, 7}, {1, 3, 10, 15, 16, 17, 19}),  -- rossmann (IT)
+  fighter_info(5, 5, 3, 6, {1, 7}, {1, 3, 10, 15, 16, 19}),  -- rossmann (IT)
 
   -- make sure that this index and id matches with gameplay_data.ceo_fighter_id
   -- low level to avoid final boss learning your quotes... she would become invincible
-  fighter_info(6, 6, 0, 8, {1, 2, 7, 5, 11, 12, 13, 14, 15, 17}, {1, 5, 6, 8, 10, 11, 14, 15, 18}),  -- ceo/boss
+  fighter_info(6, 6, 0, 8, {2, 5, 12, 14, 16, 18}, {1, 5, 6, 8, 10, 11, 14, 15}),  -- ceo/boss
 
 --#if sandbox
-  fighter_info(7, 7, 99, 2, {8, 14, 18, 19}, {13, 15, 17}),  -- debug man (longest quotes)
+  fighter_info(7, 7, 99, 2, {8, 14, 19}, {15}),  -- debug man (longest quotes)
 --#endif
 }
 
@@ -234,7 +224,7 @@ local gameplay_data = {
   rossmann_fighter_id = 5,
   ceo_fighter_id = 6,
   -- rossmann lv2 attack ids unlocked after the 1st encounter
-  rossmann_lv2_attack_ids = {--[[Lv2]] 8, 13, --[[Lv3]] 14, 16, 18, 19, 20},
+  rossmann_lv2_attack_ids = {--[[Lv2]] 8, 13, --[[Lv3]] 14, 16, 18, 19},
 
   -- fight
   losing_attack_penalty = 1,
