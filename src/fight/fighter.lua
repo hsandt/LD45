@@ -140,9 +140,12 @@ function fighter:say_quote(quote)
   self.character.speaker:say(quote.text, false, is_attacking)
   self.last_quote = quote
 
-  -- if an attack, remove it from available sequence for this fight
   if is_attacking then
+    -- attack: remove it from available sequence for this fight
     del(self.available_attack_ids, quote.id)
+  elseif gameplay_data.consume_reply then
+    -- reply: remove it from available sequence for this fight, if experimental rule flag is set
+    del(self.available_reply_ids, quote.id)
   end
 end
 

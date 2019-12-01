@@ -230,7 +230,10 @@ local gameplay_data = {
   -- How many times ai fighter of level L must receive quote of level L
   --   to learn it. Decrements with each fighter level above quote level,
   --   but minimum is 1.
-  base_learning_repetition_threshold = 2
+  base_learning_repetition_threshold = 2,
+
+  -- experimental rules
+  consume_reply = true
 }
 
 -- data access helpers
