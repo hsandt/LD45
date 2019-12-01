@@ -32,6 +32,12 @@ local function get_matching_quotes_for_reply(reply_info)
 end
 
 local function can_npc_counter(npc_fighter_info, attack_info)
+  -- DEPRECATED attacks have no replies, so they would normally be considered
+  -- uncounterable; ignore them instead
+  if attack_info.text == "DEPRECATED" then
+    return true
+  end
+
   for reply_id in all(npc_fighter_info.initial_reply_ids) do
     local reply_info = gameplay_data:get_quote(quote_types.reply, reply_id)
     if gameplay_data:get_quote_match(attack_info, reply_info) then
