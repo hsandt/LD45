@@ -93,36 +93,38 @@ end
 
 -- Return a reply following the policy:
 -- - return any matching reply for the passed attack id, if possible
--- - else, return a random reply
+-- - else, return a losing reply
 -- Humans can call this method so we can itest easily with AI controlling PC.
 -- Both AI and human fallback to losing reply if no reply is available
 function fighter:auto_pick_reply(attack_id)
-  local available_reply_ids = copy_seq(self:get_available_quote_ids(quote_types.reply))
-
-  if #available_reply_ids == 0 then
-    add(available_reply_ids, -1)
-  end
-
-  local attack_info = gameplay_data:get_quote(quote_types.attack, attack_id)
-
-  -- pick matching reply if possible
-  -- v2: pick random reply among matching replies (whatever their power is)
-  local candidate_replies = filter(available_reply_ids, function (reply_id)
-    local reply_info = gameplay_data:get_quote(quote_types.reply, reply_id)
-    local quote_match = gameplay_data:get_quote_match(attack_info, reply_info)
-    return quote_match ~= nil  -- power = 0 (cancel reply) is a valid candidate
-  end)
-
   local picked_reply_id
 
-  if #candidate_replies > 0 then
-    picked_reply_id = pick_random(candidate_replies)
-    log("fighter \""..self:get_name().."\" picks randomly matching reply ("..picked_reply_id..")", 'fight')
+  local available_reply_ids = copy_seq(self:get_available_quote_ids(quote_types.reply))
+  if #available_reply_ids > 0 then
+    -- at least one non-fallback reply
+    local attack_info = gameplay_data:get_quote(quote_types.attack, attack_id)
+
+    -- pick matching reply if possible
+    -- v2: pick random reply among matching replies (whatever their power is)
+    local candidate_replies = filter(available_reply_ids, function (reply_id)
+      local reply_info = gameplay_data:get_quote(quote_types.reply, reply_id)
+      local quote_match = gameplay_data:get_quote_match(attack_info, reply_info)
+      return quote_match ~= nil  -- power = 0 (cancel reply) is a valid candidate
+    end)
+
+    if #candidate_replies > 0 then
+      picked_reply_id = pick_random(candidate_replies)
+      log("fighter \""..self:get_name().."\" picks randomly matching reply ("..picked_reply_id..")", 'fight')
+    else
+      -- no matching quote found; pick a losing reply instead
+      picked_reply_id = -1
+      log("fighter \""..self:get_name().."\" picks losing reply (-1) (none matching)", 'fight')
+    end
   else
-    -- no matching quote found; pick a random reply instead
-    -- remember we added a dummy quote above if needed, so sequence is never empty
-    picked_reply_id = pick_random(available_reply_ids)
-    log("fighter \""..self:get_name().."\" picks randomly some reply ("..picked_reply_id..")", 'fight')
+    -- no reply left at all (no reply known like pc on start or all replies consumed)
+    -- pick losing reply
+    picked_reply_id = -1
+    log("fighter \""..self:get_name().."\" picks losing reply (-1) (no replies left)", 'fight')
   end
 
   local picked_reply = gameplay_data:get_quote(quote_types.reply, picked_reply_id)

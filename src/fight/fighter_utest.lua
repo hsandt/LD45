@@ -147,12 +147,12 @@ describe('fighter', function ()
       assert.are_equal(gameplay_data.replies[6], f:auto_pick_reply(1))
     end)
 
-    it('should return a random available reply using pick_random when no matching reply is known', function ()
+    it('should return a losing reply when no matching reply is known', function ()
       -- ! test is gameplay_data-dependent for quote matches !
       -- f doesn't know any matching reply for 10 (neither R5, R9, R15),
       -- so will return random one, stubbed to last
       f.available_reply_ids = {2, 4, 7, 13}
-      assert.are_equal(gameplay_data.replies[13], f:auto_pick_reply(10))
+      assert.are_equal(gameplay_data.replies[-1], f:auto_pick_reply(10))
     end)
 
     it('should return a losing reply when no reply is available', function ()
