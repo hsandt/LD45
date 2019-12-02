@@ -77,7 +77,7 @@ itest_manager:register_itest('start -> real fights loop',
   end
 
   -- too hard to assert after such a long test, we just run it to detect errors
-  final_assert(function ()
+  final_assert(function (app)
     return true, "impossible"
   end)
 
@@ -163,7 +163,7 @@ itest_manager:register_itest('start -> end with ai control on pc',
   wait(10)
 
   -- too hard to assert after such a long test, we just run it to detect errors
-  final_assert(function ()
+  final_assert(function (app)
     return true, "impossible"
   end)
 
@@ -214,7 +214,7 @@ itest_manager:register_itest('insta-kill ceo',
   short_press(button_ids.o)
   wait(3.0)
 
-  final_assert(function ()
+  final_assert(function (app)
     -- we must have killed the opponent and be back to adventure
     return flow.curr_state.type == ':main_menu', "current game state is not ':main_menu', has instead type: '"..flow.curr_state.type.."'"
   end)

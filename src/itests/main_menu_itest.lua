@@ -15,7 +15,7 @@ itest_manager:register_itest('player starts game',
   short_press(button_ids.o)
 
   -- check that we entered the adventure state
-  final_assert(function ()
+  final_assert(function (app)
     return flow.curr_state.type == ':adventure', "current game state is not ':adventure', has instead type: '"..flow.curr_state.type.."'"
   end)
 

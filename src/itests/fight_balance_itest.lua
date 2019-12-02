@@ -44,7 +44,7 @@ local function register_fight_balance_itest(opponent_id, pc_max_hp, initial_atta
     local estimated_fight_time = 5.0 * (total_hp + 2)
     wait(estimated_fight_time)
 
-    final_assert(function ()
+    final_assert(function (app)
       return true, "impossible"
     end)
 

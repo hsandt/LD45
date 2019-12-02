@@ -43,7 +43,7 @@ itest_manager:register_itest('play intro -> 1st fight',
   wait(8.0)
 
   -- check that we entered the fight state
-  final_assert(function ()
+  final_assert(function (app)
     return flow.curr_state.type == ':fight', "current game state is not ':fight', has instead type: '"..flow.curr_state.type.."'"
   end)
 
@@ -88,7 +88,7 @@ itest_manager:register_itest('play floor loop after won -> random fight',
   --   so don't check that we are exactly in the fight state as we may have already finished the fight
   -- ideally we would have a detector that succeeds the test as soon as we enter the fight state,
   --   but we cannot check that right now
-  final_assert(function ()
+  final_assert(function (app)
     return true, "impossible"
   end)
 
@@ -318,7 +318,7 @@ itest_manager:register_itest('play floor loop at boss floor',
   wait(2)
 
   -- check that we entered the fight state
-  final_assert(function ()
+  final_assert(function (app)
     return flow.curr_state.type == ':fight', "current game state is not ':fight', has instead type: '"..flow.curr_state.type.."'"
   end)
 

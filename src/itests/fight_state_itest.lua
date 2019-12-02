@@ -39,7 +39,7 @@ itest_manager:register_itest('1st fight -> back to adv',
   -- also wait for victory_anim_duration
   wait(2.0)
 
-  final_assert(function ()
+  final_assert(function (app)
     return flow.curr_state.type == ':adventure', "current game state is not ':adventure', has instead type: '"..flow.curr_state.type.."'"
   end)
 
@@ -79,7 +79,7 @@ itest_manager:register_itest('insta-kill',
   -- wait for victory_anim_duration
   wait(2.0)
 
-  final_assert(function ()
+  final_assert(function (app)
     -- we must have killed the opponent and be back to adventure
     return flow.curr_state.type == ':adventure', "current game state is not ':adventure', has instead type: '"..flow.curr_state.type.."'"
   end)
@@ -128,7 +128,7 @@ itest_manager:register_itest('intermediate fight -> back to adv',
 
   -- opponent depends a bit on randomness, so until we decide to stub randomness, just don't check final result
 
-  final_assert(function ()
+  final_assert(function (app)
     return true, "impossible"
   end)
 
