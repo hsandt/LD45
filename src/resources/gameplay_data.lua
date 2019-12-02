@@ -129,7 +129,7 @@ local floors = {
   floor_info( 3,  2,  2),
   floor_info( 4,  2,  2),
   floor_info( 5,  3,  3),  -- rossmann
-  floor_info( 6,  0,  0),  -- ceo with fictive level 0 (maybe prefer flag can_learn: false)
+  floor_info( 6,  4,  4),  -- ceo
 }
 
 -- character story and visual info
