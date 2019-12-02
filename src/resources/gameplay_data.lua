@@ -171,8 +171,8 @@ local npc_fighter_info_s = {
 --fighter_info( 4,  4, 1, 3, {2, 4, 5},                 {5, 7, 8},                     ), -- junior marketing (good at matching quotes)
 --fighter_info( 5,  5, 2, 5, {1, 5, 7, 10},             {6, 7, 11, 13, 14},            ), -- designer
 -- R3 is now level 2, so move that away
-  fighter_info( 1,  1, 1, 3, {4, 5, 7},                    {3, 15}),                  -- junior accountant (good at planning topics)
-  fighter_info( 2,  2, 1, 3, {1, 3, 6},                    {5,  6,  9}),                    -- junior designer (good at attacks and communication topics)
+  fighter_info( 1,  1, 1, 3, {3, 4, 5},                    {1, 4, 9}),                  -- junior accountant (good at planning topics)
+  fighter_info( 2,  2, 1, 3, {1, 6, 7},                    {3, 5, 6}),                    -- junior designer (good at attacks and communication topics)
   -- fighter_info( 3,  3, 2, 4, {4, 6, 7, 9, 11, 12, 13, 17},  {1, 3, 9, 10, 12, 19}),          -- programmer
   -- fighter_info( 4,  4, 2, 5, {2, 5, 10, 14, 15},    {2, 4, 5, 6, 7, 8, 11, 14, 15}), -- manager (tank and planning topics, replaces qa at level 2)
   fighter_info( 3,  3, 2, 4, {3, 4, 7, --[[new attacks]] 12, 17, 18},    {5, --[[reply to new attacks]] 1, 9, 10, 19}),          -- programmer
@@ -232,8 +232,14 @@ local gameplay_data = {
   --   but minimum is 1.
   base_learning_repetition_threshold = 2,
 
-  -- experimental rules
-  consume_reply = true
+
+  -- Experimental rules
+
+  -- all fighters: cannot reuse same reply twice in a fight
+  consume_reply = true,
+  -- npc: when some replies are left but none matches last attack,
+  --      pick a random reply instead of the losing reply
+  npc_random_reply_fallback = false
 }
 
 -- data access helpers
