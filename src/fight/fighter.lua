@@ -116,9 +116,16 @@ function fighter:auto_pick_reply(attack_id)
       picked_reply_id = pick_random(candidate_replies)
       log("fighter \""..self:get_name().."\" picks randomly matching reply ("..picked_reply_id..")", 'fight')
     else
-      -- no matching quote found; pick a losing reply instead
-      picked_reply_id = -1
-      log("fighter \""..self:get_name().."\" picks losing reply (-1) (none matching)", 'fight')
+      if gameplay_data.npc_random_reply_fallback then
+        -- no matching quote found; pick a random reply instead (it will lose, but may teach a new reply
+        --   to the player as an extra)
+        picked_reply_id = pick_random(available_reply_ids)
+        log("fighter \""..self:get_name().."\" picks cannot find match => picks randomly reply ("..picked_reply_id..")", 'fight')
+      else
+        -- no matching quote found; pick a losing reply instead
+        picked_reply_id = -1
+        log("fighter \""..self:get_name().."\" picks losing reply (-1) (none matching)", 'fight')
+      end
     end
   else
     -- no reply left at all (no reply known like pc on start or all replies consumed)

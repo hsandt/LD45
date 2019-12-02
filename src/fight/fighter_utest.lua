@@ -122,6 +122,8 @@ describe('fighter', function ()
 
    describe('auto_pick_reply', function ()
 
+    local original_npc_random_reply_fallback = gameplay_data.npc_random_reply_fallback
+
     setup(function ()
       stub(_G, "pick_random", function (seq)
         -- always return last element for this test
@@ -147,44 +149,76 @@ describe('fighter', function ()
       assert.are_equal(gameplay_data.replies[6], f:auto_pick_reply(1))
     end)
 
-    it('should return a losing reply when no matching reply is known', function ()
-      -- ! test is gameplay_data-dependent for quote matches !
-      -- f doesn't know any matching reply for 10 (neither R5, R9, R15),
-      -- so will return random one, stubbed to last
-      f.available_reply_ids = {2, 4, 7, 13}
-      assert.are_equal(gameplay_data.replies[-1], f:auto_pick_reply(10))
-    end)
-
     it('should return a losing reply when no reply is available', function ()
       f.available_reply_ids = {}
       assert.are_equal(gameplay_data.replies[-1], f:auto_pick_reply(1))
     end)
 
+    describe('(npc_random_reply_fallback: true)', function ()
+
+      before_each(function ()
+        gameplay_data.npc_random_reply_fallback = true
+      end)
+
+      after_each(function ()
+        gameplay_data.npc_random_reply_fallback = original_npc_random_reply_fallback
+      end)
+
+      it('should return a losing reply when no matching reply is known', function ()
+        -- ! test is gameplay_data-dependent for quote matches !
+        -- f doesn't know any matching reply for 10 (neither R1, R5, R9, R15),
+        -- so will return random one, stubbed to last
+        f.available_reply_ids = {2, 4, 7, 13}
+        assert.are_equal(gameplay_data.replies[13], f:auto_pick_reply(10))
+      end)
+
+    end)
+
+    describe('(npc_random_reply_fallback: false)', function ()
+
+      before_each(function ()
+        gameplay_data.npc_random_reply_fallback = false
+      end)
+
+      after_each(function ()
+        gameplay_data.npc_random_reply_fallback = original_npc_random_reply_fallback
+      end)
+
+      it('should return a losing reply when no matching reply is known', function ()
+        -- ! test is gameplay_data-dependent for quote matches !
+        -- f doesn't know any matching reply for 10 (neither R5, R9, R15),
+        -- so will return losing one (-1)
+        f.available_reply_ids = {2, 4, 7, 13}
+        assert.are_equal(gameplay_data.replies[-1], f:auto_pick_reply(10))
+      end)
+
+    end)
+
   end)
 
-   describe('preview_quote', function ()
+  describe('preview_quote', function ()
 
-     setup(function ()
-       stub(speaker_component, "think")
-     end)
+    setup(function ()
+      stub(speaker_component, "think")
+    end)
 
-     teardown(function ()
-       speaker_component.think:revert()
-     end)
+    teardown(function ()
+      speaker_component.think:revert()
+    end)
 
-     after_each(function ()
-       speaker_component.think:clear()
-     end)
+    after_each(function ()
+      speaker_component.think:clear()
+    end)
 
-     it('should call think on character speaker component', function ()
-       local q = quote_info(3, quote_types.attack, 1, "attack 3")
+    it('should call think on character speaker component', function ()
+      local q = quote_info(3, quote_types.attack, 1, "attack 3")
 
-       f:preview_quote(q)
+      f:preview_quote(q)
 
-       local s = assert.spy(speaker_component.think)
-       s.was_called(1)
-       s.was_called_with(match.ref(f.character.speaker), "attack 3", false, true)
-     end)
+      local s = assert.spy(speaker_component.think)
+      s.was_called(1)
+      s.was_called_with(match.ref(f.character.speaker), "attack 3", false, true)
+    end)
 
   end)
 
