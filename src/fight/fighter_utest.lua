@@ -140,11 +140,11 @@ describe('fighter', function ()
 
     it('should return a random matching reply', function ()
       -- ! test is gameplay_data-dependent for quote matches !
-      -- attack 1 can be replied with replies 6 or 7, but f only knows R7
+      -- attack 1 can be replied with replies 6, 14 or 16, but f only knows R6
       -- just add 13 at the end of the reply ids so we are sure
-      --   that 7 is not picked just because it's last
-      f.available_reply_ids = {2, 4, 7, 13}
-      assert.are_equal(gameplay_data.replies[7], f:auto_pick_reply(1))
+      --   that 6 is not picked just because it's last
+      f.available_reply_ids = {2, 4, 6, 13}
+      assert.are_equal(gameplay_data.replies[6], f:auto_pick_reply(1))
     end)
 
     it('should return a random available reply using pick_random when no matching reply is known', function ()
@@ -190,6 +190,8 @@ describe('fighter', function ()
 
   describe('say_quote', function ()
 
+    local original_consume_reply = gameplay_data.consume_reply
+
     setup(function ()
       stub(speaker_component, "say")
     end)
@@ -228,14 +230,44 @@ describe('fighter', function ()
       assert.are_same({1, 5}, f.available_attack_ids)
     end)
 
-    it('should preserve available attack/reply if saying a reply', function ()
-      local q = quote_info(3, quote_types.reply, 2, "reply 3")
-      local q = quote_info(4, quote_types.reply, 2, "reply 4")
+    describe('(consume_reply: true)', function ()
 
-      f:say_quote(q)
+      before_each(function ()
+        gameplay_data.consume_reply = true
+      end)
 
-      assert.are_same({1, 3, 5}, f.available_attack_ids)
-      assert.are_same({2, 4, 7}, f.available_reply_ids)
+      after_each(function ()
+        gameplay_data.consume_reply = original_consume_reply
+      end)
+
+      it('should remove an attack id from the sequence of available attack ids', function ()
+        local q = quote_info(4, quote_types.reply, 2, "reply 4")
+
+        f:say_quote(q)
+
+        assert.are_same({2, 7}, f.available_reply_ids)
+      end)
+
+    end)
+
+    describe('(consume_reply: false)', function ()
+
+        before_each(function ()
+          gameplay_data.consume_reply = false
+        end)
+
+        after_each(function ()
+          gameplay_data.consume_reply = original_consume_reply
+        end)
+
+      it('should preserve available reply if saying a reply', function ()
+        local q = quote_info(4, quote_types.reply, 2, "reply 4")
+
+        f:say_quote(q)
+
+        assert.are_same({2, 4, 7}, f.available_reply_ids)
+      end)
+
     end)
 
   end)
