@@ -94,6 +94,57 @@ itest_manager:register_itest('play floor loop after won -> random fight',
 
 end)
 
+itest_manager:register_itest('after winning fight on 2F, unlock and reach 3F',
+    -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
+    -- but without gamestate_proxy, not used
+    {':adventure'}, function ()
+
+  -- enter fight state
+  setup_callback(function (app)
+    local gs = app.game_session
+    local am = app.managers[':adventure']
+    local fm = app.managers[':fight']
+
+    -- win at 2F to reach 3F
+    gs.floor_number = 2
+    -- high count to avoid unwanted tutorials (although tuto 1 has a safety check not to decrease max hp)
+    gs.fight_count = 10
+
+    -- fight junior accountant (doesn't matter)
+    fm.next_opponent = app.game_session.npc_fighter_progressions[1]
+
+    flow:change_gamestate_by_type(':fight')
+  end)
+
+  -- fight start
+
+  wait(2.0)
+
+  -- opponent should auto-attack
+
+  -- use insta-kill to win and go to next floor
+  short_press(button_ids.x)
+
+  -- wait for victory_anim_duration
+  wait(2.0)
+
+  -- skip dialogue and aftermath until going to and unlocking next floor
+  short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+  wait(2)
+  short_press(button_ids.o)
+
+  -- unfortunately, some random fights have longer intros and battle duration than others,
+  --   so don't check that we are exactly in the fight state as we may have already finished the fight
+  -- ideally we would have a detector that succeeds the test as soon as we enter the fight state,
+  --   but we cannot check that right now
+  final_assert(function (app)
+    return app.game_session.floor_number == 3 and app.game_session.unlocked_floor_numbers[3], "3F not reached/unlocked"
+  end)
+
+end)
+
 --#if cheat
 itest_manager:register_itest('after first fight, pc max hp increase to 3', {':fight'}, function ()
 

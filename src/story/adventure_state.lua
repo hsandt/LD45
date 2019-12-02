@@ -207,7 +207,7 @@ function adventure_state:async_fight_aftermath()
 
   if self.forced_next_floor_number then
     -- assign forced floor and consume immediately
-    gs.floor_number = self.forced_next_floor_number
+    gs:go_to_floor_and_try_unlock(self.forced_next_floor_number)
     self.forced_next_floor_number = nil
 
     log("go to forced floor: "..gs.floor_number, 'adventure')
@@ -228,14 +228,14 @@ function adventure_state:async_fight_aftermath()
       -- for now, auto go up 1 floor
       pc_speaker:say_and_wait_for_input("fine, let's go to the next floor now.")
 
-      gs.floor_number = min(floor_number + 1, #gameplay_data.floors)
+      gs:go_to_floor_and_try_unlock(min(floor_number + 1, #gameplay_data.floors))
       log("go to next floor: "..gs.floor_number, 'adventure')
     else
       -- player lost, prevent access to next floor
       -- for now, auto go down 1 floor
       pc_speaker:say_and_wait_for_input("guess after my loss, i should go down one floor now.")
 
-      gs.floor_number = max(1, floor_number - 1)
+      gs:go_to_floor_and_try_unlock(max(1, floor_number - 1))
       log("go to previous floor: "..gs.floor_number, 'adventure')
 
     -- remove existing npc last (after fade-out), as he was blocking you

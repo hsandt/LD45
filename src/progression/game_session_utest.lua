@@ -33,6 +33,30 @@ describe('game_session', function ()
     end)
   end)
 
+  describe('go_to_floor_and_try_unlock', function ()
+
+    it('should set the floor number', function ()
+      local gs = game_session()
+      gs:go_to_floor_and_try_unlock(3)
+      assert.are_equal(3, gs.floor_number)
+    end)
+
+    it('should unlock an unlockable floor', function ()
+      -- depends on gameplay_data.unlockable_floor_numbers
+      local gs = game_session()
+      gs:go_to_floor_and_try_unlock(3)
+      assert.is_true(gs.unlocked_floor_numbers[3])
+    end)
+
+    it('should not unlock an non-unlockable floor', function ()
+      -- depends on gameplay_data.unlockable_floor_numbers
+      local gs = game_session()
+      gs:go_to_floor_and_try_unlock(2)
+      assert.is_nil(gs.unlocked_floor_numbers[2])  -- sets leave entry nil, not false
+    end)
+
+  end)
+
   describe('increment_fight_count', function ()
 
     it('should increment the fight count', function ()
