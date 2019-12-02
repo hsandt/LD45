@@ -9,9 +9,8 @@ local game_session = new_class()
 function game_session:_init()
   -- current floor number the player character is located at
   self.floor_number = gameplay_data.initial_floor
-  -- set of floors already reached by player. player can teleport to them directly after a fight
-  -- {[floor_number] = true}
-  self.unlocked_floor_numbers = {}
+  -- highest floor reached by player (excludes the initial floor for the tutorial fight)
+  self.max_floor_reached = 0
 
   -- track last opponent so you avoid fighting the same twice in a row
   -- we could use fight_manager.next_opponent but the semantics of "next" is not clear
@@ -29,16 +28,9 @@ function game_session:_init()
   self.npc_fighter_progressions = game_session.generate_npc_fighter_progressions()
 end
 
-function game_session:go_to_floor_and_try_unlock(floor_number)
+function game_session:go_to_floor(floor_number)
   self.floor_number = floor_number
-
-  -- unlock floor if needed
-  if contains(gameplay_data.unlockable_floor_numbers, floor_number) and
-      not self.unlocked_floor_numbers[floor_number] then
-    self.unlocked_floor_numbers[floor_number] = true
-    log("unlocked floor: "..floor_number.."F", 'progression')
-  end
-
+  self.max_floor_reached = max(self.max_floor_reached, floor_number)
 end
 
 function game_session:increment_fight_count()

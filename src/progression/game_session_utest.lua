@@ -33,26 +33,36 @@ describe('game_session', function ()
     end)
   end)
 
-  describe('go_to_floor_and_try_unlock', function ()
+  describe('go_to_floor', function ()
 
     it('should set the floor number', function ()
       local gs = game_session()
-      gs:go_to_floor_and_try_unlock(3)
+      gs.floor_number = 1
+      gs.max_floor_reached = 1
+      
+      gs:go_to_floor(3)
+
       assert.are_equal(3, gs.floor_number)
     end)
 
-    it('should unlock an unlockable floor', function ()
-      -- depends on gameplay_data.unlockable_floor_numbers
+    it('should set max floor to new floor if higher', function ()
       local gs = game_session()
-      gs:go_to_floor_and_try_unlock(3)
-      assert.is_true(gs.unlocked_floor_numbers[3])
+      gs.floor_number = 1
+      gs.max_floor_reached = 1
+
+      gs:go_to_floor(3)
+
+      assert.are_equal(3, gs.max_floor_reached)
     end)
 
-    it('should not unlock an non-unlockable floor', function ()
-      -- depends on gameplay_data.unlockable_floor_numbers
+    it('should preserve max floor if not higher', function ()
       local gs = game_session()
-      gs:go_to_floor_and_try_unlock(2)
-      assert.is_nil(gs.unlocked_floor_numbers[2])  -- sets leave entry nil, not false
+      gs.floor_number = 3
+      gs.max_floor_reached = 3
+
+      gs:go_to_floor(1)
+
+      assert.are_equal(3, gs.max_floor_reached)
     end)
 
   end)

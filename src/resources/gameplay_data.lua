@@ -133,8 +133,8 @@ local floors = {
 }
 
 -- floors at which a "checkpoint" is created and the player can teleport to it
-local unlockable_floor_numbers = {
-  3, 5, 6
+local checkpoint_floor_numbers = {
+  1, 3, 5, 6
 }
 
 -- character story and visual info
@@ -205,7 +205,7 @@ local gameplay_data = {
   quote_matches = quote_matches,
   cancel_quote_match = quote_match_info(0, '*', 0, 0),  -- reply 0 cancels anything
   floors = floors,
-  unlockable_floor_numbers = unlockable_floor_numbers,
+  checkpoint_floor_numbers = checkpoint_floor_numbers,
   pc_info = pc_info,
   npc_info_s = npc_info_s,
   pc_fighter_info = pc_fighter_info,

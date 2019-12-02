@@ -2,6 +2,7 @@ local gamestate = require("engine/application/gamestate")
 
 local flow = require("engine/application/flow")
 
+local menu_item = require("menu/menu_item")
 local game_session = require("progression/game_session")
 local painter = require("render/painter")
 local audio_data = require("resources/audio_data")
@@ -176,6 +177,7 @@ end
 function adventure_state:async_fight_aftermath()
   local gs = self.app.game_session
   local am = self.app.managers[':adventure']
+  local dm = self.app.managers[':dialogue']
   local fm = self.app.managers[':fight']
   local pc_speaker = am.pc.speaker
   local npc_speaker = am.npc.speaker
@@ -207,9 +209,8 @@ function adventure_state:async_fight_aftermath()
 
   if self.forced_next_floor_number then
     -- assign forced floor and consume immediately
-    gs:go_to_floor_and_try_unlock(self.forced_next_floor_number)
+    gs:go_to_floor(self.forced_next_floor_number)
     self.forced_next_floor_number = nil
-
     log("go to forced floor: "..gs.floor_number, 'adventure')
 
     -- remove existing npc last (after fade-out), as he was blocking you
@@ -228,20 +229,61 @@ function adventure_state:async_fight_aftermath()
       -- for now, auto go up 1 floor
       pc_speaker:say_and_wait_for_input("fine, let's go to the next floor now.")
 
-      gs:go_to_floor_and_try_unlock(min(floor_number + 1, #gameplay_data.floors))
+      local next_floor = min(floor_number + 1, #gameplay_data.floors)
+      self:async_prompt_go_to_floor(next_floor)
       log("go to next floor: "..gs.floor_number, 'adventure')
     else
       -- player lost, prevent access to next floor
       -- for now, auto go down 1 floor
       pc_speaker:say_and_wait_for_input("guess after my loss, i should go down one floor now.")
 
-      gs:go_to_floor_and_try_unlock(max(1, floor_number - 1))
+      local next_floor = max(1, floor_number - 1)
+      self:async_prompt_go_to_floor(next_floor)
       log("go to previous floor: "..gs.floor_number, 'adventure')
 
     -- remove existing npc last (after fade-out), as he was blocking you
       am:despawn_npc()
     end
   end
+end
+
+function adventure_state:async_prompt_go_to_floor(next_floor)
+  local gs = self.app.game_session
+  local dm = self.app.managers[':dialogue']
+
+  local chosen_floor_number = nil
+
+  -- first item is always to continue to next floor
+  local items = {
+    menu_item("continue to "..next_floor.."f", function ()
+      chosen_floor_number = next_floor
+    end)
+  }
+
+  -- then, if checkpoints have been reached and are in a different zone than
+  --   the next floor, add them as other choices
+  -- note that we consider any floor in the range [checkpoint_floor, checkpoint_floor + 1]
+  --   as in the same zone
+  -- start with highest levels first
+  for i = #gameplay_data.checkpoint_floor_numbers, 1, -1 do
+    local checkpoint_floor_number = gameplay_data.checkpoint_floor_numbers[i]
+    if checkpoint_floor_number <= gs.max_floor_reached and
+        not (next_floor >= checkpoint_floor_number and next_floor <= checkpoint_floor_number + 1) then
+      local item = menu_item("warp to "..checkpoint_floor_number.."f", function ()
+        chosen_floor_number = checkpoint_floor_number
+      end)
+      add(items, item)
+    end
+  end
+
+  dm:prompt_items(items)
+
+  -- async wait for confirming a choice
+  while not chosen_floor_number do
+    yield()
+  end
+
+  gs:go_to_floor(chosen_floor_number)
 end
 
 function adventure_state:async_check_max_hp_increase(floor_number)
