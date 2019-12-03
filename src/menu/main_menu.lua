@@ -21,13 +21,34 @@ main_menu._items = transform({
       flow:query_gamestate_type(':adventure')
     end},
 --#if cheat
-    {"debug: 1st fight", function(app)
+    {"debug: tutorial fight", function(app)
       app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.rossmann_fighter_id]
       flow:query_gamestate_type(':fight')
+    end},
+    {"debug: 1f fight", function(app)
+      app.game_session.floor_number = 1
+      app.game_session.fight_count = 10  -- just to avoid tutorials
+      local pc_fighter_prog = app.game_session.pc_fighter_progression
+      pc_fighter_prog.known_attack_ids = {1, 7}  -- learned from rossmann
+      pc_fighter_prog.known_reply_ids = {}
+      app.managers[':adventure'].next_step = 'floor_loop'
+      flow:query_gamestate_type(':adventure')
+    end},
+    {"debug: 3f fight", function(app)
+      app.game_session.floor_number = 3
+      app.game_session.fight_count = 10  -- just to avoid tutorials
+      local pc_fighter_prog = app.game_session.pc_fighter_progression
+      pc_fighter_prog.max_hp = gameplay_data.max_hp_after_win_by_floor_number[2]
+      pc_fighter_prog.known_attack_ids = {1, 7, 4, 5, 6, 4, 12}
+      pc_fighter_prog.known_reply_ids = {4, 9, 5}
+      app.managers[':adventure'].next_step = 'floor_loop'
+      flow:query_gamestate_type(':adventure')
     end},
     {"debug: boss floor", function(app)
       app.game_session.floor_number = #gameplay_data.floors  -- last floor
       app.game_session.fight_count = 10  -- high count to avoid unwanted tutorials
+      local pc_fighter_prog = app.game_session.pc_fighter_progression
+      pc_fighter_prog.max_hp = gameplay_data.max_hp_after_win_by_floor_number[4]
       app.managers[':adventure'].next_step = 'floor_loop'
       flow:query_gamestate_type(':adventure')
     end},
@@ -35,7 +56,8 @@ main_menu._items = transform({
       app.game_session.floor_number = #gameplay_data.floors  -- last floor
       app.game_session.fight_count = 10
       local pc_fighter_prog = app.game_session.pc_fighter_progression
-      pc_fighter_prog.known_attack_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+      pc_fighter_prog.max_hp = gameplay_data.max_hp_after_win_by_floor_number[4]
+      pc_fighter_prog.known_reply_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
       pc_fighter_prog.known_reply_ids = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
       app.managers[':fight'].next_opponent = app.game_session.npc_fighter_progressions[gameplay_data.ceo_fighter_id]
       flow:query_gamestate_type(':fight')
