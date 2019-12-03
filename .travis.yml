@@ -62,5 +62,5 @@ script:
   # build game and itest to make sure everything works fine
   - ./build_game.sh
   - ./build_itest.sh
-  # just to print advanced DB inf so we can track balance progression over commits 
-  - lua src/debug/print_data.lua
+  # just to print advanced DB inf so we can track balance progression over commits
+  - LUA_PATH="pico-boots/src/?.lua;src/?.lua" lua src/debug/print_data.lua
