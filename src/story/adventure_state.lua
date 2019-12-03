@@ -238,16 +238,23 @@ function adventure_state:async_fight_aftermath()
       --   and the checkpoint he/she was about to continue to
       --   will not be recorded so he/she will have to win again to get there
       gs:unlock_floor(next_floor)
-      self:async_prompt_go_to_floor(next_floor, true)
+      self:async_prompt_go_to_floor(next_floor, "go up to")
       log("go to next floor: "..gs.floor_number, 'adventure')
     else
       -- player lost, prevent access to next floor
       -- for now, auto go down 1 floor
       pc_speaker:say_and_wait_for_input("guess after my loss, i should go down one floor now.")
 
-      local next_floor = max(1, floor_number - 1)
+      local next_floor
+      if floor_number > 1 then
+        next_floor = floor_number - 1
+        default_verb = "go down to"
+      else
+        next_floor = 1
+        default_verb = "retry at"
+      end
       gs:unlock_floor(next_floor)
-      self:async_prompt_go_to_floor(next_floor, false)
+      self:async_prompt_go_to_floor(next_floor, default_verb)
       log("go to previous floor: "..gs.floor_number, 'adventure')
 
     -- remove existing npc last (after fade-out), as he was blocking you
@@ -256,16 +263,15 @@ function adventure_state:async_fight_aftermath()
   end
 end
 
-function adventure_state:async_prompt_go_to_floor(next_floor, going_up)
+function adventure_state:async_prompt_go_to_floor(next_floor, default_verb)
   local gs = self.app.game_session
   local dm = self.app.managers[':dialogue']
 
   local chosen_floor_number = nil
 
   -- first item is always to continue to next floor
-  local verb_str = going_up and "go up to" or "go down to"
   local items = {
-    menu_item(verb_str.." "..next_floor.."f", function ()
+    menu_item(default_verb.." "..next_floor.."f", function ()
       chosen_floor_number = next_floor
     end)
   }
@@ -286,7 +292,7 @@ function adventure_state:async_prompt_go_to_floor(next_floor, going_up)
         checkpoint_zone_max = checkpoint_zone_min
       end
       if not (next_floor >= checkpoint_zone_min and next_floor <= checkpoint_zone_max) then
-        verb_str = checkpoint_floor_number == gs.floor_number and "retry at" or "warp to"
+        local verb_str = checkpoint_floor_number == gs.floor_number and "retry at" or "warp to"
         local item = menu_item(verb_str.." "..checkpoint_floor_number.."f", function ()
           chosen_floor_number = checkpoint_floor_number
         end)
