@@ -209,6 +209,7 @@ function adventure_state:async_fight_aftermath()
 
   if self.forced_next_floor_number then
     -- assign forced floor and consume immediately
+    gs:unlock_floor(self.forced_next_floor_number)
     gs:go_to_floor(self.forced_next_floor_number)
     self.forced_next_floor_number = nil
     log("go to forced floor: "..gs.floor_number, 'adventure')
@@ -230,6 +231,13 @@ function adventure_state:async_fight_aftermath()
       pc_speaker:say_and_wait_for_input("fine, let's go to the next floor now.")
 
       local next_floor = min(floor_number + 1, #gameplay_data.floors)
+
+      -- whatever the player chooses, unlock the next floor now
+      -- otherwise, if the next floor is a checkpoint,
+      --   the player may decide to warp to a lower checkpoint,
+      --   and the checkpoint he/she was about to continue to
+      --   will not be recorded so he/she will have to win again to get there
+      gs:unlock_floor(next_floor)
       self:async_prompt_go_to_floor(next_floor)
       log("go to next floor: "..gs.floor_number, 'adventure')
     else
@@ -238,6 +246,7 @@ function adventure_state:async_fight_aftermath()
       pc_speaker:say_and_wait_for_input("guess after my loss, i should go down one floor now.")
 
       local next_floor = max(1, floor_number - 1)
+      gs:unlock_floor(next_floor)
       self:async_prompt_go_to_floor(next_floor)
       log("go to previous floor: "..gs.floor_number, 'adventure')
 
@@ -267,7 +276,7 @@ function adventure_state:async_prompt_go_to_floor(next_floor)
   -- start with highest levels first
   for i = #gameplay_data.checkpoint_floor_numbers, 1, -1 do
     local checkpoint_floor_number = gameplay_data.checkpoint_floor_numbers[i]
-    if checkpoint_floor_number <= gs.max_floor_reached and
+    if checkpoint_floor_number <= gs.max_unlocked_floor and
         not (next_floor >= checkpoint_floor_number and next_floor <= checkpoint_floor_number + 1) then
       local item = menu_item("warp to "..checkpoint_floor_number.."f", function ()
         chosen_floor_number = checkpoint_floor_number

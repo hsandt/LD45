@@ -108,7 +108,7 @@ itest_manager:register_itest('after winning fight on 2F for the second time, go 
     -- win at 2F to reach 3F
     gs.floor_number = 2
     -- we've already been at 3F, so the game offers us to restart at 1F or continue to 3F
-    gs.max_floor_reached = 3
+    gs.max_unlocked_floor = 3
     -- high count to avoid unwanted tutorials (although tuto 1 has a safety check not to decrease max hp)
     gs.fight_count = 10
 
@@ -164,7 +164,7 @@ itest_manager:register_itest('after winning fight on 2F for the second time, go 
     -- win at 2F to reach 3F
     gs.floor_number = 2
     -- we've already been at 3F, so the game offers us to restart at 1F or continue to 3F
-    gs.max_floor_reached = 3
+    gs.max_unlocked_floor = 3
     -- high count to avoid unwanted tutorials (although tuto 1 has a safety check not to decrease max hp)
     gs.fight_count = 10
 
@@ -203,7 +203,9 @@ itest_manager:register_itest('after winning fight on 2F for the second time, go 
   -- ideally we would have a detector that succeeds the test as soon as we enter the fight state,
   --   but we cannot check that right now
   final_assert(function (app)
-    return app.game_session.floor_number == 1, "Current floor is "..app.game_session.floor_number..", expected 1"
+    return app.game_session.floor_number == 1 and app.game_session.max_unlocked_floor == 3,
+      "Current floor is "..app.game_session.floor_number.." and max_unlocked_floor is "..app.game_session.max_unlocked_floor..
+      ", expected 1 and 3"
   end)
 
 end)

@@ -9,8 +9,10 @@ local game_session = new_class()
 function game_session:_init()
   -- current floor number the player character is located at
   self.floor_number = gameplay_data.initial_floor
-  -- highest floor reached by player (excludes the initial floor for the tutorial fight)
-  self.max_floor_reached = 0
+  -- highest floor unlocked by player (excludes the initial floor for the tutorial fight,
+  --   but includes the next floor unlocked by a victory, even if the player decides not to go there
+  --   for now)
+  self.max_unlocked_floor = 0
 
   -- track last opponent so you avoid fighting the same twice in a row
   -- we could use fight_manager.next_opponent but the semantics of "next" is not clear
@@ -29,8 +31,12 @@ function game_session:_init()
 end
 
 function game_session:go_to_floor(floor_number)
+  assert(floor_number <= self.max_unlocked_floor)
   self.floor_number = floor_number
-  self.max_floor_reached = max(self.max_floor_reached, floor_number)
+end
+
+function game_session:unlock_floor(floor_number)
+  self.max_unlocked_floor = max(self.max_unlocked_floor, floor_number)
 end
 
 function game_session:increment_fight_count()
