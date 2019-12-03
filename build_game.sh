@@ -13,7 +13,7 @@ build_output_path="$(dirname "$0")/build"
 author="hsandt"
 title="wit fighter"
 cartridge_stem="wit_fighter"
-version="0.1"
+version="1.0"
 
 help() {
   echo "Build a PICO-8 cartridge with the passed config."

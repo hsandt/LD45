@@ -5,7 +5,7 @@
 
 # Configuration: cartridge
 cartridge_stem="wit_fighter"
-version="0.1"
+version="1.0"
 
 run_cmd="pico8 -run build/${cartridge_stem}_v${version}_debug.p8 -screenshot_scale 4 -gif_scale 4 $@"
 

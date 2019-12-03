@@ -12,6 +12,8 @@ The link with the theme is that initially, the player character knows no insults
 
 v0.1: The current game has almost no interactions as you can only select an empty dialogue line. It consists mostly of a static screen, but was uploaded as such to have something to show for the Ludum Dare.
 
+v1.0: Complete fights with attack and reply matching, player quote selection menu, AI logic, hit animation and SFX. Progression over 6 floors and 6 enemies. Cutscenes and special NPC entrance/victory sequences. BGM for adventure, encounter and fight.
+
 ## Terminology
 
 Insults are named "attacks" and comebacks are named "replies". They are both referred to as "quotes" (despite not being actual movie quotes).
