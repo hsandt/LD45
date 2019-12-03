@@ -446,7 +446,8 @@ function fight_manager:hit_fighter(target_fighter, quote_type, damage)
 end
 
 function fight_manager:play_neutralize_feedback(target_fighter)
-  -- todo
+  -- feedback message
+  self.app:start_coroutine(self._async_show_hit_feedback_label, self, target_fighter, quote_types.reply, 0)
 end
 
 function fight_manager:_async_play_hurt_anim(fighter_character)
