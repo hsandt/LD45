@@ -34,7 +34,7 @@ local attacks = {
   quote_info(16, quote_types.attack, 3, to_big("People like you can also get here now? They really lowered the bar.")),
   quote_info(17, quote_types.attack, 3, to_big("For my website, I set up a much better security system than yours.")),
   quote_info(18, quote_types.attack, 3, to_big("You couldn't install an app if I gave you a setup.exe.")),
-  quote_info(19, quote_types.attack, 3, to_big("Rookies like you should leave hard tasks to pros with hands-on experience like me.")),
+  quote_info(19, quote_types.attack, 3, to_big("You should leave the hard stuff to pros with hands-on experience like me.")),
   quote_info(20, quote_types.attack, 3, "DEPRECATED"),
 }
 
