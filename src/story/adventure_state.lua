@@ -1,3 +1,4 @@
+require("engine/application/constants")
 local gamestate = require("engine/application/gamestate")
 
 local flow = require("engine/application/flow")
@@ -7,6 +8,7 @@ local game_session = require("progression/game_session")
 local painter = require("render/painter")
 local audio_data = require("resources/audio_data")
 local gameplay_data = require("resources/gameplay_data")
+local visual_data = require("resources/visual_data")
 
 local adventure_state = new_class(gamestate)
 
@@ -17,6 +19,13 @@ function adventure_state:_init()
 
   self.forced_next_floor_number = nil
   self.should_finish_game = false
+
+  -- render param (precomputed on game start)
+  self.max_nb_lines = screen_height + ceil(screen_width / visual_data.fade_line_step_width) - 1
+
+  -- render state
+  self.fade_out_nb_lines = 0
+  self.fade_in_nb_lines = 0
 end
 
 function adventure_state:on_enter()
@@ -58,6 +67,32 @@ end
 function adventure_state:render()
   painter.draw_background(self.app.game_session.floor_number)
   painter.draw_floor_number(self.app.game_session.floor_number)
+end
+
+function adventure_state:render_post()
+  self:render_fade()
+end
+
+function adventure_state:render_fade()
+  if self.fade_out_nb_lines > 0 then
+    -- draw all the fade lines from the top-left corner to the current frontier,
+    --   so we iterate again from 1
+    for i = 0, self.fade_out_nb_lines - 1 do
+      -- the most efficient is to only draw the part inside the screen
+      -- but then we need to distinguish 2 phases: drawing from the left side (i = 0..screen_height)
+      --   and drawing from the bottom side (i=screen_height..max_nb_lines)
+      -- for now we don't know if it's worth the optimization, so just draw a giant line covering the screen
+      --   from side to side
+      -- also, we go a bit too far over the right edge when fade_line_step_width >= 2,
+      --   just because it's safer to compute products than dividing when we want perfect pixel steps
+      -- (128 is divisible by 2 so for 2, we could have (0, i, screen_width, i - screen_width / 2)
+      line(0, i, visual_data.fade_line_step_width * screen_width, i - screen_width, colors.black)
+    end
+  elseif self.fade_in_nb_lines > 0 then
+    for i = self.max_nb_lines - self.fade_in_nb_lines, self.max_nb_lines - 1 do
+      line(0, i, visual_data.fade_line_step_width * screen_width, i - screen_width, colors.black)
+    end
+  end
 end
 
 function adventure_state:start_sequence()
@@ -209,7 +244,9 @@ function adventure_state:async_fight_aftermath()
   end
 
   if self.forced_next_floor_number then
-    -- assign forced floor and consume immediately
+    self:async_fade_out()
+
+    -- unlock and assign forced floor, then consume immediately
     gs:unlock_floor(self.forced_next_floor_number)
     gs:go_to_floor(self.forced_next_floor_number)
     self.forced_next_floor_number = nil
@@ -217,6 +254,8 @@ function adventure_state:async_fight_aftermath()
 
     -- remove existing npc last (after fade-out), as he was blocking you
     am:despawn_npc()
+
+    self:async_fade_in()
   else
     -- check if player lost or won previous fight
     local floor_number = gs.floor_number
@@ -228,8 +267,7 @@ function adventure_state:async_fight_aftermath()
       self:async_check_max_hp_increase(floor_number)
 
       -- player won, allow access to next floor
-      -- for now, auto go up 1 floor
-      pc_speaker:say_and_wait_for_input("fine, let's go to the next floor now.")
+      pc_speaker:say_and_wait_for_input("okay, should i continue?")
 
       local next_floor = min(floor_number + 1, #gameplay_data.floors)
 
@@ -243,8 +281,7 @@ function adventure_state:async_fight_aftermath()
       log("go to next floor: "..gs.floor_number, 'adventure')
     else
       -- player lost, prevent access to next floor
-      -- for now, auto go down 1 floor
-      pc_speaker:say_and_wait_for_input("guess after my loss, i should go down one floor now.")
+      pc_speaker:say_and_wait_for_input("i can't go up with my defeat... what do i do?")
 
       local next_floor
       if floor_number > 1 then
@@ -309,7 +346,47 @@ function adventure_state:async_prompt_go_to_floor(next_floor, default_verb)
     yield()
   end
 
+  self:async_fade_out()
+
   gs:go_to_floor(chosen_floor_number)
+
+  self:async_fade_in()
+end
+
+function adventure_state:async_fade_out()
+  -- draw diagonal black lines (slightly horizontal)
+  --   one by one from the top-left corner of the screen
+  -- remember that this coroutine is played every frame after the rest is rendered,
+  --   so you need to redraw all the lines so far each time
+
+  -- compute number of lines needed to cover the screen
+  -- basically, we need to spawn a line from each pixel on the left side, so over screen_height
+  -- then we need to spawn a line from the bottom line, but thanks to them being inclined
+  --   we can divide the number by the number of horizontal steps per vertical step
+  -- we ceil to be sure to cover completely the distance
+  -- finally, we remove 1 as the corner overlaps both the left and the bottom side
+  for nb_lines = 1, self.max_nb_lines, visual_data.fade_speed do
+    self.fade_out_nb_lines = nb_lines
+    yield()
+  end
+  -- in case the iteration does not fall exactly on the max value
+  -- we need to set it manually so the screen is fully covered
+  self.fade_out_nb_lines = self.max_nb_lines
+end
+
+function adventure_state:async_fade_in()
+  -- clean the previous fade-out to be sure the we don't reverse to black screen
+  -- after the fade-in
+  self.fade_out_nb_lines = 0
+
+  -- reverse operation, draw only the last lines (near bottom-right corner)
+  for nb_lines = self.max_nb_lines, 0, - visual_data.fade_speed do
+    self.fade_in_nb_lines = nb_lines
+    yield()
+  end
+  -- in case the iteration does not fall exactly on 0
+  -- we need to set it manually so the screen is fully covered
+  self.fade_in_nb_lines = 0
 end
 
 function adventure_state:async_check_max_hp_increase(floor_number)

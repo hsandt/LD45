@@ -140,6 +140,9 @@ itest_manager:register_itest('after winning fight on 2F for the second time, go 
   -- floor selection: confirm first choice, 3F
   short_press(button_ids.o)
 
+  -- wait for fade-out and actually changing floor (it takes 0.7s at fade speed = 10)
+  wait(1)
+
   -- unfortunately, some random fights have longer intros and battle duration than others,
   --   so don't check that we are exactly in the fight state as we may have already finished the fight
   -- ideally we would have a detector that succeeds the test as soon as we enter the fight state,
@@ -197,6 +200,9 @@ itest_manager:register_itest('after winning fight on 2F for the second time, go 
   -- floor selection: move down to select 1F, and confirm
   short_press(button_ids.down)
   short_press(button_ids.o)
+
+  -- wait for fade-out and actually changing floor (it takes 0.7s at fade speed = 10)
+  wait(1)
 
   -- unfortunately, some random fights have longer intros and battle duration than others,
   --   so don't check that we are exactly in the fight state as we may have already finished the fight

@@ -169,6 +169,16 @@ local visual_data = {
   request_active_fighter_action_delay = 1,
   victory_anim_duration = 2,
   defeat_anim_duration = 2,
+
+  -- fade-in/out
+  -- 1: 45 degree lines
+  -- 2: lines move 2 steps to the right, 1 step up
+  -- and they become more horizontal as the value increases
+  -- note that the number must be an integer >= 1 due to how the filling algorithm is done
+  -- (if you need lines more vertical, just make the algo symmetrical)
+  fade_line_step_width = 2,
+  -- how make new lines to add/remove per frame
+  fade_speed = 10,
 }
 
 return visual_data
