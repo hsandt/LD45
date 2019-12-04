@@ -76,13 +76,13 @@ if [[ $config == 'debug' ]]; then
 elif [[ $config == 'debug-ultrafast' ]]; then
   symbols='assert,log,cheat,sandbox,ultrafast'
 elif [[ $config == 'cheat' ]]; then
-  symbols='cheat'
+  symbols='assert,cheat'
 elif [[ $config == 'ultrafast' ]]; then
-  symbols='ultrafast'
+  symbols='assert,ultrafast'
 elif [[ $config == 'cheat-ultrafast' ]]; then
-  symbols='cheat,ultrafast'
+  symbols='assert,cheat,ultrafast'
 elif [[ $config == 'sandbox' ]]; then
-  symbols='sandbox'
+  symbols='assert,sandbox'
 fi
 
 # Build from main
