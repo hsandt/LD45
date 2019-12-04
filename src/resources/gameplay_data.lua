@@ -258,20 +258,25 @@ function gameplay_data:get_quote(quote_type, id)
   end
 end
 
--- Return the quote match for two quote info
+-- Return the quote match for two quotes, identified by info
+function gameplay_data:get_quote_match(attack_info, reply_info)
+  return self:get_quote_match_with_id(attack_info.id, reply_info.id)
+end
+
+-- Return the quote match for two quotes, identified by id
 --   - nil if quotes are not matching at all
 --   - cancel_quote_match if using the cancel reply
 --   - otherwise the existing quote_match_info
-function gameplay_data:get_quote_match(attack_info, reply_info)
-  assert(attack_info.id >= 0, "a losing attack should be resolved immediately with resolve_losing_attack")
+function gameplay_data:get_quote_match_with_id(attack_id, reply_id)
+  assert(attack_id >= 0, "a losing attack should be resolved immediately with resolve_losing_attack")
 
-  if reply_info.id == 0 then
+  if reply_id == 0 then
     -- cancel reply cancels any damage
     return gameplay_data.cancel_quote_match
   end
 
   for quote_match in all(quote_matches) do
-    if quote_match.attack_id == attack_info.id and quote_match.reply_id == reply_info.id then
+    if quote_match.attack_id == attack_id and quote_match.reply_id == reply_id then
       return quote_match
     end
   end

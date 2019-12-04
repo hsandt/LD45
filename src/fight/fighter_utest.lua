@@ -90,31 +90,61 @@ describe('fighter', function ()
         assert(#seq > 0)
         return seq[#seq]
       end)
+      stub(gameplay_data, "get_quote_match_with_id", function (self, attack_id, reply_id)
+        if attack_id == 1 and reply_id == 2 then
+          return quote_match_info(100, 1, 2, 99)
+        elseif attack_id == 3 and reply_id == 4 then
+          return quote_match_info(100, 3, 4, 99)
+        elseif attack_id == 5 and reply_id == 7 then
+          return quote_match_info(100, 5, 7, 99)
+        else
+          return nil
+        end
+      end)
     end)
 
     teardown(function ()
       pick_random:revert()
+      gameplay_data.get_quote_match_with_id:revert()
     end)
 
     after_each(function ()
       pick_random:clear()
+      gameplay_data.get_quote_match_with_id:clear()
     end)
 
-    it('should return a random available attack using pick_random', function ()
+    it('(npc) should return a random available attack using pick_random', function ()
       -- f.available_attack_ids is {1, 3, 5}
       assert.are_equal(gameplay_data.attacks[5], f:auto_pick_attack())
     end)
 
-    it('should return a losing attack when no attack is available', function ()
+    it('(npc) should assert when no attack is available', function ()
       f.available_attack_ids = {}
-      assert.are_equal(gameplay_data.attacks[-1], f:auto_pick_attack())
-    end)
-
-    it('should assert if no attack is available for human fighter', function ()
-      f.available_attack_ids = {}
-      f.fighter_progression.character_type = character_types.pc
       assert.has_error(function ()
         f:auto_pick_attack()
+      end)
+    end)
+
+    it('(pc, knows all replies) should return a random available attack using pick_random', function ()
+      -- pcf.available_attack_ids is {1, 3, 5}
+      -- pcf.fighter_progression.known_reply_ids is {2, 4, 7}
+      -- we stubbed get_quote_match_with_id so that A1 => R2, A3 => R4, A5 => R7
+      --   so in the current situation, pc knows all replies to his own attacks
+      --   therefore he just picks random (stubbed to last)
+      assert.are_equal(gameplay_data.attacks[5], pcf:auto_pick_attack())
+    end)
+
+    it('(pc, misses replies) should return a random attack among those with no known replies', function ()
+      -- pcf.available_attack_ids is {1, 3, 5}
+      pcf.fighter_progression.known_reply_ids = {7}
+      -- so A1 and A3 have no known replies, pick randomly one (stubbed to last)
+      assert.are_equal(gameplay_data.attacks[3], pcf:auto_pick_attack())
+    end)
+
+    it('(pc) should assert if no attack is available', function ()
+      pcf.available_attack_ids = {}
+      assert.has_error(function ()
+        pcf:auto_pick_attack()
       end)
     end)
 
@@ -149,9 +179,11 @@ describe('fighter', function ()
       assert.are_equal(gameplay_data.replies[6], f:auto_pick_reply(1))
     end)
 
-    it('should return a losing reply when no reply is available', function ()
+    it('should assert if no reply is available', function ()
       f.available_reply_ids = {}
-      assert.are_equal(gameplay_data.replies[-1], f:auto_pick_reply(1))
+      assert.has_error(function ()
+        f:auto_pick_reply(1)
+      end)
     end)
 
     describe('(npc_random_reply_fallback: true)', function ()

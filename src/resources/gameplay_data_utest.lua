@@ -5,6 +5,8 @@
 require("engine/test/bustedhelper")
 local gameplay_data = require("resources/gameplay_data")
 
+local quote_match_info = require("content/quote_match_info")
+
 describe('gameplay_data', function ()
 
   describe('get_quote', function ()
@@ -23,23 +25,39 @@ describe('gameplay_data', function ()
 
   describe('get_quote_match', function ()
 
-    it('should return cancel_quote_match (power 0) if using the cancel reply against anything', function ()
+    setup(function ()
+      stub(gameplay_data, "get_quote_match_with_id", function (self, attack_id, reply_id)
+        return quote_match_info(77, attack_id, reply_id, 99)
+      end)
+    end)
+
+    teardown(function ()
+      gameplay_data.get_quote_match_with_id:revert()
+    end)
+
+    it('should return get_quote_match_with_id applied to the attack and reply ids', function ()
       local attack = gameplay_data.attacks[8]
       local reply = gameplay_data.replies[0]
-      assert.are_equal(gameplay_data.cancel_quote_match, gameplay_data:get_quote_match(attack, reply))
+      assert.are_same(quote_match_info(77, 8, 0, 99), gameplay_data:get_quote_match(attack, reply))
+    end)
+
+  end)
+
+  describe('get_quote_match_with_id', function ()
+
+    it('should return cancel_quote_match (power 0) if using the cancel reply against anything', function ()
+      -- ! gameplay_data-dependent !
+      assert.are_equal(gameplay_data.cancel_quote_match, gameplay_data:get_quote_match_with_id(8, 0))
     end)
 
     it('should return nil if quotes are not matching', function ()
-      local attack = gameplay_data.attacks[8]
-      local reply = gameplay_data.replies[10]
-      assert.is_nil(gameplay_data:get_quote_match(attack, reply))
+      -- ! gameplay_data-dependent !
+      assert.is_nil(gameplay_data:get_quote_match_with_id(8, 10))
     end)
 
     it('should return match power if quotes are matching', function ()
-      local attack = gameplay_data.attacks[8]
-      local reply = gameplay_data.replies[11]
-      -- dependent on quote_matches content
-      assert.are_equal(gameplay_data.quote_matches[24], gameplay_data:get_quote_match(attack, reply))
+      -- ! gameplay_data-dependent !
+      assert.are_equal(gameplay_data.quote_matches[24], gameplay_data:get_quote_match_with_id(8, 11))
     end)
 
   end)

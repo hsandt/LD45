@@ -77,17 +77,46 @@ function fighter:auto_pick_attack()
   --   available attacks after usage, but cleaner
   local available_attack_ids = copy_seq(self:get_available_quote_ids(quote_types.attack))
 
-  if #available_attack_ids == 0 then
 --#if assert
-    assert(self.fighter_progression.character_type == character_types.npc, "only npc are forced to say losing attack when none is left. "..
-      "pc should skip their turn, so you should never call auto_pick_attack in that case, even in debug.")
+  assert(#available_attack_ids > 0, "auto_pick_attack should only be called when at least one attack is available."..
+      "if no attack is left, request_human/ai_fighter_action should add a dummy quote as fallback")
 --#endif
-    -- ai has nothing to say, whether attack or reply, add losing attack
-    add(available_attack_ids, -1)
+
+  -- note: if no attack was left, we've added losing attack (-1) in request_human/ai_fighter_action,
+  --   and we know that we will return the losing attack
+
+  local random_attack_id
+
+  if self.fighter_progression.character_type == character_types.pc then
+    -- DEBUG for itests: when human auto-picks an attack, try (available) attacks for which replies
+    --   are not known first, as a player would do to learn counters faster
+    local unmatched_attack_ids = filter(self.available_attack_ids, function (attack_id)
+      -- fighter is only interested in known replies in general, not just replies available right now
+      for reply_id in all(self.fighter_progression.known_reply_ids) do
+        if gameplay_data:get_quote_match_with_id(attack_id, reply_id) then
+          -- fighter already knows a reply for this attack, skip it
+          return false
+        end
+      end
+      -- no matching reply known, so this attack is unmatched
+      return true
+    end)
+
+    if #unmatched_attack_ids > 0 then
+      random_attack_id = pick_random(unmatched_attack_ids)
+      log("fighter \""..self:get_name().."\" picks unmatched attack ("..random_attack_id..")", 'fight')
+    else
+      -- all attacks have known replies and and we are not sure if there are *better* replies to learn
+      --   (more exactly the player is not supposed to know), so just use a random attack
+      random_attack_id = pick_random(available_attack_ids)
+      log("fighter \""..self:get_name().."\" picks random attack ("..random_attack_id..")", 'fight')
+    end
+  else
+    -- for attack, ai picks random one among available (sequence is never empty here)
+    random_attack_id = pick_random(available_attack_ids)
+      log("fighter \""..self:get_name().."\" picks random attack ("..random_attack_id..")", 'fight')
   end
 
-  -- for attack, ai picks random one among available (sequence is never empty here)
-  local random_attack_id = pick_random(available_attack_ids)
   return gameplay_data:get_quote(quote_types.attack, random_attack_id)
 end
 
@@ -100,38 +129,37 @@ function fighter:auto_pick_reply(attack_id)
   local picked_reply_id
 
   local available_reply_ids = copy_seq(self:get_available_quote_ids(quote_types.reply))
-  if #available_reply_ids > 0 then
-    -- at least one non-fallback reply
-    local attack_info = gameplay_data:get_quote(quote_types.attack, attack_id)
 
-    -- pick matching reply if possible
-    -- v2: pick random reply among matching replies (whatever their power is)
-    local candidate_replies = filter(available_reply_ids, function (reply_id)
-      local reply_info = gameplay_data:get_quote(quote_types.reply, reply_id)
-      local quote_match = gameplay_data:get_quote_match(attack_info, reply_info)
-      return quote_match ~= nil  -- power = 0 (cancel reply) is a valid candidate
-    end)
+  --#if assert
+  assert(#available_reply_ids > 0, "auto_pick_reply should only be called when at least one reply is available."..
+      "if no reply is left, request_human/ai_fighter_action should add a dummy quote as fallback")
+  --#endif
 
-    if #candidate_replies > 0 then
-      picked_reply_id = pick_random(candidate_replies)
-      log("fighter \""..self:get_name().."\" picks randomly matching reply ("..picked_reply_id..")", 'fight')
-    else
-      if gameplay_data.npc_random_reply_fallback then
-        -- no matching quote found; pick a random reply instead (it will lose, but may teach a new reply
-        --   to the player as an extra)
-        picked_reply_id = pick_random(available_reply_ids)
-        log("fighter \""..self:get_name().."\" picks cannot find match => picks randomly reply ("..picked_reply_id..")", 'fight')
-      else
-        -- no matching quote found; pick a losing reply instead
-        picked_reply_id = -1
-        log("fighter \""..self:get_name().."\" picks losing reply (-1) (none matching)", 'fight')
-      end
-    end
+  -- pick matching reply if possible
+  -- v2: pick random reply among matching replies (whatever their power is)
+  -- note: if no reply was left, we've added losing reply (-1) in request_human/ai_fighter_action,
+  --   and we know that we will return the losing reply
+  local candidate_replies = filter(available_reply_ids, function (reply_id)
+    local quote_match = gameplay_data:get_quote_match_with_id(attack_id, reply_id)
+    return quote_match ~= nil  -- power = 0 (cancel reply) is a valid candidate
+  end)
+
+  if #candidate_replies > 0 then
+    picked_reply_id = pick_random(candidate_replies)
+    log("fighter \""..self:get_name().."\" picks randomly matching reply ("..picked_reply_id..")", 'fight')
   else
-    -- no reply left at all (no reply known like pc on start or all replies consumed)
-    -- pick losing reply
-    picked_reply_id = -1
-    log("fighter \""..self:get_name().."\" picks losing reply (-1) (no replies left)", 'fight')
+    if gameplay_data.npc_random_reply_fallback then
+      -- no matching quote found; pick a random reply instead (it will lose, but may teach a new reply
+      --   to the player as an extra)
+      picked_reply_id = pick_random(available_reply_ids)
+      log("fighter \""..self:get_name().."\" picks cannot find match => picks randomly reply ("..picked_reply_id..")", 'fight')
+    else
+      -- no matching quote found; pick a losing reply instead
+      -- this includes the case where there is only the losing reply as fallback
+      --   (in which case available_reply_ids is {-1})
+      picked_reply_id = -1
+      log("fighter \""..self:get_name().."\" picks losing reply (-1) (none matching)", 'fight')
+    end
   end
 
   local picked_reply = gameplay_data:get_quote(quote_types.reply, picked_reply_id)
