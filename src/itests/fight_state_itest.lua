@@ -87,7 +87,7 @@ itest_manager:register_itest('insta-kill',
 end)
 --#endif
 
-itest_manager:register_itest('intermediate fight -> back to adv',
+itest_manager:register_itest('#solo intermediate fight -> back to adv',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
     -- but without gamestate_proxy, not used
     {':fight'}, function ()

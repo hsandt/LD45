@@ -67,7 +67,19 @@ function fighter:get_available_quote_ids(quote_type)
 end
 
 -- Return an attack quote following the policy:
---   pick a random one from the available ids
+-- NPC
+--   - pick a random attack from the available ids
+-- PC
+--   - try to pick a random attack for which no reply is known yet
+--   - if replies are known for all available attacks,
+--       pick a random attack from the available ids
+
+-- Note: because we don't track PC memory, we don't know if the PC
+--   is supposed to know if his opponent knows the reply to his attacks, and which ones, yet.
+-- Therefore, we cannot have the PC select attacks have not been counted by the
+--   opponent yet, not pick the skip attack when all the attacks are known to be counterable.
+-- This must be taken into account when running balance itests.
+
 -- Humans can call this method so we can itest easily with AI controlling PC.
 -- AI fallback to losing attack if no attack is available
 --   but human should have skipped his turn on caller side,
@@ -126,6 +138,8 @@ end
 -- Humans can call this method so we can itest easily with AI controlling PC.
 -- Both AI and human fallback to losing reply if no reply is available
 function fighter:auto_pick_reply(attack_id)
+  assert(attack_id >= 0, "skip attack should be resolved immediately, so auto_pick_reply should not be called")
+
   local picked_reply_id
 
   local available_reply_ids = copy_seq(self:get_available_quote_ids(quote_types.reply))

@@ -11,10 +11,10 @@ local quote_match_info = require("content/quote_match_info")
 
 -- see doc/quote_graph.dot A nodes
 local attacks = {
-  -- first is dummy attack, only used by ai when no quote left
-  -- human doesn't have it and prefer skipping one's turn, as it's too punishing to have to say
-  --   something dmmy and always lose
-  [-1] = quote_info(-1, quote_types.attack, 0, to_big("Uh... I don't know what to say now.")),
+  -- this is the "skip" attack, it automatically skips your turn
+  -- - the pc fighter can always choose it
+  -- - the npc fighters, and pc fighter as AI will only pick it if there is no attack is left
+  [-1] = quote_info(-1, quote_types.attack, 0, to_big("Uh... I'll skip this one.")),
   -- no [0] "cancel" entry for attacks
   quote_info( 1, quote_types.attack, 1, to_big("Already exhausted? You should really avoid staircases.")),
   quote_info( 2, quote_types.attack, 3, to_big("I hope your personality is not as flat as your fashion sense.")),
@@ -43,7 +43,7 @@ local replies = {
   -- first is dummy reply, to fill menu when there are no known replies
   --   or no replies left to say
   [-1] = quote_info(-1, quote_types.reply, 0, to_big("Er...")),
-  -- this is the cancel reply, that neutralizes any attack (should be available only once)
+  -- this is the cancel reply, that neutralizes any attack (only available once, even if consume_reply = false)
   [0] = quote_info(0, quote_types.reply, 0, to_big("Sorry, I didn't catch this one.")),
   quote_info( 1, quote_types.reply,  1, to_big("At least, mine is working.")),
   quote_info( 2, quote_types.reply,  1, "DEPRECATED"),
@@ -231,7 +231,6 @@ local gameplay_data = {
   rossmann_lv2_attack_ids = {--[[Lv2]] 8, 13, --[[Lv3]] 14, 16, 18, 19},
 
   -- fight
-  losing_attack_penalty = 1,
 
   -- How many times ai fighter of level L must receive quote of level L
   --   to learn it. Decrements with each fighter level above quote level,
@@ -268,7 +267,10 @@ end
 --   - cancel_quote_match if using the cancel reply
 --   - otherwise the existing quote_match_info
 function gameplay_data:get_quote_match_with_id(attack_id, reply_id)
-  assert(attack_id >= 0, "a losing attack should be resolved immediately with resolve_losing_attack")
+  printh("attack_id: "..dump(attack_id))
+  if attack_id <= 0 then
+    return nil
+  end
 
   if reply_id == 0 then
     -- cancel reply cancels any damage

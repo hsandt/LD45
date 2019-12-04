@@ -633,7 +633,7 @@ describe('fight_manager', function ()
       local mock_human_fighter
 
         -- set character_type just to pass the assertions
-      local fake_attack_items = {[-1] = "dummy attack", "attack1", "attack2", "attack3"}
+      local fake_attack_items = {[-1] = "skip", "attack1", "attack2", "attack3"}
       local fake_reply_items = {[-1] = "dummy reply", [0] = "cancel reply", "reply1"}
 
       setup(function ()
@@ -728,12 +728,12 @@ describe('fight_manager', function ()
             fighter.get_available_quote_ids:revert()
           end)
 
-          it('should still prompt with a dummy attack', function ()
+          it('should still prompt with skip attack', function ()
             fm:request_human_fighter_action(mock_human_fighter)
 
             local s = assert.spy(dialogue_manager.prompt_items)
             s.was_called(1)
-            s.was_called_with(match.ref(dm), {"dummy attack"})
+            s.was_called_with(match.ref(dm), {"skip"})
           end)
 
         end)
@@ -758,7 +758,7 @@ describe('fight_manager', function ()
 
             local s = assert.spy(dialogue_manager.prompt_items)
             s.was_called(1)
-            s.was_called_with(match.ref(dm), {"attack1", "attack2"})
+            s.was_called_with(match.ref(dm), {"attack1", "attack2", "skip"})
           end)
 
           describe('(when under ai control', function ()

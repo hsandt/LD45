@@ -223,20 +223,36 @@ function fight_manager:request_human_fighter_action(human_fighter)
   local quote_type = self:is_active_fighter_attacking() and quote_types.attack or quote_types.reply
   local available_quote_ids = human_fighter:get_available_quote_ids(quote_type)
 
-  if #available_quote_ids == 0 then
-    -- no quotes left
-    -- pc has nothing to say, whether attack or reply, add losing quote
-    add(available_quote_ids, -1)
-  end
 
   -- for debugging, allow ai control over pc
   if human_fighter.fighter_progression.control_type == control_types.human then
+    -- pc (with human control) can always skip turn when attacking
+    if quote_type == quote_types.attack then
+      add(available_quote_ids, -1)
+    elseif #available_quote_ids == 0 then
+      -- no replies left, add losing reply
+      -- (unlike attacks, only allow this when no replies are left, since it is never advantageous
+      --  not to try something to reply)
+      add(available_quote_ids, -1)
+    end
+
     local items = self:generate_quote_menu_items(human_fighter, quote_type, available_quote_ids)
     self.app.managers[':dialogue']:prompt_items(items)
   else  -- control_types.ai
     -- DEBUG for itests: human can be under AI control
-    -- pick quote and say it automatically like an ai
-    local next_quote = self:auto_pick_quote(human_fighter, quote_type)
+
+    local next_quote
+
+    if #available_quote_ids > 0 then
+      -- pick quote like an ai
+      next_quote = self:auto_pick_quote(human_fighter, quote_type)
+    else
+      -- no quotes left
+      -- pc has nothing to say, whether attack or reply, auto-select skip attack/losing reply
+      -- (pc as ai can only skip when no attacks are left)
+      next_quote = gameplay_data:get_quote(quote_type, -1)
+    end
+
     self.app:wait_and_do(visual_data.ai_say_quote_delay, self.say_quote, self, human_fighter, next_quote)
   end
 end
@@ -269,13 +285,17 @@ function fight_manager:request_ai_fighter_action(ai_fighter)
   local quote_type = self:is_active_fighter_attacking() and quote_types.attack or quote_types.reply
   local available_quote_ids = ai_fighter:get_available_quote_ids(quote_type)
 
-  if #available_quote_ids == 0 then
-    -- ai has nothing to say, whether attack or reply, add losing quote
-    add(available_quote_ids, -1)
-  end
+  local next_quote
 
-  -- npc always use ai control (we cannot plug human input into npc decisions currently)
-  local next_quote = self:auto_pick_quote(ai_fighter, quote_type)
+  if #available_quote_ids > 0 then
+    -- npc always use ai control (we cannot plug human input into npc decisions currently)
+    next_quote = self:auto_pick_quote(ai_fighter, quote_type)
+  else
+    -- no quotes left
+    -- npc has nothing to say, whether attack or reply, auto-select skip attack/losing reply
+    -- (pc as ai can only skip when no attacks are left)
+    next_quote = gameplay_data:get_quote(quote_type, -1)
+  end
 
   self.app:wait_and_do(visual_data.ai_say_quote_delay, self.say_quote, self, ai_fighter, next_quote)
 end
@@ -304,10 +324,10 @@ function fight_manager:say_quote(active_fighter, quote)
 
   if is_attacking then
     if quote.id == -1 then
-      -- active fighter said losing quote, no need to ask opponent for reply
-      -- immediately resolve with attacker's loss
-      self.app:wait_and_do(visual_data.resolve_losing_attack_delay,
-        self.resolve_losing_attack, self, active_fighter, self:get_active_fighter_opponent())
+      -- active fighter said "skip" attack, no need to ask opponent for reply
+      -- wait just enough to show the text bubble, and skip turn
+      self.app:wait_and_do(visual_data.resolve_skip_turn_delay,
+        self.resolve_skip_attack, self, active_fighter)
     else
       -- learning: replier receives quote and may remember it for later
       self:get_active_fighter_opponent():on_receive_quote(quote)
@@ -331,13 +351,15 @@ function fight_manager:request_next_fighter_action()
   self:request_active_fighter_action()
 end
 
--- todo: losing attack is not interesting, replace with "i give up" or allow fighter
---   to reuse attacks already used after some turns
-function fight_manager:resolve_losing_attack(losing_attacker, passive_replier)
-  -- damage is not really due to attack or reply, but self failure, so pass quote_type = nil
-  self:hit_fighter(losing_attacker, nil, gameplay_data.losing_attack_penalty)
-  self.app:wait_and_do(visual_data.check_exchange_result_delay,
-    self.check_exchange_result, self, losing_attacker, passive_replier)
+
+function fight_manager:resolve_skip_attack(active_fighter)
+  -- consume quote now to prevent opponent from trying to reply,
+  --   have fighter stop speaking and request next turn
+  active_fighter.last_quote = nil
+  active_fighter.character.speaker:stop()
+
+  self.app:wait_and_do(visual_data.skip_turn_delay,
+    self.request_next_fighter_action, self)
 end
 
 -- attacker: fighter
@@ -464,17 +486,14 @@ function fight_manager:_async_play_hurt_anim(fighter_character)
 end
 
 function fight_manager:_async_show_hit_feedback_label(target_fighter, quote_type, damage)
-  -- losing attack has no hit feedback label
   local repr_damage = min(damage, 3)
-  if quote_type then
-    self.hit_feedback_label = visual_data.hit_feedback_labels[target_fighter.fighter_progression.character_type][quote_type][repr_damage]
+  self.hit_feedback_label = visual_data.hit_feedback_labels[target_fighter.fighter_progression.character_type][quote_type][repr_damage]
 --#if assert
-    assert(self.hit_feedback_label, "no hit feedback label for (character type, quote type, representative damage): "..
-      joinstr(", ", target_fighter.fighter_progression.character_type, quote_type, repr_damage))
+  assert(self.hit_feedback_label, "no hit feedback label for (character type, quote type, representative damage): "..
+    joinstr(", ", target_fighter.fighter_progression.character_type, quote_type, repr_damage))
 --#endif
-    self.app:yield_delay_s(1.0)
-    self.hit_feedback_label = nil
-  end
+  self.app:yield_delay_s(1.0)
+  self.hit_feedback_label = nil
 end
 
 function fight_manager:start_victory(some_fighter)
