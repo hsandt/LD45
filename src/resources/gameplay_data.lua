@@ -267,7 +267,6 @@ end
 --   - cancel_quote_match if using the cancel reply
 --   - otherwise the existing quote_match_info
 function gameplay_data:get_quote_match_with_id(attack_id, reply_id)
-  printh("attack_id: "..dump(attack_id))
   if attack_id <= 0 then
     return nil
   end
