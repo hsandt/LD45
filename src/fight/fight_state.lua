@@ -31,12 +31,7 @@ end
 
 function fight_state:render()
   painter.draw_background(self.app.game_session.floor_number)
-  self:draw_floor_number()
-end
-
-function fight_state:draw_floor_number()
-  ui.draw_box(110, 65, 124, 73, colors.black, colors.orange)
-  ui.print_centered(self.app.game_session.floor_number.."f", 117, 69, colors.black)
+  painter.draw_floor_number(self.app.game_session.floor_number)
 end
 
 return fight_state

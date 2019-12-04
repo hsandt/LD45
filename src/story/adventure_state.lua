@@ -57,6 +57,7 @@ end
 
 function adventure_state:render()
   painter.draw_background(self.app.game_session.floor_number)
+  painter.draw_floor_number(self.app.game_session.floor_number)
 end
 
 function adventure_state:start_sequence()
@@ -82,7 +83,7 @@ function adventure_state:_async_step_intro()
   local pc_speaker = am.pc.speaker
 
   self.app:yield_delay_s(0.5)
-  dm.current_bottom_text = '= main building of it company\n* browsing solutions * ='
+  dm.current_bottom_text = '= main building of it company =\n= "browsing solutions" -  5f  ='
   self.app:yield_delay_s(2)
   dm.current_bottom_text = nil
   self.app:yield_delay_s(1)

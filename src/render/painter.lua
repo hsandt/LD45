@@ -1,4 +1,5 @@
 require("engine/core/math")
+local ui = require("engine/ui/ui")
 
 local gameplay_data = require("resources/gameplay_data")
 local visual_data = require("resources/visual_data")
@@ -52,6 +53,11 @@ function painter.draw_background_ceo_room()
   line(104, 85, 119, 85, colors.black)
   rectfill(104, 57, 119, 84, colors.orange)
   rectfill(104, 86, 119, 95, colors.brown)
+end
+
+function painter.draw_floor_number(floor_number)
+  ui.draw_box(110, 65, 124, 73, colors.black, colors.orange)
+  ui.print_centered(floor_number.."f", 117, 69, colors.black)
 end
 
 return painter
