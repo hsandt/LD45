@@ -426,12 +426,10 @@ local function async_tutorial_learn_attacks(self)
   self.app:yield_delay_s(0.5)
   pc_speaker:say_and_wait_for_input("i need to go back there, but first i should think about how to beat those guys.")
   pc_speaker:say_and_wait_for_input("i'll write down the attacks i've just received so i can reuse them.")
-  pc_speaker:say_and_wait_for_input("an attack may lose its effect once said, so i shouldn't reuse the same twice in the same fight.")
   self.app:yield_delay_s(1)
   pc_speaker:say_and_wait_for_input("ok, i'm done.")
+  pc_speaker:say_and_wait_for_input("i'll only be able to reuse my opponents' attacks and replies on the next fight, though.")
   self.app:yield_delay_s(1)
-  pc_speaker:say_and_wait_for_input("good, i feel a little more confident already.")
-  pc_speaker:say_and_wait_for_input("i should be more resilient to insults now.")
 
   -- increase player stamina to 3 after tutorial (with safety check to avoid decreasing max hp when
   --   debugging and teleporting the player to some floor from start)
@@ -458,24 +456,23 @@ local function async_tutorial_reply_power(self)
   self.app:yield_delay_s(1)
 end
 
-local function async_tutorial_npc_learning(self)
+local function async_tutorial_quote_consumption(self)
   local am = self.app.managers[':adventure']
   local pc_speaker = am.pc.speaker
 
   self.app:yield_delay_s(1)
-  pc_speaker:say_and_wait_for_input("i feel like my opponents are also learning my quotes.")
-  pc_speaker:say_and_wait_for_input("besides, if they randomly find a good reply they will probably reuse them later.")
-  pc_speaker:say_and_wait_for_input("i should be careful when exposing my opponents to new quotes.")
-  pc_speaker:say_and_wait_for_input("that said, newbies are probably not good enough to learn selfanced quotes.")
-  pc_speaker:say_and_wait_for_input("fine, let's go on.")
+  pc_speaker:say_and_wait_for_input("using the same attack twice in a fight is lame, so we don't do that.")
+  pc_speaker:say_and_wait_for_input("it seems i can't reuse the same reply twice either.")
+  pc_speaker:say_and_wait_for_input("i can reuse an attack used by an opponent, though")
+  pc_speaker:say_and_wait_for_input("so what's next?")
   self.app:yield_delay_s(1)
 end
 
 -- after [key] fights, we show tutorial with sequence method [value]
 adventure_state.async_tutorials = {
   [1] = async_tutorial_learn_attacks,
-  [2] = async_tutorial_reply_power,
-  [3] = async_tutorial_npc_learning,
+  [2] = async_tutorial_quote_consumption,
+  [4] = async_tutorial_reply_power,
 }
 
 -- before/after fight sequence methods
