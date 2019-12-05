@@ -226,9 +226,13 @@ function fight_manager:request_human_fighter_action(human_fighter)
 
   -- for debugging, allow ai control over pc
   if human_fighter.fighter_progression.control_type == control_types.human then
-    -- pc (with human control) can always skip turn when attacking
     if quote_type == quote_types.attack then
-      add(temp_available_quote_ids, -1)
+      -- PC (with human control) can voluntarily skip turn when attacking, unless the opponent
+      --   has just skipped (voluntarily or not) => voluntary stale prevention
+      -- if PC has no attacks left, he can only skip (as with replies)
+      if not self:get_active_fighter_opponent().has_just_skipped or #temp_available_quote_ids == 0 then
+        add(temp_available_quote_ids, -1)
+      end
     elseif #temp_available_quote_ids == 0 then
       -- no replies left, add losing reply
       -- (unlike attacks, only allow this when no replies are left, since it is never advantageous
