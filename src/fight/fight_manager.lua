@@ -222,29 +222,28 @@ function fight_manager:request_human_fighter_action(human_fighter)
   assert(human_fighter.fighter_progression.character_type == character_types.pc)
 
   local quote_type = self:is_active_fighter_attacking() and quote_types.attack or quote_types.reply
-  local available_quote_ids = human_fighter:get_available_quote_ids(quote_type)
-
+  local temp_available_quote_ids = copy_seq(human_fighter:get_available_quote_ids(quote_type))
 
   -- for debugging, allow ai control over pc
   if human_fighter.fighter_progression.control_type == control_types.human then
     -- pc (with human control) can always skip turn when attacking
     if quote_type == quote_types.attack then
-      add(available_quote_ids, -1)
-    elseif #available_quote_ids == 0 then
+      add(temp_available_quote_ids, -1)
+    elseif #temp_available_quote_ids == 0 then
       -- no replies left, add losing reply
       -- (unlike attacks, only allow this when no replies are left, since it is never advantageous
       --  not to try something to reply)
-      add(available_quote_ids, -1)
+      add(temp_available_quote_ids, -1)
     end
 
-    local items = self:generate_quote_menu_items(human_fighter, quote_type, available_quote_ids)
+    local items = self:generate_quote_menu_items(human_fighter, quote_type, temp_available_quote_ids)
     self.app.managers[':dialogue']:prompt_items(items)
   else  -- control_types.ai
     -- DEBUG for itests: human can be under AI control
 
     local next_quote
 
-    if #available_quote_ids > 0 then
+    if #temp_available_quote_ids > 0 then
       -- pick quote like an ai
       next_quote = self:auto_pick_quote(human_fighter, quote_type)
     else
@@ -368,7 +367,7 @@ function fight_manager:resolve_skip_attack(active_fighter)
   -- Note: voluntary skip does *not* end the game, so in theory, 2 human fighters could provoke
   --   a stale on purpose to avoid losing. This never happens because we play PvE only,
   --   but if we had to solve this, I would simply make voluntary skip an available attack
-  --   and consume it like the others (could also be done to avoid spamming skip anyway).  
+  --   and consume it like the others (could also be done to avoid spamming skip anyway).
   local opponent = self:get_active_fighter_opponent()
   if opponent.has_just_skipped then
     if #active_fighter.available_attack_ids == 0 and #opponent.available_attack_ids == 0 then
