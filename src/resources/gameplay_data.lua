@@ -161,10 +161,9 @@ local npc_info_s = {
 
 -- "start with nothing" -> no known quotes to start with
 -- pc has level 10 so he's able to learn any quote in one hearing
--- initial stamina is 3, just so pc gets defeated by rossmann in 2 hits including pc losing attack
---   but it may increase after 1st tutorial, depending on data (if max_hp_after_first_tutorial is also 3,
---   then we stay at 3)
-local pc_fighter_info = fighter_info(0, 0, 10, 3, {}, {}, {})
+-- initial stamina is 2, just so pc gets defeated by rossmann in 2 hits (considering pc skips once)
+--   but it may increase after 1st tutorial, depending on max_hp_after_first_tutorial
+local pc_fighter_info = fighter_info(0, 0, 10, 2, {}, {}, {})
 
 -- fighters are mostly mapped to characters 1:1, but storing characters separately is useful
 --   in case we have a non-fighting npc

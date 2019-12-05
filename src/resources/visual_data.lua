@@ -165,9 +165,10 @@ local visual_data = {
   request_reply_delay = 1,
   resolve_skip_turn_delay = 1,
   skip_turn_delay = 0,
+  start_victory_by_stale_delay = 1,
   resolve_exchange_delay = 1,
   check_exchange_result_delay = 1,
-  request_active_fighter_action_delay = 1,
+  request_action_after_exchange_delay = 1,
   victory_anim_duration = 2,
   defeat_anim_duration = 2,
 

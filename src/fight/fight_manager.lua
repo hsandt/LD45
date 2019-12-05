@@ -98,6 +98,7 @@ end
 
 function fight_manager:give_control_to_next_fighter()
   self.active_fighter_index = self:get_active_fighter_index_opponent()
+  self.fighters[self.active_fighter_index].has_just_skipped = false
 end
 
 function fight_manager:is_active_fighter_attacking()
@@ -355,8 +356,32 @@ end
 function fight_manager:resolve_skip_attack(active_fighter)
   -- consume quote now to prevent opponent from trying to reply,
   --   have fighter stop speaking and request next turn
+  active_fighter.has_just_skipped = true
   active_fighter.last_quote = nil
   active_fighter.character.speaker:stop()
+
+  -- to avoid loophole where both fighters have nothing to say and get stuck,
+  --   on the 2nd skip attack, and only if both fighters have no attacks left
+  --   (to avoid ending the fight if one of the skip was voluntary), end battle on stale
+  -- fighter with more hp is winner
+  -- in case of draw, the active fighter wins
+  -- Note: voluntary skip does *not* end the game, so in theory, 2 human fighters could provoke
+  --   a stale on purpose to avoid losing. This never happens because we play PvE only,
+  --   but if we had to solve this, I would simply make voluntary skip an available attack
+  --   and consume it like the others (could also be done to avoid spamming skip anyway).  
+  local opponent = self:get_active_fighter_opponent()
+  if opponent.has_just_skipped then
+    if #active_fighter.available_attack_ids == 0 and #opponent.available_attack_ids == 0 then
+      local winner
+      if active_fighter.hp >= opponent.hp then
+        winner = active_fighter
+      else
+        winner = opponent
+      end
+      self.app:start_coroutine(self.async_start_victory_by_stale, self, winner)
+      return
+    end
+  end
 
   self.app:wait_and_do(visual_data.skip_turn_delay,
     self.request_next_fighter_action, self)
@@ -427,7 +452,7 @@ function fight_manager:check_exchange_result(attacker, replier)
     end
 
     -- now wait to request action for appropriate fighter
-    self.app:wait_and_do(visual_data.request_active_fighter_action_delay,
+    self.app:wait_and_do(visual_data.request_action_after_exchange_delay,
       self.request_active_fighter_action, self)
   elseif is_attacker_alive then
     self:start_victory(attacker)
@@ -449,19 +474,19 @@ function fight_manager:hit_fighter(target_fighter, quote_type, damage)
   target_fighter:take_damage(damage)
 
   -- anim
-  self.app:start_coroutine(self._async_play_hurt_anim, self, target_fighter.character)
+  self.app:start_coroutine(self.async_play_hurt_anim, self, target_fighter.character)
 
   -- fx
   local hit_fx_offset = visual_data.hit_fx_offset_right:copy()
   if target_fighter.direction == horizontal_dirs.left then
     hit_fx_offset:mirror_x()
   end
-  -- use root_pos not sprite_pos, as the latter may change during _async_play_hurt_anim
+  -- use root_pos not sprite_pos, as the latter may change during async_play_hurt_anim
   self.hit_fx_pos = target_fighter.character.root_pos + hit_fx_offset
   self.hit_fx:play('once')
 
   -- feedback message
-  self.app:start_coroutine(self._async_show_hit_feedback_label, self, target_fighter, quote_type, damage)
+  self.app:start_coroutine(self.async_show_hit_feedback_label, self, target_fighter, quote_type, damage)
 
   -- audio
   sfx(audio_data.sfx.fight_direct_hit)
@@ -469,10 +494,10 @@ end
 
 function fight_manager:play_neutralize_feedback(target_fighter)
   -- feedback message
-  self.app:start_coroutine(self._async_show_hit_feedback_label, self, target_fighter, quote_types.reply, 0)
+  self.app:start_coroutine(self.async_show_hit_feedback_label, self, target_fighter, quote_types.reply, 0)
 end
 
-function fight_manager:_async_play_hurt_anim(fighter_character)
+function fight_manager:async_play_hurt_anim(fighter_character)
   local offset = visual_data.hurt_sprite_offset_right:copy()
   if fighter_character.direction == horizontal_dirs.left then
     offset:mirror_x()
@@ -485,7 +510,7 @@ function fight_manager:_async_play_hurt_anim(fighter_character)
   fighter_character.sprite:play('idle')
 end
 
-function fight_manager:_async_show_hit_feedback_label(target_fighter, quote_type, damage)
+function fight_manager:async_show_hit_feedback_label(target_fighter, quote_type, damage)
   local repr_damage = min(damage, 3)
   self.hit_feedback_label = visual_data.hit_feedback_labels[target_fighter.fighter_progression.character_type][quote_type][repr_damage]
 --#if assert
@@ -494,6 +519,12 @@ function fight_manager:_async_show_hit_feedback_label(target_fighter, quote_type
 --#endif
   self.app:yield_delay_s(1.0)
   self.hit_feedback_label = nil
+end
+
+function fight_manager:async_start_victory_by_stale(some_fighter)
+  self.app:yield_delay_s(visual_data.start_victory_by_stale_delay)
+  some_fighter.character.speaker:say_and_wait_for_input("stale, uh? i have more hp, so i win!", true)
+  self:start_victory(some_fighter)
 end
 
 function fight_manager:start_victory(some_fighter)

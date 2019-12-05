@@ -159,8 +159,18 @@ describe('fight_manager', function ()
 
     describe('give_control_to_next_fighter', function ()
 
+      local fake_fighter1
+      local fake_fighter2
+
+      before_each(function ()
+        fake_fighter1 = {has_just_skipped = false}
+        fake_fighter2 = {has_just_skipped = false}
+        fm.fighters = {fake_fighter1, fake_fighter2}
+      end)
+
       it('set active fighter index from 1 to 2', function ()
         fm.active_fighter_index = 1
+
         fm:give_control_to_next_fighter()
 
         assert.are_equal(2, fm.active_fighter_index)
@@ -168,9 +178,19 @@ describe('fight_manager', function ()
 
       it('set active fighter index from 2 to 1', function ()
         fm.active_fighter_index = 2
+
         fm:give_control_to_next_fighter()
 
         assert.are_equal(1, fm.active_fighter_index)
+      end)
+
+      it('clear has_just_skipped flag on the new active fighter', function ()
+        fm.active_fighter_index = 2
+        fake_fighter1.has_just_skipped = true
+
+        fm:give_control_to_next_fighter()
+
+        assert.is_false(fake_fighter1.has_just_skipped)
       end)
 
     end)

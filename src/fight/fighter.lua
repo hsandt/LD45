@@ -26,6 +26,8 @@ State
                                             the same as the fighter progression known_reply_ids,
                                             but not exactly (e.g. the cancel reply should be consumed,
                                             and we may add dummies)
+  has_just_skipped: bool                    true iff this fighter has said the "skip" attack last turn
+                                            cleared as soon as this fighter becomes active again
 --]]
 function fighter:_init(char, fighter_prog)
 --#if assert
@@ -44,6 +46,7 @@ function fighter:_init(char, fighter_prog)
   self.received_reply_id_count_map = {}
   self.available_attack_ids = copy_seq(fighter_prog.known_attack_ids)
   self.available_reply_ids = copy_seq(fighter_prog.known_reply_ids)
+  self.has_just_skipped = false
 end
 
 --#if log

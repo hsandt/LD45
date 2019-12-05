@@ -430,6 +430,7 @@ local function async_tutorial_learn_attacks(self)
   pc_speaker:say_and_wait_for_input("ok, i'm done.")
   pc_speaker:say_and_wait_for_input("i'll only be able to reuse my opponents' attacks and replies on the next fight, though.")
   self.app:yield_delay_s(1)
+  pc_speaker:say_and_wait_for_input("in any case, my first defeat made me stronger.")
 
   -- increase player stamina to 3 after tutorial (with safety check to avoid decreasing max hp when
   --   debugging and teleporting the player to some floor from start)
@@ -440,6 +441,8 @@ local function async_tutorial_learn_attacks(self)
   if gs.pc_fighter_progression.max_hp < new_max_hp then
     self:async_increase_pc_max_hp(gs.pc_fighter_progression, new_max_hp)
   end
+
+  pc_speaker:say_and_wait_for_input("okay, time to go!")
 end
 
 local function async_tutorial_reply_power(self)

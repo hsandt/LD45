@@ -49,9 +49,9 @@ describe('fighter', function ()
     end)
 
     it('should init a fighter', function ()
-      assert.are_same({5, nil, {}, {}, {1, 3, 5}, {2, 4, 7}},
+      assert.are_same({5, nil, {}, {}, {1, 3, 5}, {2, 4, 7}, false},
         {f.hp, f.last_quote, f.received_attack_id_count_map, f.received_reply_id_count_map,
-        f.available_attack_ids, f.available_reply_ids})
+        f.available_attack_ids, f.available_reply_ids, f.has_just_skipped})
     end)
 
   end)
