@@ -364,8 +364,7 @@ function fight_manager:resolve_skip_attack(active_fighter)
   active_fighter.character.speaker:stop()
 
   -- to avoid loophole where both fighters have nothing to say and get stuck,
-  --   on the 2nd skip attack, and only if both fighters have no attacks left
-  --   (to avoid ending the fight if one of the skip was voluntary), end battle on stale
+  --   on the 2nd skip attack, end battle on stale
   -- fighter with more hp is winner
   -- in case of draw, the active fighter wins
   -- Note: voluntary skip does *not* end the game, so in theory, 2 human fighters could provoke
@@ -374,6 +373,9 @@ function fight_manager:resolve_skip_attack(active_fighter)
   --   and consume it like the others (could also be done to avoid spamming skip anyway).
   local opponent = self:get_active_fighter_opponent()
   if opponent.has_just_skipped then
+    -- the test below is needed even though PC cannot skip voluntarily after the opponent has just skipped,
+    --   because the reverse may happen: PC skips voluntarily, then opponent *must* skip
+    -- in this case, PC cannot skip again next turn so there is no reason to declare stale
     if #active_fighter.available_attack_ids == 0 and #opponent.available_attack_ids == 0 then
       local winner
       if active_fighter.hp >= opponent.hp then
