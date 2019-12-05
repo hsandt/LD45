@@ -346,8 +346,9 @@ function adventure_state:async_prompt_go_to_floor(next_floor, default_verb)
 
   self:async_fade_out()
 
-  -- remove existing npc last (after fade-out), as he was blocking you
-  am:despawn_npc()
+  -- remove existing npc last (after fade-out) if still here, as he was blocking you
+  -- this only happens after losing
+  am:try_despawn_npc()
 
   gs:go_to_floor(chosen_floor_number)
 

@@ -67,8 +67,14 @@ function adventure_manager:despawn_pc()
   self.pc = nil
 end
 
+function adventure_manager:try_despawn_npc()
+  if self.npc then
+    self:despawn_npc()
+  end
+end
+
 function adventure_manager:despawn_npc()
-  assert(self.npc)
+  assert(self.npc, "cannot despawn_npc if no npc is present")
 
   local dm = self.app.managers[':dialogue']
 

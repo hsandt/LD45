@@ -87,6 +87,51 @@ itest_manager:register_itest('insta-kill',
 end)
 --#endif
 
+--#if cheat
+itest_manager:register_itest('#solo insta-kill then change floor',
+    -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
+    -- but without gamestate_proxy, not used
+    {':fight'}, function ()
+
+  -- enter fight state
+  setup_callback(function (app)
+    local am = app.managers[':adventure']
+    local fm = app.managers[':fight']
+
+    -- fight some junior fighter (not rossmann to avoid long dialogue after fight)
+    fm.next_opponent = app.game_session.npc_fighter_progressions[1]
+
+    flow:change_gamestate_by_type(':fight')
+  end)
+
+  -- fight start
+
+  wait(2.0)
+
+  -- opponent should auto-attack
+
+  -- use insta-kill
+  short_press(button_ids.x)
+
+  wait(2.0)
+
+  -- skip dialogue and confirm go to next floor
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+  short_press(button_ids.o)
+
+  -- wait for fade out and despawn npc to happen
+  wait(2.0)
+
+  final_assert(function (app)
+    -- we must have killed the opponent and be back to adventure, but this test is mostly just to test
+    -- we didn't assert on despawn npc
+    return flow.curr_state.type == ':adventure', "current game state is not ':adventure', has instead type: '"..flow.curr_state.type.."'"
+  end)
+
+end)
+--#endif
+
 itest_manager:register_itest('intermediate fight -> back to adv',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
     -- but without gamestate_proxy, not used
