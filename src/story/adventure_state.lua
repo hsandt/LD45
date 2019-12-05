@@ -294,15 +294,13 @@ function adventure_state:async_fight_aftermath()
       gs:unlock_floor(next_floor)
       self:async_prompt_go_to_floor(next_floor, default_verb)
       log("go to previous floor: "..gs.floor_number, 'adventure')
-
-    -- remove existing npc last (after fade-out), as he was blocking you
-      am:despawn_npc()
     end
   end
 end
 
 function adventure_state:async_prompt_go_to_floor(next_floor, default_verb)
   local gs = self.app.game_session
+  local am = self.app.managers[':adventure']
   local dm = self.app.managers[':dialogue']
 
   local chosen_floor_number = nil
@@ -347,6 +345,9 @@ function adventure_state:async_prompt_go_to_floor(next_floor, default_verb)
   end
 
   self:async_fade_out()
+
+  -- remove existing npc last (after fade-out), as he was blocking you
+  am:despawn_npc()
 
   gs:go_to_floor(chosen_floor_number)
 
