@@ -68,9 +68,6 @@ describe('adventure_manager', function ()
     describe('update', function ()
     end)
 
-    describe('render', function ()
-    end)
-
   end)
 
 end)

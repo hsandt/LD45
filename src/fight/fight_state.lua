@@ -30,8 +30,14 @@ function fight_state:update()
 end
 
 function fight_state:render()
+  local fm = self.app.managers[':fight']
+
   painter.draw_background(self.app.game_session.floor_number)
   painter.draw_floor_number(self.app.game_session.floor_number)
+
+  -- same as adventure_state:render, we prefer drawing characters here
+  --   than in fight_manager:render because of guaranteed layering
+  fm:draw_fighters()
 end
 
 return fight_state

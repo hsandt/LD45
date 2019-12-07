@@ -65,8 +65,16 @@ function adventure_state:update()
 end
 
 function adventure_state:render()
+  local am = self.app.managers[':adventure']
+
   painter.draw_background(self.app.game_session.floor_number)
   painter.draw_floor_number(self.app.game_session.floor_number)
+
+  -- prefer drawing characters from adventure_state:render than adventure_manager:render,
+  --   as flow/gamestate is rendered before managers, and dialogue manager should render bubbles
+  --   on top of characters (we could also register adventure manager before dialogue manager,
+  --   but we prefer avoiding relying on exact script execution order)
+  am:draw_characters()
 end
 
 function adventure_state:render_post()

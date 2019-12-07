@@ -35,7 +35,7 @@ end
 function adventure_manager:update()  -- override
 end
 
-function adventure_manager:render()  -- override
+function adventure_manager:draw_characters()
   self.pc:draw()
   if self.npc then
     self.npc:draw()

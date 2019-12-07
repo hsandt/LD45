@@ -77,8 +77,6 @@ function fight_manager:update()  -- override
 end
 
 function fight_manager:render()  -- override
-  self:draw_fighters()
-
   -- we should have some fx manager rendering all fx, but for now we do it ourselves
   self.hit_fx:render(self.hit_fx_pos)
 
