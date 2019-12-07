@@ -31,9 +31,8 @@ local sprites = {
     [3]  = sprite_data(sprite_id_location(6, 6),  tile_vector(2, 5), vector(5, 39), colors.pink),
     [4]  = sprite_data(sprite_id_location(8, 6),  tile_vector(2, 5), vector(5, 39), colors.pink),
     [5]  = sprite_data(sprite_id_location(10, 6), tile_vector(2, 5), vector(5, 39), colors.pink),
-    -- [6]  = sprite_data(sprite_id_location(12, 6), tile_vector(2, 5), vector(5, 39), colors.pink),
-    -- just to get old CEO sprites (12) until we swap them directly in the palette
-    [6]  = sprite_data(sprite_id_location(12, 0), tile_vector(2, 5), vector(5, 39), colors.pink),
+    [6]  = sprite_data(sprite_id_location(12, 6), tile_vector(2, 5), vector(5, 39), colors.pink),
+    -- old sprites
     -- [7]  = sprite_data(sprite_id_location(14, 6), tile_vector(2, 5), vector(5, 39), colors.pink),
     -- [8]  = sprite_data(sprite_id_location(4, 0),  tile_vector(2, 5), vector(5, 39), colors.pink),
     -- [9]  = sprite_data(sprite_id_location(6, 0),  tile_vector(2, 5), vector(5, 39), colors.pink),
@@ -145,8 +144,8 @@ local visual_data = {
     6   -- thought
   },
   bubble_tail_offset_right_by_bubble_type = {
-    vector( 2, -37),  -- speech
-    vector( 9, -35)   -- thought
+    vector( 4, -37),  -- speech
+    vector(11, -34)   -- thought
   },
   -- in fight, first speaker bubble is shown above second one to avoid overlapping
   first_speaker_tail_offset_y = -23,
