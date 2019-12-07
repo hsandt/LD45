@@ -26,6 +26,9 @@ function painter.draw_background_stairs(zone)
   line(0, 50, 104, 50, colors.black)
   line(104, 50, 104, 127, colors.black)
 
+  -- switch color palette for stairs so they match the floor color
+  pal(colors.light_gray, zone_paint_info.floor_color)
+
   -- upper stairs
   visual_data.sprites.upper_stairs_step1:render(vector(104, 45))
   local pos = vector(110, 40)
@@ -37,6 +40,9 @@ function painter.draw_background_stairs(zone)
   -- lower stairs
   visual_data.sprites.lower_stairs_step:render(vector(104, 80))
   visual_data.sprites.lower_stairs_step:render(vector(110, 84))
+
+  -- reset palette switch
+  pal()
 end
 
 function painter.draw_background_ceo_room()
