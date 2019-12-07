@@ -24,25 +24,25 @@ local sprites = {
   -- characters
   character = {
     -- pc
-    [0]  = sprite_data(sprite_id_location(0, 6),  tile_vector(2, 5), vector(6, 39), colors.pink),
+    [0]  = sprite_data(sprite_id_location(0, 6),  tile_vector(2, 5), vector(5, 39), colors.pink),
     -- npcs
-    [1]  = sprite_data(sprite_id_location(2, 6),  tile_vector(2, 5), vector(9, 39), colors.pink),
-    [2]  = sprite_data(sprite_id_location(4, 6),  tile_vector(2, 5), vector(9, 39), colors.pink),
-    [3]  = sprite_data(sprite_id_location(6, 6),  tile_vector(2, 5), vector(9, 39), colors.pink),
-    [4]  = sprite_data(sprite_id_location(8, 6),  tile_vector(2, 5), vector(9, 39), colors.pink),
-    [5]  = sprite_data(sprite_id_location(10, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
-    -- [6]  = sprite_data(sprite_id_location(12, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
+    [1]  = sprite_data(sprite_id_location(2, 6),  tile_vector(2, 5), vector(5, 39), colors.pink),
+    [2]  = sprite_data(sprite_id_location(4, 6),  tile_vector(2, 5), vector(5, 39), colors.pink),
+    [3]  = sprite_data(sprite_id_location(6, 6),  tile_vector(2, 5), vector(5, 39), colors.pink),
+    [4]  = sprite_data(sprite_id_location(8, 6),  tile_vector(2, 5), vector(5, 39), colors.pink),
+    [5]  = sprite_data(sprite_id_location(10, 6), tile_vector(2, 5), vector(5, 39), colors.pink),
+    -- [6]  = sprite_data(sprite_id_location(12, 6), tile_vector(2, 5), vector(5, 39), colors.pink),
     -- just to get old CEO sprites (12) until we swap them directly in the palette
-    [6]  = sprite_data(sprite_id_location(12, 0), tile_vector(2, 5), vector(9, 39), colors.pink),
-    -- [7]  = sprite_data(sprite_id_location(14, 6), tile_vector(2, 5), vector(9, 39), colors.pink),
-    -- [8]  = sprite_data(sprite_id_location(4, 0),  tile_vector(2, 5), vector(9, 39), colors.pink),
-    -- [9]  = sprite_data(sprite_id_location(6, 0),  tile_vector(2, 5), vector(9, 39), colors.pink),
-    -- [10] = sprite_data(sprite_id_location(8, 0),  tile_vector(2, 5), vector(9, 39), colors.pink),
-    -- [11] = sprite_data(sprite_id_location(10, 0), tile_vector(2, 5), vector(9, 39), colors.pink),
-    -- [12] = sprite_data(sprite_id_location(12, 0), tile_vector(2, 5), vector(9, 39), colors.pink),
-    -- [13] = sprite_data(sprite_id_location(14, 0), tile_vector(2, 5), vector(9, 39), colors.black),
+    [6]  = sprite_data(sprite_id_location(12, 0), tile_vector(2, 5), vector(5, 39), colors.pink),
+    -- [7]  = sprite_data(sprite_id_location(14, 6), tile_vector(2, 5), vector(5, 39), colors.pink),
+    -- [8]  = sprite_data(sprite_id_location(4, 0),  tile_vector(2, 5), vector(5, 39), colors.pink),
+    -- [9]  = sprite_data(sprite_id_location(6, 0),  tile_vector(2, 5), vector(5, 39), colors.pink),
+    -- [10] = sprite_data(sprite_id_location(8, 0),  tile_vector(2, 5), vector(5, 39), colors.pink),
+    -- [11] = sprite_data(sprite_id_location(10, 0), tile_vector(2, 5), vector(5, 39), colors.pink),
+    -- [12] = sprite_data(sprite_id_location(12, 0), tile_vector(2, 5), vector(5, 39), colors.pink),
+    -- [13] = sprite_data(sprite_id_location(14, 0), tile_vector(2, 5), vector(5, 39), colors.black),
   },
-  hurt_character = sprite_data(sprite_id_location(10, 11), tile_vector(3, 5), vector(5, 33), colors.pink),
+  hurt_character = sprite_data(sprite_id_location(10, 11), tile_vector(3, 5), vector(6, 34), colors.pink),
   -- fx
   hit_fx = {
     sprite_data(sprite_id_location(0, 12), tile_vector(2, 2), vector(6, 6), colors.pink),
