@@ -78,6 +78,13 @@ local visual_data = {
   sprites = sprites,
   anim_sprites = anim_sprites,
 
+  -- bg colors
+  zone_paint_info_t = {
+    [1] = {wall_color = colors.dark_gray, floor_color = colors.light_gray},
+    [2] = {wall_color = colors.brown, floor_color = colors.orange},
+    [3] = {wall_color = colors.dark_purple, floor_color = colors.pink},
+  },
+
   -- misc ui parameters
 
   -- characters

@@ -7,19 +7,22 @@ local visual_data = require("resources/visual_data")
 local painter = {}
 
 function painter.draw_background(floor_number)
-  if floor_number < #gameplay_data.floors then
-    painter.draw_background_stairs()
+  local zone = gameplay_data:get_zone(floor_number)
+  if zone < 4 then
+    painter.draw_background_stairs(zone)
   else
     painter.draw_background_ceo_room()
   end
 end
 
-function painter.draw_background_stairs()
+function painter.draw_background_stairs(zone)
+  local zone_paint_info = visual_data.zone_paint_info_t[zone]
+
   -- wall
-  rectfill(0, 0, 127, 127, colors.dark_gray)
+  rectfill(0, 0, 127, 127, zone_paint_info.wall_color)
 
   -- floor
-  rectfill(0, 51, 103, 127, colors.light_gray)
+  rectfill(0, 51, 103, 127, zone_paint_info.floor_color)
   line(0, 50, 104, 50, colors.black)
   line(104, 50, 104, 127, colors.black)
 
@@ -30,6 +33,7 @@ function painter.draw_background_stairs()
     visual_data.sprites.upper_stairs_step2:render(pos)
     pos = pos + vector(6, -6)
   end
+
   -- lower stairs
   visual_data.sprites.lower_stairs_step:render(vector(104, 80))
   visual_data.sprites.lower_stairs_step:render(vector(110, 84))

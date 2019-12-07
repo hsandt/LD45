@@ -132,8 +132,11 @@ local floors = {
   floor_info( 6,  4,  4),  -- ceo
 }
 
--- floors at which a "checkpoint" is created and the player can teleport to it
-local checkpoint_floor_numbers = {
+-- Floors at which a new zone starts, also where a "checkpoint" is created and the player can teleport to it
+-- The entry index is also the zone number.
+-- Deduce the floor range as [zone_start_floors[i], zone_start_floors[i + 1] - 1]
+-- So zone 1 is [1, 2], zone 2 is [3, 4], zone 3 is [5, 5], zone 4 is [6, 6]
+local zone_start_floors = {
   1, 3, 5, 6
 }
 
@@ -204,7 +207,7 @@ local gameplay_data = {
   quote_matches = quote_matches,
   cancel_quote_match = quote_match_info(0, '*', 0, 0),  -- reply 0 cancels anything
   floors = floors,
-  checkpoint_floor_numbers = checkpoint_floor_numbers,
+  zone_start_floors = zone_start_floors,
   pc_info = pc_info,
   npc_info_s = npc_info_s,
   pc_fighter_info = pc_fighter_info,
@@ -287,6 +290,17 @@ end
 function gameplay_data:get_floor_info(floor_number)
   assert(self.floors[floor_number], "no floor info found at number: "..floor_number)
   return self.floors[floor_number]
+end
+
+function gameplay_data:get_zone(floor_number)
+  -- find the lower bound for floor_number, inclusive
+  for i = #self.zone_start_floors, 1, -1 do
+    if self.zone_start_floors[i] <= floor_number then
+      return i
+    end
+  end
+  assert(false, "could not find zone for floor: "..floor_number..", is it positive? zone_start_floors: "..dump_sequence(zone_start_floors))
+  return 0
 end
 
 function gameplay_data:get_all_npc_fighter_info_with_initial_level(level)

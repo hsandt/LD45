@@ -69,6 +69,42 @@ describe('gameplay_data', function ()
     end)
   end)
 
+  describe('get_zone', function ()
+
+    -- ! data-dependent !
+
+    it('should assert', function ()
+      assert.has_error(function ()
+        gameplay_data:get_zone(0)
+      end)
+    end)
+
+    it('should return 1 for floor 1', function ()
+      assert.are_equal(1, gameplay_data:get_zone(1))
+    end)
+
+    it('should return 1 for floor 2', function ()
+      assert.are_equal(1, gameplay_data:get_zone(2))
+    end)
+
+    it('should return 2 for floor 3', function ()
+      assert.are_equal(2, gameplay_data:get_zone(3))
+    end)
+
+    it('should return 2 for floor 4', function ()
+      assert.are_equal(2, gameplay_data:get_zone(4))
+    end)
+
+    it('should return 3 for floor 5', function ()
+      assert.are_equal(3, gameplay_data:get_zone(5))
+    end)
+
+    it('should return 4 for floor 6', function ()
+      assert.are_equal(4, gameplay_data:get_zone(6))
+    end)
+
+  end)
+
   describe('get_all_npc_fighter_info_with_level', function ()
     it('should return info for all npcs of a given level', function ()
       local npc_info_s_level3 = gameplay_data:get_all_npc_fighter_info_with_initial_level(1)

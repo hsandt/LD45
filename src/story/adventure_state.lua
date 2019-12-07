@@ -272,7 +272,7 @@ function adventure_state:async_fight_aftermath()
       local next_floor = min(floor_number + 1, #gameplay_data.floors)
 
       -- whatever the player chooses, unlock the next floor now
-      -- otherwise, if the next floor is a checkpoint,
+      -- otherwise, if the next floor is a checkpoint (zone start),
       --   the player may decide to warp to a lower checkpoint,
       --   and the checkpoint he/she was about to continue to
       --   will not be recorded so he/she will have to win again to get there
@@ -312,22 +312,14 @@ function adventure_state:async_prompt_go_to_floor(next_floor, default_verb)
     end)
   }
 
-  -- then, if checkpoints have been reached and are in a different zone than
+  -- then, if zone starts aka checkpoints have been reached and are in a different zone than
   --   the next floor, add them as other choices
   -- start with highest levels first
-  for i = #gameplay_data.checkpoint_floor_numbers, 1, -1 do
-    local checkpoint_floor_number = gameplay_data.checkpoint_floor_numbers[i]
+  for zone = #gameplay_data.zone_start_floors, 1, -1 do
+    local checkpoint_floor_number = gameplay_data.zone_start_floors[zone]
     if checkpoint_floor_number <= gs.max_unlocked_floor then
-      local checkpoint_zone_min = checkpoint_floor_number
-      local checkpoint_zone_max
-      if checkpoint_zone_min < 5 then
-        -- 1F-2F and 3F-4F go together
-        checkpoint_zone_max = checkpoint_zone_min + 1
-      else
-        -- 5F and 6F are 1-floor zones themselves
-        checkpoint_zone_max = checkpoint_zone_min
-      end
-      if not (next_floor >= checkpoint_zone_min and next_floor <= checkpoint_zone_max) then
+      local next_zone = gameplay_data:get_zone(next_floor)
+      if next_zone ~= zone then
         local verb_str = checkpoint_floor_number == gs.floor_number and "retry at" or "warp to"
         local item = menu_item(verb_str.." "..checkpoint_floor_number.."f", function ()
           chosen_floor_number = checkpoint_floor_number
