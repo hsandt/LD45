@@ -86,7 +86,7 @@
 			"name": "Game: build and reload or run",
 			"working_dir": "${project_path}",
 			"shell": true,
-			"cmd": ["./build_game.sh debug && (./pico-boots/scripts/reload.sh || ./run_game_debug.sh)"],
+			"cmd": ["./build_game.sh debug && (./pico-boots/scripts/reload.sh || ./run_game.sh debug)"],
 			"file_regex": "(.*\\.sh)(?:\\: line )([\\d]+)(?:\\:)([\\d]+)? (.*)",
 			"syntax": "Packages/Python/Python.sublime-syntax",
 			"variants":
@@ -117,7 +117,7 @@
 				},
 				{
 					"name": "release",
-					"cmd": ["./build_game.sh release && (./pico-boots/scripts/reload.sh || ./run_game_release.sh)"]
+					"cmd": ["./build_game.sh release && (./pico-boots/scripts/reload.sh || ./run_game.sh release)"]
 				}
 			]
 		},
@@ -133,7 +133,7 @@
 			"name": "Game: start",
 			"working_dir": "${project_path}",
 			"shell": true,
-			"cmd": ["./run_game_debug.sh"],
+			"cmd": ["./run_game.sh debug"],
 			"syntax": "Packages/Python/Python.sublime-syntax",
 			"variants":
 			[
@@ -163,7 +163,7 @@
 				},
 				{
 					"name": "release",
-					"cmd": ["./run_game_release.sh"]
+					"cmd": ["./run_game.sh release"]
 				},
 				{
 					"name": "itests",
