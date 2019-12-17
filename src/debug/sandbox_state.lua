@@ -4,6 +4,7 @@ require("engine/core/class")
 local input = require("engine/input/input")
 local animated_sprite = require("engine/render/animated_sprite")
 
+local dialogue_manager = require("dialogue/dialogue_manager")
 local visual_data = require("resources/visual_data")
 
 -- sandbox: gamestate to test simple stuff actually running in PICO-8
@@ -42,6 +43,9 @@ end
 function sandbox_state:render()
   self.fighter_sprite:render(vector(10, 40))
   self.hit_fx:render(vector(10, 10))
+
+  -- test bubble with continue hint, esp. with short text
+  dialogue_manager.draw_bubble_with_text(bubble_types.speech, "...", vector(64, 64), true)
 end
 
 function sandbox_state:go_back()

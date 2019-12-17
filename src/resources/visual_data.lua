@@ -16,6 +16,10 @@ local sprites = {
     sprite_data(sprite_id_location(2, 0), tile_vector(1, 1), vector(3, 7), colors.pink),  -- speech
     sprite_data(sprite_id_location(2, 3), tile_vector(2, 1), vector(1, 6), colors.pink)   -- thought
   },
+  button_o = {
+    idle    = sprite_data(sprite_id_location(0, 14), tile_vector(2, 2), vector(6, 6), colors.pink),
+    pressed = sprite_data(sprite_id_location(0, 14), tile_vector(2, 2), vector(6, 6), colors.pink)
+  },
   -- background
   upper_stairs_step1 = sprite_data(sprite_id_location(0, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
   upper_stairs_step2 = sprite_data(sprite_id_location(1, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
@@ -66,6 +70,9 @@ local function generate_character_anim_sprite_data_table()
 end
 
 local anim_sprites = {
+  button_o = {
+    ["press_loop"] = animated_sprite_data({sprites.button_o.idle, sprites.button_o.pressed}, 60, anim_loop_modes.loop)
+  },
   character = generate_character_anim_sprite_data_table(),
   hit_fx = {
     ["once"] = animated_sprite_data.create(sprites.hit_fx,
@@ -149,6 +156,11 @@ local visual_data = {
   },
   -- in fight, first speaker bubble is shown above second one to avoid overlapping
   first_speaker_tail_offset_y = -23,
+
+  -- continue hint offset from bubble bottom-right
+  continue_hint_offset = vector(-7, 6),
+  -- for very short text, the hint may collide with the bubble tail, so clamp it to the right
+  continue_hint_min_offset_x_from_bubble_tail = 8,
 
   -- bottom box
   bottom_box_topleft = vector(0, 89),
