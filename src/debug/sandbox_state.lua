@@ -17,11 +17,13 @@ function sandbox_state:_init()
 
   self.hit_fx = animated_sprite(visual_data.anim_sprites.hit_fx)
   self.fighter_sprite = animated_sprite(visual_data.anim_sprites.character[0])
+  self.button_o = animated_sprite(visual_data.anim_sprites.button_o)
 end
 
 function sandbox_state:on_enter()
-  self.hit_fx:play('once')
-  self.fighter_sprite:play('idle')
+  self.hit_fx:play("once")
+  self.fighter_sprite:play("idle")
+  self.button_o:play("press_loop")
 end
 
 function sandbox_state:on_exit()
@@ -30,9 +32,10 @@ end
 function sandbox_state:update()
   self.hit_fx:update()
   self.fighter_sprite:update()
+  self.button_o:update()
 
   if input:is_just_pressed(button_ids.o) then
-    self.fighter_sprite:play('hurt')
+    self.fighter_sprite:play("hurt")
   end
 
   if input:is_just_pressed(button_ids.x) then
@@ -43,6 +46,7 @@ end
 function sandbox_state:render()
   self.fighter_sprite:render(vector(10, 40))
   self.hit_fx:render(vector(10, 10))
+  self.button_o:render(vector(10, 50))
 
   -- test bubble with continue hint, esp. with short text
   dialogue_manager.draw_bubble_with_text(bubble_types.speech, "...", vector(64, 64), true)

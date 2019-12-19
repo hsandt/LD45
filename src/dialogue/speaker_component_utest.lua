@@ -1,6 +1,8 @@
 require("engine/test/bustedhelper")
 local speaker_component = require("dialogue/speaker_component")
 
+local animated_sprite = require("engine/render/animated_sprite")
+
 local character_info = require("content/character_info")
 local visual_data = require("resources/visual_data")
 local character = require("story/character")
@@ -22,8 +24,8 @@ describe('speaker_component', function ()
   describe('_init', function ()
     it('should init a speaker_component', function ()
       assert.are_equal(c, s.entity)
-      assert.are_same({bubble_types.speech, nil, false, false},
-        {s.bubble_type, s.current_text, s.wait_for_input, s.higher_text})
+      assert.are_same({animated_sprite(visual_data.anim_sprites.button_o), bubble_types.speech, nil, false, false},
+        {s.continue_hint_sprite, s.bubble_type, s.current_text, s.wait_for_input, s.higher_text})
     end)
   end)
 
@@ -125,6 +127,18 @@ describe('speaker_component', function ()
 
   describe('show_bubble', function ()
 
+    setup(function ()
+      stub(animated_sprite, "play")
+    end)
+
+    teardown(function ()
+      animated_sprite.play:revert()
+    end)
+
+    after_each(function ()
+      animated_sprite.play:clear()
+    end)
+
     it('should set the bubble type and the current text with wait_for_input = false and higher_text = false by default', function ()
       s:show_bubble(bubble_types.thought, "hello")
 
@@ -143,9 +157,42 @@ describe('speaker_component', function ()
       assert.is_true(s.higher_text)
     end)
 
+    it('should play continue hint sprite press_loop anim if waiting for input', function ()
+      -- animated_sprite.play is called in character:_init (before_each), so clear call count now
+      animated_sprite.play:clear()
+
+      s:show_bubble(bubble_types.thought, "hello", true)
+
+      local spy = assert.spy(animated_sprite.play)
+      spy.was_called(1)
+      spy.was_called_with(match.ref(s.continue_hint_sprite), 'press_loop')
+    end)
+
+    it('should not play continue hint sprite press_loop anim if not waiting for input', function ()
+      -- animated_sprite.play is called in character:_init (before_each), so clear call count now
+      animated_sprite.play:clear()
+
+      s:show_bubble(bubble_types.thought, "hello", false)
+
+      local spy = assert.spy(animated_sprite.play)
+      spy.was_not_called()
+    end)
+
   end)
 
   describe('stop', function ()
+
+    setup(function ()
+      stub(animated_sprite, "stop")
+    end)
+
+    teardown(function ()
+      animated_sprite.stop:revert()
+    end)
+
+    after_each(function ()
+      animated_sprite.stop:clear()
+    end)
 
     it('should reset the current text and wait_for_input', function ()
       s.current_text = "hello"
@@ -154,6 +201,10 @@ describe('speaker_component', function ()
       s:stop()
 
       assert.are_same({nil, false}, {s.current_text, s.wait_for_input})
+
+      local spy = assert.spy(animated_sprite.stop)
+      spy.was_called(1)
+      spy.was_called_with(match.ref(s.continue_hint_sprite))
     end)
 
   end)

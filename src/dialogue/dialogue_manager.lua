@@ -84,8 +84,12 @@ end
 
 -- static
 function dialogue_manager.update_speaker(speaker)
-  if speaker.wait_for_input and input:is_just_pressed(button_ids.o) then
-    speaker:stop()
+  if speaker.wait_for_input then
+    if input:is_just_pressed(button_ids.o) then
+      speaker:stop()
+    else
+      speaker.continue_hint_sprite:update()
+    end
   end
 end
 
@@ -93,18 +97,18 @@ end
 -- static
 function dialogue_manager.render_speaker(speaker)
   if speaker.current_text then
-    dialogue_manager.draw_bubble_with_text(speaker.bubble_type, speaker.current_text, speaker:get_final_bubble_tail_pos(), speaker.wait_for_input)
+    dialogue_manager.draw_bubble_with_text(speaker.bubble_type, speaker.current_text, speaker:get_final_bubble_tail_pos(), speaker.wait_for_input, speaker.continue_hint_sprite)
   end
 end
 
 -- static
-function dialogue_manager.draw_bubble_with_text(bubble_type, text, bubble_tail_pos, wait_for_input)
+function dialogue_manager.draw_bubble_with_text(bubble_type, text, bubble_tail_pos, wait_for_input, continue_hint_sprite)
   local wrapped_text = wwrap(text, visual_data.bubble_line_max_chars)
   local bubble_left, bubble_top, bubble_right, bubble_bottom = dialogue_manager.compute_bubble_bounds(bubble_type, wrapped_text, bubble_tail_pos)
   dialogue_manager.draw_bubble(bubble_type, bubble_left, bubble_top, bubble_right, bubble_bottom, bubble_tail_pos)
   dialogue_manager.draw_text(wrapped_text, bubble_left, bubble_top)
   if wait_for_input then
-    dialogue_manager.draw_continue_hint(bubble_right, bubble_bottom, bubble_tail_pos)
+    dialogue_manager.draw_continue_hint(continue_hint_sprite, bubble_right, bubble_bottom, bubble_tail_pos)
   end
 end
 
@@ -167,11 +171,11 @@ function dialogue_manager.draw_text(wrapped_text, bubble_left, bubble_top)
 end
 
 -- static
-function dialogue_manager.draw_continue_hint(bubble_right, bubble_bottom, bubble_tail_pos)
+function dialogue_manager.draw_continue_hint(continue_hint_sprite, bubble_right, bubble_bottom, bubble_tail_pos)
   local pos = vector(bubble_right, bubble_bottom) + visual_data.continue_hint_offset
   local min_x = bubble_tail_pos.x + visual_data.continue_hint_min_offset_x_from_bubble_tail
   pos.x = max(min_x, pos.x)
-  visual_data.sprites.button_o.idle:render(pos)
+  continue_hint_sprite:render(pos)
 end
 
 -- static

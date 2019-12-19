@@ -1,4 +1,5 @@
 require("engine/core/class")
+local animated_sprite = require("engine/render/animated_sprite")
 
 local visual_data = require("resources/visual_data")
 
@@ -16,6 +17,11 @@ local speaker_component = new_class()
 Owner
   entity: character             character owning this component
 
+Components
+  continue_hint_sprite: animated_sprite
+                                sprite indicating player to press something
+                                to continue
+
 State
   bubble_type: bubble_types     type of current text, if any
   current_text: string|nil      current text said/thought
@@ -25,6 +31,8 @@ State
 --]]
 function speaker_component:_init(entity)
   self.entity = entity
+
+  self.continue_hint_sprite = animated_sprite(visual_data.anim_sprites.button_o)
 
   self.bubble_type = bubble_types.speech
   self.current_text = nil
@@ -79,6 +87,10 @@ function speaker_component:show_bubble(bubble_type, text, wait_for_input, higher
   self.current_text = text
   self.wait_for_input = wait_for_input
   self.higher_text = higher_text
+
+  if self.wait_for_input then
+    self.continue_hint_sprite:play('press_loop')
+  end
 end
 
 -- helper to combine say and wait_for_input flag checking loop
@@ -102,7 +114,10 @@ end
 
 function speaker_component:stop()
   self.current_text = nil
-  self.wait_for_input = false
+  if self.wait_for_input then
+    self.wait_for_input = false
+    self.continue_hint_sprite:stop()
+  end
   self.higher_text = false
 end
 

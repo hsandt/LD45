@@ -486,7 +486,7 @@ function fight_manager:hit_fighter(target_fighter, quote_type, damage)
   end
   -- use root_pos not sprite_pos, as the latter may change during async_play_hurt_anim
   self.hit_fx_pos = target_fighter.character.root_pos + hit_fx_offset
-  self.hit_fx:play('once')
+  self.hit_fx:play("once")
 
   -- feedback message
   self.app:start_coroutine(self.async_show_hit_feedback_label, self, target_fighter, quote_type, damage)
@@ -507,10 +507,10 @@ function fight_manager:async_play_hurt_anim(fighter_character)
   end
   -- original value was fighter_character.root_pos, so just add offset
   fighter_character.sprite_pos:add_inplace(offset)
-  fighter_character.sprite:play('hurt')
+  fighter_character.sprite:play("hurt")
   self.app:yield_delay_s(0.5)
   fighter_character.sprite_pos:copy_assign(fighter_character.root_pos)
-  fighter_character.sprite:play('idle')
+  fighter_character.sprite:play("idle")
 end
 
 function fight_manager:async_show_hit_feedback_label(target_fighter, quote_type, damage)

@@ -18,7 +18,7 @@ local sprites = {
   },
   button_o = {
     idle    = sprite_data(sprite_id_location(0, 14), tile_vector(2, 2), vector(6, 6), colors.pink),
-    pressed = sprite_data(sprite_id_location(0, 14), tile_vector(2, 2), vector(6, 6), colors.pink)
+    pressed = sprite_data(sprite_id_location(2, 14), tile_vector(2, 2), vector(6, 6), colors.pink)
   },
   -- background
   upper_stairs_step1 = sprite_data(sprite_id_location(0, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
@@ -71,7 +71,7 @@ end
 
 local anim_sprites = {
   button_o = {
-    ["press_loop"] = animated_sprite_data({sprites.button_o.idle, sprites.button_o.pressed}, 60, anim_loop_modes.loop)
+    ["press_loop"] = animated_sprite_data({sprites.button_o.idle, sprites.button_o.pressed}, 30, anim_loop_modes.loop)
   },
   character = generate_character_anim_sprite_data_table(),
   hit_fx = {

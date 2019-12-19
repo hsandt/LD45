@@ -4,6 +4,7 @@ local dialogue_manager = require("dialogue/dialogue_manager")
 require("engine/application/constants")
 local manager = require("engine/application/manager")
 local input = require("engine/input/input")
+local animated_sprite = require("engine/render/animated_sprite")
 
 local character_info = require("content/character_info")
 local speaker_component = require("dialogue/speaker_component")
@@ -282,25 +283,32 @@ describe('dialogue_manager', function ()
 
     setup(function ()
       stub(speaker_component, "stop")
+      stub(animated_sprite, "update")
     end)
 
     teardown(function ()
       speaker_component.stop:revert()
+      animated_sprite.update:revert()
     end)
 
     after_each(function ()
       input:init()
 
       speaker_component.stop:clear()
+      animated_sprite.update:clear()
     end)
 
-    it('(some speaker waiting for input, but no confirm) should not stop speaker', function ()
+    it('(some speaker waiting for input, but no confirm input) should not stop speaker and update continue hint sprite', function ()
       s1.wait_for_input = true
 
       dialogue_manager.update_speaker(s1)
 
       local s = assert.spy(speaker_component.stop)
       s.was_not_called()
+
+      s = assert.spy(animated_sprite.update)
+      s.was_called()
+      s.was_called_with(match.ref(s1.continue_hint_sprite))
     end)
 
     it('(some speaker waiting for input and confirm input) should stop speaker', function ()
@@ -313,6 +321,22 @@ describe('dialogue_manager', function ()
       local s = assert.spy(speaker_component.stop)
       s.was_called(1)
       s.was_called_with(match.ref(s1))
+
+      s = assert.spy(animated_sprite.update)
+      s.was_not_called()
+    end)
+
+    it('(some speaker not waiting for input) should not stop speaker nor update continue hint sprite', function ()
+      s1.wait_for_input = false
+
+      -- normally d.speakers = {speaker} but we can test by passing directly s1
+      dialogue_manager.update_speaker(s1)
+
+      local s = assert.spy(speaker_component.stop)
+      s.was_not_called()
+
+      s = assert.spy(animated_sprite.update)
+      s.was_not_called()
     end)
 
   end)
