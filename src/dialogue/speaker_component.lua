@@ -96,8 +96,10 @@ end
 -- helper to combine say and wait_for_input flag checking loop
 -- call inside coroutine only
 function speaker_component:say_and_wait_for_input(text)
+  -- this call with set wait_for_input to true
   self:say(text, true)
 
+  -- just wait for input and return (stop will take care of cleaning text)
   while self.wait_for_input do
     yield()
   end

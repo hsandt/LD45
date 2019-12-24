@@ -126,9 +126,7 @@ function adventure_state:_async_step_intro()
   local pc_speaker = am.pc.speaker
 
   self.app:yield_delay_s(0.5)
-  dm.current_bottom_text = '= main building of it company =\n= "browsing solutions" -  5f  ='
-  self.app:yield_delay_s(2)
-  dm.current_bottom_text = nil
+  dm:show_bottom_text_and_wait_for_input('10:04\n\nheadquarters of it company\n"virtual frameworks" - 5f')
   self.app:yield_delay_s(1)
   pc_speaker:think_and_wait_for_input("ok, let's sum up")
   pc_speaker:think_and_wait_for_input("1. i need funding to organize a hackathon")

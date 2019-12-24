@@ -17,7 +17,10 @@ itest_manager:register_itest('play intro -> 1st fight',
 
   -- play intro coroutine starts
 
-  wait(8.0)
+  wait(0.5)
+  -- continue bottom text
+  short_press(button_ids.o)
+  wait(1.0)
 
   -- pc monologue starts
 

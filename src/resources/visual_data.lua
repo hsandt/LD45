@@ -164,8 +164,9 @@ local visual_data = {
 
   -- bottom box
   bottom_box_topleft = vector(0, 89),
-  bottom_box_max_chars_per_line = 31,
+  bottom_box_max_chars_per_line = 29,  -- 31 - 2, to leave room for continue hint sprite
   bottom_box_max_lines_count = 6,
+  bottom_text_continue_hint_sprite_pos = vector(121, 122),
 
   -- health bar
   health_bar_center_x_dist_from_char = 12,

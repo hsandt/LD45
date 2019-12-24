@@ -194,13 +194,34 @@ describe('speaker_component', function ()
       animated_sprite.stop:clear()
     end)
 
-    it('should reset the current text and wait_for_input', function ()
+    it('should reset the current text', function ()
+      s.current_text = "hello"
+      s.wait_for_input = false
+
+      s:stop()
+
+      assert.is_nil(s.current_text)
+    end)
+
+    it('(not waiting for input) should keep wait_for_input false and not stop continue hint sprite', function ()
+      s.current_text = "hello"
+      s.wait_for_input = false
+
+      s:stop()
+
+      assert.is_false(false, s.wait_for_input)
+
+      local spy = assert.spy(animated_sprite.stop)
+      spy.was_not_called()
+    end)
+
+    it('should reset wait_for_input and stop continue hint sprite', function ()
       s.current_text = "hello"
       s.wait_for_input = true
 
       s:stop()
 
-      assert.are_same({nil, false}, {s.current_text, s.wait_for_input})
+      assert.is_false(false, s.wait_for_input)
 
       local spy = assert.spy(animated_sprite.stop)
       spy.was_called(1)

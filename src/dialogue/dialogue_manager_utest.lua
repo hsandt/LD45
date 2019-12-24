@@ -62,8 +62,8 @@ describe('dialogue_manager', function ()
     it('should init a dialogue_manager', function ()
       local d = dialogue_manager()
 
-      assert.are_same({nil, {}, false, nil},
-        {d.text_menu, d.speakers, d.should_show_bottom_box, d.current_bottom_text})
+      assert.are_same({nil, {}, false, nil, false},
+        {d.text_menu, d.speakers, d.should_show_bottom_box, d.current_bottom_text, d.bottom_text_wait_for_input})
     end)
 
   end)
@@ -98,16 +98,22 @@ describe('dialogue_manager', function ()
 
         setup(function ()
           stub(dialogue_manager, "update_speaker")
+          stub(dialogue_manager, "hide_bottom_text")
+          stub(animated_sprite, "update")
         end)
 
         teardown(function ()
           dialogue_manager.update_speaker:revert()
+          dialogue_manager.hide_bottom_text:revert()
+          animated_sprite.update:revert()
         end)
 
         after_each(function ()
           input:init()
 
           dialogue_manager.update_speaker:clear()
+          dialogue_manager.hide_bottom_text:clear()
+          animated_sprite.update:clear()
         end)
 
         it('(no speakers) should do nothing', function ()
@@ -126,6 +132,45 @@ describe('dialogue_manager', function ()
           s.was_called(2)
           s.was_called_with(match.ref(s1))
           s.was_called_with(match.ref(s2))
+        end)
+
+        it('(bottom text waiting for input and confirm input) should call hide_bottom_text', function ()
+          d.bottom_text_wait_for_input = true
+          input.players_btn_states[0][button_ids.o] = btn_states.just_pressed
+
+          d:update()
+
+          s = assert.spy(dialogue_manager.hide_bottom_text)
+          s.was_called()
+          s.was_called_with(match.ref(d))
+
+          s = assert.spy(animated_sprite.update)
+          s.was_not_called()
+        end)
+
+        it('(bottom text waiting input but no confirm input) should update continue hint sprite', function ()
+          d.bottom_text_wait_for_input = true
+
+          d:update()
+
+          local s = assert.spy(dialogue_manager.hide_bottom_text)
+          s.was_not_called()
+
+          s = assert.spy(animated_sprite.update)
+          s.was_called()
+          s.was_called_with(match.ref(d.bottom_text_continue_hint_sprite))
+        end)
+
+        it('(confirm input but no bottom text waiting for input) should not call hide_bottom_text nor update continue hint sprite', function ()
+          input.players_btn_states[0][button_ids.o] = btn_states.just_pressed
+
+          d:update()
+
+          local s = assert.spy(dialogue_manager.hide_bottom_text)
+          s.was_not_called()
+
+          s = assert.spy(animated_sprite.update)
+          s.was_not_called()
         end)
 
       end)
@@ -269,6 +314,56 @@ describe('dialogue_manager', function ()
           local s = assert.spy(text_menu.show_items)
           s.was_called(1)
           s.was_called_with(match.ref(d.text_menu), match.ref(fake_items))
+        end)
+
+      end)
+
+      -- show_bottom_text_and_wait_for_input:
+      -- hard to test because of async yield
+
+      describe('hide_bottom_text', function ()
+
+        setup(function ()
+          stub(animated_sprite, "stop")
+        end)
+
+        teardown(function ()
+          animated_sprite.stop:revert()
+        end)
+
+        after_each(function ()
+          animated_sprite.stop:clear()
+        end)
+
+        it('should clear bottom text', function ()
+          d.current_bottom_text = "should be cleared"
+
+          d:hide_bottom_text()
+
+          assert.is_nil(d.current_bottom_text)
+        end)
+
+        it('(not waiting for input) should keep bottom text wait flag false and stop continue hint sprite without update', function ()
+          d.bottom_text_wait_for_input = false
+
+          d:hide_bottom_text()
+
+          assert.is_false(d.bottom_text_wait_for_input)
+
+          local spy = assert.spy(animated_sprite.stop)
+          spy.was_not_called()
+        end)
+
+        it('(waiting for input) should clear bottom text wait flag and stop continue hint sprite', function ()
+          d.bottom_text_wait_for_input = true
+
+          d:hide_bottom_text()
+
+          assert.is_false(d.bottom_text_wait_for_input)
+
+          local spy = assert.spy(animated_sprite.stop)
+          spy.was_called(1)
+          spy.was_called_with(match.ref(d.bottom_text_continue_hint_sprite))
         end)
 
       end)

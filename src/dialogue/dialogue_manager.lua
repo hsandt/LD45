@@ -3,6 +3,7 @@ local manager = require("engine/application/manager")
 require("engine/core/class")
 require("engine/core/helper")
 local input = require("engine/input/input")
+local animated_sprite = require("engine/render/animated_sprite")
 local ui = require("engine/ui/ui")
 
 local text_menu = require("menu/text_menu_with_sfx")
@@ -29,6 +30,8 @@ function dialogue_manager:_init()
   -- bottom box state
   self.should_show_bottom_box = false
   self.current_bottom_text = nil
+  self.bottom_text_wait_for_input = false
+  self.bottom_text_continue_hint_sprite = animated_sprite(visual_data.anim_sprites.button_o)
 end
 
 function dialogue_manager:start()  -- override
@@ -41,6 +44,15 @@ function dialogue_manager:update()  -- override
 
   for speaker in all(self.speakers) do
     dialogue_manager.update_speaker(speaker)
+  end
+
+  -- continue bottom text on input
+  if self.bottom_text_wait_for_input then
+    if input:is_just_pressed(button_ids.o) then
+      self:hide_bottom_text()
+    else
+      self.bottom_text_continue_hint_sprite:update()
+    end
   end
 end
 
@@ -74,12 +86,39 @@ function dialogue_manager:prompt_items(items)
   self.text_menu:show_items(items)
 end
 
+function dialogue_manager:show_bottom_text_and_wait_for_input(text)
+  self.current_bottom_text = text
+  self.bottom_text_wait_for_input = true
+  self.bottom_text_continue_hint_sprite:play('press_loop')
+
+  -- just wait for input and return (hide_bottom_text will take care of cleaning text)
+  while self.bottom_text_wait_for_input do
+    yield()
+  end
+end
+
+function dialogue_manager:hide_bottom_text()
+  self.current_bottom_text = nil
+  if self.bottom_text_wait_for_input then
+    self.bottom_text_wait_for_input = false
+    self.bottom_text_continue_hint_sprite:stop()
+  end
+end
+
 -- render
 
 -- draw text in bottom box for narration/notification/instruction
 function dialogue_manager:draw_bottom_text()
   local top_left = visual_data.bottom_box_topleft + vector(2, 2)  -- padding 2px
   api.print(wwrap(self.current_bottom_text, visual_data.bottom_box_max_chars_per_line), top_left.x, top_left.y, colors.black)
+
+  if self.bottom_text_wait_for_input then
+    self:draw_bottom_text_continue_hint()
+  end
+end
+
+function dialogue_manager:draw_bottom_text_continue_hint()
+  self.bottom_text_continue_hint_sprite:render(visual_data.bottom_text_continue_hint_sprite_pos)
 end
 
 -- static
