@@ -264,6 +264,10 @@ itest_manager:register_itest('after first fight, pc max hp increase to 3', {':fi
   short_press(button_ids.o)
   wait(1.0)
   short_press(button_ids.o)
+  wait(1.0)
+  short_press(button_ids.o)
+  wait(1.0)
+  short_press(button_ids.o)
 
   final_assert(function (app)
     local gs = app.game_session
