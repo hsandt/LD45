@@ -405,9 +405,7 @@ function adventure_state:async_increase_pc_max_hp(pc_fighter_prog, new_max_hp)
   pc_fighter_prog.max_hp = new_max_hp
   log("pc max hp increase to "..new_max_hp, 'progression')
 
-  dm.current_bottom_text = 'player character stamina increases to '..new_max_hp..'!'
-  self.app:yield_delay_s(2)
-  dm.current_bottom_text = nil
+  dm:show_bottom_text_and_wait_for_input('player character stamina increases to '..new_max_hp..'!')
   self.app:yield_delay_s(1)
 end
 
@@ -531,9 +529,7 @@ local function async_after_fight_with_ceo(self, npc_fighter_id)
     pc_speaker:say_and_wait_for_input("what a day. i hope it was worth it.")
 
     self.app:yield_delay_s(0.5)
-    dm.current_bottom_text = 'game end'
-    self.app:yield_delay_s(2)
-    dm.current_bottom_text = nil
+    dm:show_bottom_text_and_wait_for_input('game end')
 
     -- GAME END
     self.should_finish_game = true
