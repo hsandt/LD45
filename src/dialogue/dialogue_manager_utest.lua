@@ -84,7 +84,10 @@ describe('dialogue_manager', function ()
         d:start()
 
         assert.are_equal(fake_app, d.text_menu.app)
-        assert.are_same({alignments.left, colors.dark_blue}, {d.text_menu.alignment, d.text_menu.text_color})
+        assert.are_same({visual_data.bottom_box_max_lines_count,
+            alignments.left, colors.dark_blue, visual_data.bottom_text_previous_page_arrow_sprite_offset},
+          {d.text_menu.items_count_per_page,
+            d.text_menu.alignment, d.text_menu.text_color, d.text_menu.prev_page_arrow_offset})
       end)
     end)
 
@@ -236,7 +239,7 @@ describe('dialogue_manager', function ()
 
           local s = assert.spy(text_menu.draw)
           s.was_called(1)
-          s.was_called_with(match.ref(d.text_menu), 2, 91)
+          s.was_called_with(match.ref(d.text_menu), visual_data.bottom_box_topleft.x + 2, visual_data.bottom_box_topleft.y + 2)
         end)
 
         it('(text menu active and current bottom text set) draw text menu in priority', function ()
@@ -247,7 +250,7 @@ describe('dialogue_manager', function ()
 
           local s = assert.spy(text_menu.draw)
           s.was_called(1)
-          s.was_called_with(match.ref(d.text_menu), 2, 91)
+          s.was_called_with(match.ref(d.text_menu), visual_data.bottom_box_topleft.x + 2, visual_data.bottom_box_topleft.y + 2)
         end)
 
         it('(current bottom text set) should not error', function ()

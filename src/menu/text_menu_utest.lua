@@ -4,9 +4,11 @@ local text_menu = require("menu/text_menu")
 local flow = require("engine/application/flow")
 local input = require("engine/input/input")
 require("engine/render/color")
+local sprite_data = require("engine/render/sprite_data")
 local ui = require("engine/ui/ui")
 
 local menu_item = require("menu/menu_item")
+local visual_data = require("resources/visual_data")
 
 describe('text_menu', function ()
 
@@ -15,11 +17,17 @@ describe('text_menu', function ()
   describe('init', function ()
 
     it('should set passed items, alignment and color, and set selection index to 0', function ()
-      local menu = text_menu(fake_app, 5, alignments.left, colors.red)
+      local menu = text_menu(fake_app, 5, alignments.left, colors.red, vector(12, 2))
 
       assert.are_equal(fake_app, menu.app)
-      assert.are_same({5, alignments.left, colors.red, {}, false, 0},
-        {menu.items_count_per_page, menu.alignment, menu.text_color, menu.items, menu.active, menu.selection_index})
+      assert.are_same({5, alignments.left, colors.red, vector(12, 2), {}, false, 0},
+        {menu.items_count_per_page, menu.alignment, menu.text_color, menu.prev_page_arrow_offset, menu.items, menu.active, menu.selection_index})
+    end)
+
+    it('should set default arrow offset to (0, 0)', function ()
+      local menu = text_menu(fake_app, 5, alignments.left, colors.red)
+
+      assert.are_equal(vector(0, 0), menu.prev_page_arrow_offset)
     end)
 
   end)
@@ -47,7 +55,7 @@ describe('text_menu', function ()
     local menu
 
     before_each(function ()
-      menu = text_menu(fake_app, 2, alignments.left, colors.red)
+      menu = text_menu(fake_app, 2, alignments.left, colors.red, vector(20, -4))
     end)
 
     describe('show_items', function ()
@@ -454,14 +462,17 @@ describe('text_menu', function ()
 
       setup(function ()
         stub(ui, "print_aligned")
+        stub(sprite_data, "render")
       end)
 
       teardown(function ()
         ui.print_aligned:revert()
+        sprite_data.render:revert()
       end)
 
       after_each(function ()
         ui.print_aligned:clear()
+        sprite_data.render:clear()
       end)
 
       describe('(inactive)', function ()
@@ -492,6 +503,18 @@ describe('text_menu', function ()
           s.was_called_with("> credits", 60, 54, alignments.left, colors.red)
         end)
 
+        it('should print the item labels from a given top, passed alignment, on lines of 6px height, with current selection surrounded by "> <" for horizontally centered alignment', function ()
+          menu.alignment = alignments.horizontal_center
+          menu.selection_index = 2  -- credits
+
+          menu:draw(60, 48)
+
+          local s = assert.spy(ui.print_aligned)
+          s.was_called(2)
+          s.was_called_with("in-game", 60, 48, alignments.horizontal_center, colors.red)
+          s.was_called_with("> credits <", 60, 54, alignments.horizontal_center, colors.red)
+        end)
+
         it('should print the item labels from a given top, passed alignment, on lines of 6px height, with current selection surrounded by "> <" for centered alignment', function ()
           menu.alignment = alignments.center
           menu.selection_index = 2  -- credits
@@ -502,6 +525,13 @@ describe('text_menu', function ()
           s.was_called(2)
           s.was_called_with("in-game", 60, 48, alignments.center, colors.red)
           s.was_called_with("> credits <", 60, 54, alignments.center, colors.red)
+        end)
+
+        it('should not print any previous/next page arrow', function ()
+          menu:draw(60, 48)
+
+          local s = assert.spy(sprite_data.render)
+          s.was_not_called()
         end)
 
       end)  -- (showing 2 items, below max items per page)
@@ -544,6 +574,45 @@ describe('text_menu', function ()
           local s = assert.spy(ui.print_aligned)
           s.was_called(1)
           s.was_called_with("> extra3", 60, 48, alignments.left, colors.red)
+        end)
+
+        it('(selection falls on page 1/3) should draw next page arrow (previous arrow y-flipped)', function ()
+          menu.selection_index = 1
+
+          menu:draw(60, 48)
+
+          local s = assert.spy(sprite_data.render)
+          s.was_called(1)
+          -- 60 + offset 20 = 80
+          -- 48 + 2 lines * char height 6 - offset -4 = 64
+          s.was_called_with(match.ref(visual_data.sprites.previous_arrow),
+            vector(80, 65), false, true)
+        end)
+
+        it('(selection falls on page 2/3) should draw previous and next page arrow', function ()
+          menu.selection_index = 4
+
+          menu:draw(60, 48)
+
+          local s = assert.spy(sprite_data.render)
+          s.was_called(2)
+          -- 60 + offset 20 = 80
+          -- 48 - margin 2 - offset 4 = 42
+          s.was_called_with(match.ref(visual_data.sprites.previous_arrow),
+            vector(80, 42))
+          s.was_called_with(match.ref(visual_data.sprites.previous_arrow),
+            vector(80, 65), false, true)
+        end)
+
+        it('(selection falls on page 3/3) should draw previous page arrow', function ()
+          menu.selection_index = 5  -- extra3
+
+          menu:draw(60, 48)
+
+          local s = assert.spy(sprite_data.render)
+          s.was_called(1)
+          s.was_called_with(match.ref(visual_data.sprites.previous_arrow),
+            vector(80, 42))
         end)
 
       end)  -- (showing 5 items, so 2 pages + 1 item)

@@ -5,6 +5,8 @@ require("engine/render/color")
 local input = require("engine/input/input")
 local ui = require("engine/ui/ui")
 
+local visual_data = require("resources/visual_data")
+
 --[[
 Class representing a menu with labels and arrow-based scrolling navigation
 
@@ -15,6 +17,10 @@ Instance parameters
   items_count_per_page  int         number of items displayed per page
   alignment             alignments  text alignment to use for item display
   text_color            colors      item text color
+  prev_page_arrow_offset      vector      where to draw previous/next page arrow
+                                      from top-left (in left alignment) or
+                                      top-center (in center alignment)
+                                    next page arrow is drawn symmetrically
 
 Instance dynamic parameters
   items             {menu_item}   sequence of items to display
@@ -25,7 +31,7 @@ Instance state
 --]]
 
 local text_menu = new_class()
-function text_menu:_init(app, items_count_per_page, alignment, text_color)
+function text_menu:_init(app, items_count_per_page, alignment, text_color, prev_page_arrow_offset)
   -- external references
   self.app = app
 
@@ -33,6 +39,7 @@ function text_menu:_init(app, items_count_per_page, alignment, text_color)
   self.items_count_per_page = items_count_per_page
   self.alignment = alignment
   self.text_color = text_color
+  self.prev_page_arrow_offset = prev_page_arrow_offset or vector.zero()
 
   -- dynamic parameters (mostly set once, but may change in some usage cases)
   self.items = {}
@@ -126,7 +133,7 @@ end
 function text_menu:confirm_selection()
   -- just deactivate menu, so we can reuse the items later if menu is static
   -- (by setting self.active = true), else next time show_items to refill the items
-  
+
   -- todo: not all menus should close after confirm! (think a sound test)
   --   so this should be true for prompt menus only, and we should have a generic
   --   confirm_selection method that only calls the callbacks
@@ -150,11 +157,13 @@ function text_menu:draw(x, top)
   end
 
   assert(self.selection_index > 0, "self.selection_index is "..self.selection_index..", should be > 0")
+  assert(self.selection_index <= #self.items, "self.selection_index is "..self.selection_index..", should be <= item count: "..#self.items)
 
   local y = top
 
   -- identify which page is currently shown from the current selection
   -- unlike other indices in Lua, page starts at 0
+  local page_count = ceil(#self.items / self.items_count_per_page)
   local page_index0 = flr((self.selection_index - 1) / self.items_count_per_page)
   local first_index0 = page_index0 * self.items_count_per_page
   local last_index0 = min(first_index0 + self.items_count_per_page - 1, #self.items - 1)
@@ -166,6 +175,8 @@ function text_menu:draw(x, top)
     if i == self.selection_index then
       if self.alignment == alignments.left then
         label = "> "..label
+      elseif self.alignment == alignments.horizontal_center then
+        label = "> "..label.." <"
       elseif self.alignment == alignments.center then
         label = "> "..label.." <"
       end
@@ -178,6 +189,29 @@ function text_menu:draw(x, top)
 
     ui.print_aligned(label, item_x, y, self.alignment, self.text_color)
     y = y + character_height
+  end
+
+  -- only used if enter one of the blocks below,
+  -- but precomputed as useful for both blocks
+  local previous_arrow_x = x + self.prev_page_arrow_offset.x
+
+  -- if previous/next page exists, show arrow hint
+  if page_index0 > 0 then
+    -- show previous page arrow hint
+    -- y offset of -2 to have 1px of space between text top and arrow
+    local previous_arrow_y = top - 2 + self.prev_page_arrow_offset.y
+    visual_data.sprites.previous_arrow:render(vector(previous_arrow_x, previous_arrow_y))
+  end
+  if page_index0 < page_count - 1 then
+    -- show next page arrow hint
+    -- character_height * self.items_count_per_page already contains the extra 1px spacing from text bottom
+    -- however, because partial sprites are not supported,
+    --   flipping always occur relative to the central tile axis,
+    --   and for a sprites with an odd height we need to add 1px offset y again
+    -- unfortunately this means we are dependent on exact visual data here,
+    --   but it wouldn't be needed if custom sprite size was supported
+    local previous_arrow_y = top + character_height * self.items_count_per_page - self.prev_page_arrow_offset.y + 1
+    visual_data.sprites.previous_arrow:render(vector(previous_arrow_x, previous_arrow_y), false, --[[flip_y:]] true)
   end
 end
 

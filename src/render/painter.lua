@@ -59,10 +59,10 @@ function painter.draw_background_ceo_room()
   rectfill(0, 51, 127, 127, colors.indigo)
 
   -- desk
-  rect(103, 56, 120, 96, colors.black)
-  line(104, 85, 119, 85, colors.black)
-  rectfill(104, 57, 119, 84, colors.orange)
-  rectfill(104, 86, 119, 95, colors.brown)
+  rect(103, 54, 120, 94, colors.black)
+  line(104, 83, 119, 83, colors.black)
+  rectfill(104, 55, 119, 82, colors.orange)
+  rectfill(104, 84, 119, 93, colors.brown)
 end
 
 function painter.draw_floor_number(floor_number)

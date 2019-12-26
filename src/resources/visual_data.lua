@@ -20,6 +20,7 @@ local sprites = {
     idle    = sprite_data(sprite_id_location(0, 14), tile_vector(2, 2), vector(6, 6), colors.pink),
     pressed = sprite_data(sprite_id_location(2, 14), tile_vector(2, 2), vector(6, 6), colors.pink)
   },
+  previous_arrow = sprite_data(sprite_id_location(4, 14), nil, vector(3, 5), colors.pink),
   -- background
   upper_stairs_step1 = sprite_data(sprite_id_location(0, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
   upper_stairs_step2 = sprite_data(sprite_id_location(1, 1), tile_vector(1, 5), vector(0, 0), colors.pink),
@@ -163,20 +164,22 @@ local visual_data = {
   continue_hint_min_offset_x_from_bubble_tail = 8,
 
   -- bottom box
-  bottom_box_topleft = vector(0, 89),
+  bottom_box_topleft = vector(0, 86),
+  bottom_box_bottomright = vector(127, 124),
   bottom_box_max_chars_per_line = 29,  -- 31 - 2, to leave room for continue hint sprite
   bottom_box_max_lines_count = 6,
   bottom_text_continue_hint_sprite_pos = vector(121, 122),
+  bottom_text_previous_page_arrow_sprite_offset = vector(62, 0),
 
   -- health bar
   health_bar_center_x_dist_from_char = 12,
   health_bar_half_width = 2,
-  health_bar_top_from_char = -36,
-  health_bar_bottom_from_char = -9,
+  health_bar_top_from_char = -38,
+  health_bar_bottom_from_char = -11,
 
   -- fighter name label
   fighter_name_label_center_offset_x = 2,  -- x offset from character pos
-  fighter_name_label_center_offset_y = -2, -- y offset from character pos
+  fighter_name_label_center_offset_y = -5, -- y offset from character pos
   fighter_name_label_half_width = 35,      -- box width
 
   -- timing (s)

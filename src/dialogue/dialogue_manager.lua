@@ -36,7 +36,8 @@ end
 
 function dialogue_manager:start()  -- override
   self.text_menu = text_menu(self.app,
-    visual_data.bottom_box_max_lines_count, alignments.left, colors.dark_blue)
+    visual_data.bottom_box_max_lines_count, alignments.left, colors.dark_blue,
+    visual_data.bottom_text_previous_page_arrow_sprite_offset)
 end
 
 function dialogue_manager:update()  -- override
@@ -219,7 +220,8 @@ end
 
 -- static
 function dialogue_manager.draw_bottom_box()
-  ui.draw_rounded_box(visual_data.bottom_box_topleft.x, visual_data.bottom_box_topleft.y, 127, 127, colors.dark_blue, colors.indigo)
+  ui.draw_rounded_box(visual_data.bottom_box_topleft.x, visual_data.bottom_box_topleft.y,
+    visual_data.bottom_box_bottomright.x, visual_data.bottom_box_bottomright.y, colors.dark_blue, colors.indigo)
 end
 
 return dialogue_manager

@@ -71,7 +71,7 @@ describe('main_menu', function ()
         menu:on_enter()
 
         assert.are_equal(fake_app, menu.text_menu.app)
-        assert.are_same({alignments.center, colors.white}, {menu.text_menu.alignment, menu.text_menu.text_color})
+        assert.are_same({alignments.horizontal_center, colors.white}, {menu.text_menu.alignment, menu.text_menu.text_color})
       end)
 
       it('should show text menu', function ()
