@@ -103,10 +103,6 @@ describe('fight_manager', function ()
 
         fm:render()
 
-        local s = assert.spy(fight_manager.draw_fighters)
-        s.was_called(1)
-        s.was_called_with(match.ref(fm))
-
         s = assert.spy(animated_sprite.render)
         s.was_called(1)
         s.was_called_with(match.ref(fm.hit_fx), vector(10, 10))
