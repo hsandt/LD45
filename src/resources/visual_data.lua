@@ -92,7 +92,7 @@ local visual_data = {
     [3] = {wall_color = colors.dark_purple, floor_color = colors.pink},
   },
 
-  -- misc ui parameters
+  -- misc sprite parameters
 
   -- characters
   pc_sprite_pos = vector(19, 85),
@@ -136,6 +136,11 @@ local visual_data = {
     }
   },
 
+  -- misc ui parameters
+
+  -- text menu (generic)
+  text_menu_arrow_anim_period = 1,
+
   -- bubble text
   -- Margin-x from both screen edges
   -- In practice, this is the margin to the screen edge the closest to the speaker,
@@ -169,6 +174,7 @@ local visual_data = {
   bottom_box_max_chars_per_line = 29,  -- 31 - 2, to leave room for continue hint sprite
   bottom_box_max_lines_count = 6,
   bottom_text_continue_hint_sprite_pos = vector(121, 122),
+  -- bottom text menu is left-aligned, so we must manually move the arrow around the center
   bottom_text_previous_page_arrow_sprite_offset = vector(62, 0),
 
   -- health bar

@@ -14,20 +14,23 @@ External references
   app               gameapp       game app, provided to ease object access in item callbacks
 
 Instance parameters
-  items_count_per_page  int         number of items displayed per page
-  alignment             alignments  text alignment to use for item display
-  text_color            colors      item text color
-  prev_page_arrow_offset      vector      where to draw previous/next page arrow
-                                      from top-left (in left alignment) or
-                                      top-center (in center alignment)
-                                    next page arrow is drawn symmetrically
+  items_count_per_page      int         number of items displayed per page
+  alignment                 alignments  text alignment to use for item display
+  text_color                colors      item text color
+  prev_page_arrow_offset    vector      where to draw previous/next page arrow
+                                        from top-left (in left alignment) or
+                                        top-center (in center alignment)
+                                        next page arrow is drawn symmetrically
 
 Instance dynamic parameters
   items             {menu_item}   sequence of items to display
 
 Instance state
-  active           bool           if true, the text menu is shown and receives input
-  selection_index  int            index of the item currently selected
+  active                    bool        if true, the text menu is shown and receives input
+  selection_index           int         index of the item currently selected
+  anim_time                 float       time elapsed since showing items, modulo anim period
+  prev_page_arrow_extra_y   float       animated y property to add to arrow offset
+                                        next page arrow is drawn symmetrically
 --]]
 
 local text_menu = new_class()
@@ -41,12 +44,16 @@ function text_menu:_init(app, items_count_per_page, alignment, text_color, prev_
   self.text_color = text_color
   self.prev_page_arrow_offset = prev_page_arrow_offset or vector.zero()
 
-  -- dynamic parameters (mostly set once, but may change in some usage cases)
+  -- dynamic parameters (set once per menu prompt)
   self.items = {}
 
   -- state
   self.active = false
   self.selection_index = 0
+
+  -- visual state
+  self.anim_time = 0
+  self.prev_page_arrow_extra_y = 0
 end
 
 -- idea: make a uniform_action_menu which takes a single function,
@@ -72,6 +79,10 @@ function text_menu:show_items(items)
   --   (and we didn't clear), and we don't want to call on_selection_changed either
   self.selection_index = 1
   self:try_select_callback(1)
+
+  -- visual
+  self.anim_time = 0
+  self.prev_page_arrow_extra_y = 0
 end
 
 -- deactivate the menu and remove items
@@ -91,6 +102,15 @@ function text_menu:update()
       self:select_next()
     elseif input:is_just_pressed(button_ids.o) then
       self:confirm_selection()
+    end
+
+    -- visual
+    self.anim_time = (self.anim_time + self.app.delta_time) % visual_data.text_menu_arrow_anim_period
+    local anim_time_ratio = self.anim_time / visual_data.text_menu_arrow_anim_period
+    if anim_time_ratio < 0.5 then
+      self.prev_page_arrow_extra_y = 0
+    else
+      self.prev_page_arrow_extra_y = -1  -- prev arrow goes up during anim
     end
   end
 end
@@ -193,14 +213,14 @@ function text_menu:draw(x, top)
 
   -- only used if enter one of the blocks below,
   -- but precomputed as useful for both blocks
-  local previous_arrow_x = x + self.prev_page_arrow_offset.x
+  local arrow_x = x + self.prev_page_arrow_offset.x
 
   -- if previous/next page exists, show arrow hint
   if page_index0 > 0 then
     -- show previous page arrow hint
     -- y offset of -2 to have 1px of space between text top and arrow
-    local previous_arrow_y = top - 2 + self.prev_page_arrow_offset.y
-    visual_data.sprites.previous_arrow:render(vector(previous_arrow_x, previous_arrow_y))
+    local previous_arrow_y = top - 2 + self.prev_page_arrow_offset.y + self.prev_page_arrow_extra_y
+    visual_data.sprites.previous_arrow:render(vector(arrow_x, previous_arrow_y))
   end
   if page_index0 < page_count - 1 then
     -- show next page arrow hint
@@ -210,8 +230,9 @@ function text_menu:draw(x, top)
     --   and for a sprites with an odd height we need to add 1px offset y again
     -- unfortunately this means we are dependent on exact visual data here,
     --   but it wouldn't be needed if custom sprite size was supported
-    local previous_arrow_y = top + character_height * self.items_count_per_page - self.prev_page_arrow_offset.y + 1
-    visual_data.sprites.previous_arrow:render(vector(previous_arrow_x, previous_arrow_y), false, --[[flip_y:]] true)
+    -- make sure to reverse sign of all offsets to make arrow initial position and animation symmetrical on y
+    local next_arrow_y = top + character_height * self.items_count_per_page - self.prev_page_arrow_offset.y - self.prev_page_arrow_extra_y + 1
+    visual_data.sprites.previous_arrow:render(vector(arrow_x, next_arrow_y), false, --[[flip_y:]] true)
   end
 end
 

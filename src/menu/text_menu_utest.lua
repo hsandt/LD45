@@ -2,6 +2,7 @@ require("engine/test/bustedhelper")
 local text_menu = require("menu/text_menu")
 
 local flow = require("engine/application/flow")
+local gameapp = require("engine/application/gameapp")
 local input = require("engine/input/input")
 require("engine/render/color")
 local sprite_data = require("engine/render/sprite_data")
@@ -12,7 +13,7 @@ local visual_data = require("resources/visual_data")
 
 describe('text_menu', function ()
 
-  local fake_app = {}
+  local fake_app = gameapp(60)
 
   describe('init', function ()
 
@@ -20,8 +21,8 @@ describe('text_menu', function ()
       local menu = text_menu(fake_app, 5, alignments.left, colors.red, vector(12, 2))
 
       assert.are_equal(fake_app, menu.app)
-      assert.are_same({5, alignments.left, colors.red, vector(12, 2), {}, false, 0},
-        {menu.items_count_per_page, menu.alignment, menu.text_color, menu.prev_page_arrow_offset, menu.items, menu.active, menu.selection_index})
+      assert.are_same({5, alignments.left, colors.red, vector(12, 2), {}, false, 0, 0, 0},
+        {menu.items_count_per_page, menu.alignment, menu.text_color, menu.prev_page_arrow_offset, menu.items, menu.active, menu.selection_index, menu.anim_time, menu.prev_page_arrow_extra_y})
     end)
 
     it('should set default arrow offset to (0, 0)', function ()
@@ -107,6 +108,12 @@ describe('text_menu', function ()
         s.was_called_with(match.ref(menu), 1)
       end)
 
+      it('should initialize animation state', function ()
+        menu:show_items(mock_items)
+
+        assert.are_same({0, 0}, {menu.anim_time, menu.prev_page_arrow_extra_y})
+      end)
+
     end)
 
     describe('clear', function ()
@@ -162,7 +169,7 @@ describe('text_menu', function ()
 
       describe('(inactive)', function ()
 
-        it('(when various inputs are down) it should still do nothing', function ()
+        it('(when various inputs are down) should still do nothing', function ()
           input.players_btn_states[0][button_ids.up] = btn_states.just_pressed
           input.players_btn_states[0][button_ids.down] = btn_states.just_pressed
           input.players_btn_states[0][button_ids.o] = btn_states.just_pressed
@@ -172,6 +179,12 @@ describe('text_menu', function ()
           assert.spy(text_menu.select_previous).was_not_called()
           assert.spy(text_menu.select_next).was_not_called()
           assert.spy(text_menu.confirm_selection).was_not_called()
+        end)
+
+        it('should not update anim time nor offset', function ()
+          menu:update()
+
+          assert.are_same({0, 0}, {menu.anim_time, menu.prev_page_arrow_extra_y})
         end)
 
       end)
@@ -212,7 +225,43 @@ describe('text_menu', function ()
           s.was_called_with(match.ref(menu))
         end)
 
-      end)
+        it('should increase anim_time', function ()
+          menu:update()
+
+          assert.are_equal(1/60, menu.anim_time)
+          -- menu.prev_page_arrow_extra_y}
+        end)
+
+        it('should increase anim_time and loop around period', function ()
+          menu.anim_time = visual_data.text_menu_arrow_anim_period - 1/120
+
+          menu:update()
+
+          -- lua used in busted finds decimal error at 17th decimal (PICO-8 fixed point is OK)
+          assert.is_true(almost_eq_with_message(1/120, menu.anim_time, 1e-10))
+        end)
+
+        it('should set arrow extra y to 0 on first half', function ()
+          -- impossible situation, but simple enough to check that extra y is reset
+          menu.anim_time = 0
+          menu.prev_page_arrow_extra_y = 1
+
+          menu:update()
+
+          assert.are_equal(0, menu.prev_page_arrow_extra_y)
+        end)
+
+        it('should set arrow extra y to 1 on second half', function ()
+          -- impossible situation, but simple enough to check that extra y is reset
+          menu.anim_time = visual_data.text_menu_arrow_anim_period / 2
+          menu.prev_page_arrow_extra_y = 0
+
+          menu:update()
+
+          assert.are_equal(-1, menu.prev_page_arrow_extra_y)
+        end)
+
+      end)  -- (active)
 
     end)  -- update
 
@@ -584,7 +633,7 @@ describe('text_menu', function ()
           local s = assert.spy(sprite_data.render)
           s.was_called(1)
           -- 60 + offset 20 = 80
-          -- 48 + 2 lines * char height 6 - offset -4 = 64
+          -- 48 + 2 lines * char height 6 - offset -4 + 1 = 66
           s.was_called_with(match.ref(visual_data.sprites.previous_arrow),
             vector(80, 65), false, true)
         end)
@@ -613,6 +662,25 @@ describe('text_menu', function ()
           s.was_called(1)
           s.was_called_with(match.ref(visual_data.sprites.previous_arrow),
             vector(80, 42))
+        end)
+
+        it('(selection falls on page 2/3 + arrow anim y = -1) should draw previous and next page arrow with extra offset', function ()
+          menu.selection_index = 4
+          -- impossible if anim_time ratio is not >= 0.5, but enough to test
+          menu.prev_page_arrow_extra_y = -1
+
+          menu:draw(60, 48)
+
+          local s = assert.spy(sprite_data.render)
+          s.was_called(2)
+          -- x: 60 + offset 20 = 80
+          -- y: 48 - margin 2 - offset 4 + anim offset -1 = 41
+          s.was_called_with(match.ref(visual_data.sprites.previous_arrow),
+            vector(80, 41))
+          -- y: 48 - margin 2 - offset 4 + anim offset -1 = 41
+          -- y: 48 + 2 lines * char height 6 - offset -4 - anim offset -1 + 1 = 66
+          s.was_called_with(match.ref(visual_data.sprites.previous_arrow),
+            vector(80, 66), false, true)
         end)
 
       end)  -- (showing 5 items, so 2 pages + 1 item)
