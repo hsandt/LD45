@@ -212,7 +212,8 @@ itest_manager:register_itest('insta-kill ceo',
   short_press(button_ids.o)
   wait(0.5)
   short_press(button_ids.o)
-  wait(3.0)
+  wait(0.5)
+  short_press(button_ids.o)
 
   final_assert(function (app)
     -- we must have killed the opponent and be back to adventure
