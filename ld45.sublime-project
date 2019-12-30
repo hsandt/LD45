@@ -24,6 +24,14 @@
 			}
 		},
 		{
+			"name": "Dev: analyze game scripts",
+			"shell": true,
+			"working_dir": "${project_path}",
+			"cmd": ["pico-boots/scripts/analyze.py intermediate/release/src"],
+			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax"
+		},
+		{
 			"name": "Game: edit data",
 			"shell": true,
 			"cmd": ["./edit_data.sh"],
@@ -295,6 +303,14 @@
 			"working_dir": "${project_path}/pico-boots",
 			"shell": true,
 			"cmd": ["python3 -m scripts.test_add_require"],
+			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax"
+		},
+		{
+			"name": "Engine: Postbuild: test analyze",
+			"working_dir": "${project_path}/pico-boots",
+			"shell": true,
+			"cmd": ["python3 -m scripts.test_analyze"],
 			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
 			"syntax": "Packages/Python/Python.sublime-syntax"
 		},
