@@ -72,17 +72,17 @@ symbols=''
 if [[ $config == 'debug' ]]; then
   # symbols='assert,log,visual_logger,tuner,profiler,mouse'
   # lighter config (to remain under 65536 chars)
-  symbols='assert,log,cheat,sandbox'
+  symbols='assert,deprecated,log,cheat,sandbox'
 elif [[ $config == 'debug-ultrafast' ]]; then
-  symbols='assert,log,cheat,sandbox,ultrafast'
+  symbols='assert,deprecated,log,cheat,sandbox,ultrafast'
 elif [[ $config == 'cheat' ]]; then
-  symbols='assert,cheat'
+  symbols='assert,deprecated,cheat'
 elif [[ $config == 'ultrafast' ]]; then
-  symbols='assert,ultrafast'
+  symbols='assert,deprecated,ultrafast'
 elif [[ $config == 'cheat-ultrafast' ]]; then
-  symbols='assert,cheat,ultrafast'
+  symbols='assert,deprecated,cheat,ultrafast'
 elif [[ $config == 'sandbox' ]]; then
-  symbols='assert,sandbox'
+  symbols='assert,deprecated,sandbox'
 fi
 
 # Build from main
