@@ -24,6 +24,14 @@
 			}
 		},
 		{
+			"name": "Dev: analyze engine scripts",
+			"shell": true,
+			"working_dir": "${project_path}",
+			"cmd": ["pico-boots/scripts/analyze.py intermediate/release/pico-boots"],
+			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax"
+		},
+		{
 			"name": "Dev: analyze game scripts",
 			"shell": true,
 			"working_dir": "${project_path}",
