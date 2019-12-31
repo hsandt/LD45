@@ -95,9 +95,6 @@ function main_menu:on_enter()
   self.text_menu:show_items(main_menu._items)
 end
 
-function main_menu:on_exit()
-end
-
 function main_menu:update()
   self.text_menu:update()
 end

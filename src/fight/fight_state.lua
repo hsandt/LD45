@@ -14,10 +14,12 @@ function fight_state:_init()
 end
 
 function fight_state:on_enter()
+  local fm = self.app.managers[':fight']
+
   self.app.managers[':dialogue'].should_show_bottom_box = true
 
-  self.app.managers[':fight'].active = true
-  self.app.managers[':fight']:start_fight_with_next_opponent()
+  fm.active = true
+  fm:start_fight_with_next_opponent()
 end
 
 function fight_state:on_exit()
@@ -31,9 +33,10 @@ end
 
 function fight_state:render()
   local fm = self.app.managers[':fight']
+  local floor_number = self.app.game_session.floor_number
 
-  painter.draw_background(self.app.game_session.floor_number)
-  painter.draw_floor_number(self.app.game_session.floor_number)
+  painter.draw_background(floor_number)
+  painter.draw_floor_number(floor_number)
 
   -- same as adventure_state:render, we prefer drawing characters here
   --   than in fight_manager:render because of guaranteed layering

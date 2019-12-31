@@ -16,6 +16,8 @@ function painter.draw_background(floor_number)
 end
 
 function painter.draw_background_stairs(zone)
+  local sprites = visual_data.sprites
+
   local zone_paint_info = visual_data.zone_paint_info_t[zone]
 
   -- wall
@@ -30,16 +32,16 @@ function painter.draw_background_stairs(zone)
   pal(colors.light_gray, zone_paint_info.floor_color)
 
   -- upper stairs
-  visual_data.sprites.upper_stairs_step1:render(vector(104, 45))
+  sprites.upper_stairs_step1:render(vector(104, 45))
   local pos = vector(110, 40)
   for i = 1, 3 do
-    visual_data.sprites.upper_stairs_step2:render(pos)
+    sprites.upper_stairs_step2:render(pos)
     pos = pos + vector(6, -6)
   end
 
   -- lower stairs
-  visual_data.sprites.lower_stairs_step:render(vector(104, 80))
-  visual_data.sprites.lower_stairs_step:render(vector(110, 84))
+  sprites.lower_stairs_step:render(vector(104, 80))
+  sprites.lower_stairs_step:render(vector(110, 84))
 
   -- reset palette switch
   pal()

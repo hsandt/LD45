@@ -59,16 +59,13 @@ function wit_fighter_app:instantiate_gamestates() -- override
   }
 end
 
-function wit_fighter_app:on_pre_start() -- override
-end
-
-function wit_fighter_app:on_post_start() -- override
 --#if mouse
+function wit_fighter_app:on_post_start() -- override
   -- enable mouse devkit
   input:toggle_mouse(true)
   ui:set_cursor_sprite_data(visual_data.sprites.cursor)
---#endif
 end
+--#endif
 
 function wit_fighter_app:on_reset() -- override
   -- create new game session (let the old one be GC-ed)

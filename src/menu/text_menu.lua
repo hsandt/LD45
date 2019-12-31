@@ -172,32 +172,33 @@ end
 
 -- render menu, starting at top y, with text centered on x
 function text_menu:draw(x, top)
-  if #self.items == 0 then
+  local items = self.items
+
+  if #items == 0 then
     return
   end
 
   assert(self.selection_index > 0, "self.selection_index is "..self.selection_index..", should be > 0")
-  assert(self.selection_index <= #self.items, "self.selection_index is "..self.selection_index..", should be <= item count: "..#self.items)
+  assert(self.selection_index <= #items, "self.selection_index is "..self.selection_index..", should be <= item count: "..#items)
 
   local y = top
 
   -- identify which page is currently shown from the current selection
   -- unlike other indices in Lua, page starts at 0
-  local page_count = ceil(#self.items / self.items_count_per_page)
-  local page_index0 = flr((self.selection_index - 1) / self.items_count_per_page)
-  local first_index0 = page_index0 * self.items_count_per_page
-  local last_index0 = min(first_index0 + self.items_count_per_page - 1, #self.items - 1)
+  local items_count_per_page = self.items_count_per_page
+  local page_count = ceil(#items / items_count_per_page)
+  local page_index0 = flr((self.selection_index - 1) / items_count_per_page)
+  local first_index0 = page_index0 * items_count_per_page
+  local last_index0 = min(first_index0 + items_count_per_page - 1, #items - 1)
   for i = first_index0 + 1, last_index0 + 1 do
     -- for current selection, surround with "> <" like this: "> selected item <"
-    local label = self.items[i].label
+    local label = items[i].label
     local item_x = x
 
     if i == self.selection_index then
       if self.alignment == alignments.left then
         label = "> "..label
-      elseif self.alignment == alignments.horizontal_center then
-        label = "> "..label.." <"
-      elseif self.alignment == alignments.center then
+      else  -- self.alignment is alignments.horizontal_center or alignments.center
         label = "> "..label.." <"
       end
     else
@@ -224,14 +225,14 @@ function text_menu:draw(x, top)
   end
   if page_index0 < page_count - 1 then
     -- show next page arrow hint
-    -- character_height * self.items_count_per_page already contains the extra 1px spacing from text bottom
+    -- character_height * items_count_per_page already contains the extra 1px spacing from text bottom
     -- however, because partial sprites are not supported,
     --   flipping always occur relative to the central tile axis,
     --   and for a sprites with an odd height we need to add 1px offset y again
     -- unfortunately this means we are dependent on exact visual data here,
     --   but it wouldn't be needed if custom sprite size was supported
     -- make sure to reverse sign of all offsets to make arrow initial position and animation symmetrical on y
-    local next_arrow_y = top + character_height * self.items_count_per_page - self.prev_page_arrow_offset.y - self.prev_page_arrow_extra_y + 1
+    local next_arrow_y = top + character_height * items_count_per_page - self.prev_page_arrow_offset.y - self.prev_page_arrow_extra_y + 1
     visual_data.sprites.previous_arrow:render(vector(arrow_x, next_arrow_y), false, --[[flip_y:]] true)
   end
 end
