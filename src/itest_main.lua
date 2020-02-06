@@ -10,8 +10,6 @@ local logging = require("engine/debug/logging")
 --#endif
 
 local wit_fighter_app = require("application/wit_fighter_app")
-local dialogue_manager = require("dialogue/dialogue_manager")
-local fight_manager = require("fight/fight_manager")
 
 -- set app immediately so during itest registration by require,
 --   time_trigger can access app fps
