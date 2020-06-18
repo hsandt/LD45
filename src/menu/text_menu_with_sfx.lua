@@ -3,7 +3,7 @@ require("engine/core/class")
 local text_menu = require("menu/text_menu")
 local audio_data = require("resources/audio_data")
 
-local text_menu_with_sfx = new_class(text_menu)
+local text_menu_with_sfx = derived_class(text_menu)
 
 function text_menu_with_sfx:on_selection_changed()  -- override
   -- audio

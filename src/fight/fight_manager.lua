@@ -17,7 +17,7 @@ local gameplay_data = require("resources/gameplay_data")
 local visual_data = require("resources/visual_data")
 local character = require("story/character")
 
-local fight_manager = new_class(manager)
+local fight_manager = derived_class(manager)
 
 fight_manager.type = ':fight'
 fight_manager.initially_active = false

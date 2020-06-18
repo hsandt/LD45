@@ -7,7 +7,7 @@ local visual_data = require("resources/visual_data")
 local character = require("story/character")
 
 -- Manages the adventure state, and also tutorials
-local adventure_manager = new_class(manager)
+local adventure_manager = derived_class(manager)
 
 adventure_manager.type = ':adventure'
 adventure_manager.initially_active = false

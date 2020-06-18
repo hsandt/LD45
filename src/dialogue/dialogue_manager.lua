@@ -14,7 +14,7 @@ speakers = {
   npc = 2
 }
 
-local dialogue_manager = new_class(manager)
+local dialogue_manager = derived_class(manager)
 
 dialogue_manager.type = ':dialogue'
 

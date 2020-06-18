@@ -38,7 +38,7 @@ local visual_data = require("resources/visual_data")
 local adventure_manager = require("story/adventure_manager")
 local adventure_state = require("story/adventure_state")
 
-local wit_fighter_app = new_class(gameapp)
+local wit_fighter_app = derived_class(gameapp)
 
 function wit_fighter_app:_init()
   gameapp._init(self, fps30)
