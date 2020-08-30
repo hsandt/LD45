@@ -243,7 +243,7 @@ local gameplay_data = {
   -- Experimental rules
 
   -- all fighters: cannot reuse same reply twice in a fight
-  consume_reply = true,
+  consume_reply = false,
   -- npc: when some replies are left but none matches last attack,
   --      pick a random reply instead of the losing reply
   npc_random_reply_fallback = false
