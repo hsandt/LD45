@@ -9,10 +9,6 @@ local fight_state = derived_class(gamestate)
 
 fight_state.type = ':fight'
 
-function fight_state:_init()
-  gamestate._init(self)
-end
-
 function fight_state:on_enter()
   local fm = self.app.managers[':fight']
 

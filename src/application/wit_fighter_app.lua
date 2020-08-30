@@ -1,5 +1,5 @@
--- main entry file that uses the gameapp module for a quick bootstrap
--- the gameapp is also useful for integration tests
+-- custom game application
+-- used by main and itest_main
 
 require("engine/application/constants")
 local gameapp = require("engine/application/gameapp")

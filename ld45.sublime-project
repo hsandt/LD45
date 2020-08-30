@@ -218,10 +218,6 @@
 					"cmd": ["./test.sh -m all"]
 				},
 				{
-					"name": "helper",
-					"cmd": ["./test.sh helper"],
-				},
-				{
 					"name": "headless_itests",
 					"cmd": ["./test.sh -f headless_itests"],
 				},
@@ -338,6 +334,14 @@
 			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
 			"syntax": "Packages/Python/Python.sublime-syntax"
 		},
+		{
+			"name": "lua: parse",
+			"selector": "source.lua,source.p8",
+			"working_dir": "${project_path}",
+			"shell": true,
+			"cmd": ["luac -p $file"],
+			"file_regex": "((?:src|tests)\\/[-\\w\\/]+\\.lua)(?:\\:| @ )([\\d]+)(?:\\:)?([\\d]+)?\\n?(.*)"
+		}
 	],
 	"syntax_override":
 	{
@@ -345,8 +349,8 @@
 		[
 			// use 1st line if using PICO-8 from Package Control,
 			// 2nd line if using version from GitHub (more features)
-			"PICO-8/PICO-8"
-			// "sublime-PICO-8/PICO-8"
+			// "PICO-8/PICO-8"
+			"sublime-PICO-8/PICO-8"
 		],
 		"\\.luacov":
 		[

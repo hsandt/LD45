@@ -17,40 +17,6 @@ describe('fight_state', function ()
 
   end)
 
-  describe('_init', function ()
-
-    setup(function ()
-      spy.on(gamestate, "_init")
-    end)
-
-    teardown(function ()
-      gamestate._init:revert()
-    end)
-
-    after_each(function ()
-      gamestate._init:clear()
-    end)
-
-    it('should call base constructor', function ()
-      local state = fight_state()
-
-      local s = assert.spy(gamestate._init)
-      s.was_called(1)
-      s.was_called_with(match.ref(state))
-    end)
-
-    describe('_init', function ()
-
-      it('should init an adventure state', function ()
-        local state = fight_state()
-
-        assert.is_not_nil(state)
-      end)
-
-    end)
-
-  end)
-
   describe('(with instance)', function ()
 
     local state

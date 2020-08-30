@@ -1,5 +1,4 @@
--- main entry file that uses the gameapp module for a quick bootstrap
--- the gameapp is also useful for integration tests
+-- main entry file for the game
 
 -- we must require engine/pico8/api at the top of our main.lua, so API bridges apply to all modules
 require("engine/pico8/api")
@@ -8,11 +7,10 @@ require("engine/pico8/api")
 local logging = require("engine/debug/logging")
 --#endif
 
+-- always require code tuner, since ifn tuned, `tuned` will simply use the default value
 local codetuner = require("engine/debug/codetuner")
 
 local wit_fighter_app = require("application/wit_fighter_app")
-local dialogue_manager = require("dialogue/dialogue_manager")
-local fight_manager = require("fight/fight_manager")
 
 local app = wit_fighter_app()
 

@@ -517,6 +517,7 @@ function fight_manager:async_show_hit_feedback_label(target_fighter, quote_type,
   local repr_damage = min(damage, 3)
   self.hit_feedback_label = visual_data.hit_feedback_labels[target_fighter.fighter_progression.character_type][quote_type][repr_damage]
 --#if assert
+  -- note that assert => log so joinstr should be defined
   assert(self.hit_feedback_label, "no hit feedback label for (character type, quote type, representative damage): "..
     joinstr(", ", target_fighter.fighter_progression.character_type, quote_type, repr_damage))
 --#endif
