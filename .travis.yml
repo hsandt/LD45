@@ -4,13 +4,16 @@ language: python # Can use any language here, but if it's not 'python'
                  # it becomes necessary to pass '--user' to pip when installing hererocks.
 python: "3.6"
 
-sudo: false      # Use container-based infrastructure.
+# REMOVE, DEPRECATED
+# https://docs.travis-ci.com/user/reference/overview/
+# sudo: false      # Use container-based infrastructure.
 
 env:
   - LUA_VERSION=5.3 ENABLE_RENDER=1
 
 cache:
-  apt: true  # private repositories only
+  # REMOVE, DEPRECATED
+  # apt: true  # private repositories only
   directories:
     # remember to "travis cache --delete" in travis CL each time a custom cached directory needs upgrade (unlike cached packages)
     - hererocks     # for hererocks (make a parent folder, then install lua inside, to make sure the folder will be used as cache)
@@ -62,5 +65,5 @@ script:
   # build game and itest to make sure everything works fine
   - ./build_game.sh
   - ./build_itest.sh
-  # just to print advanced DB inf so we can track balance progression over commits
+  # just to print advanced DB info so we can track balance progression over commits
   - LUA_PATH="pico-boots/src/?.lua;src/?.lua" lua src/debug/print_data.lua
