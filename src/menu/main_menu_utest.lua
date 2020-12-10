@@ -32,7 +32,7 @@ describe('main_menu', function ()
       s.was_called_with(match.ref(state))
     end)
 
-    it('should set text menu to a new text menu with given items', function ()
+    it('should set text menu to nil', function ()
       -- as long as there are no type/attribute checks in _init, we don't need
       --  to actualy derive from gameapp for the dummy app
       local fake_app = {}

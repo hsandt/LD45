@@ -1,5 +1,4 @@
 require("engine/test/bustedhelper")
-local text_menu = require("menu/text_menu")
 local text_menu_with_sfx = require("menu/text_menu_with_sfx")
 
 local menu_item = require("menu/menu_item")
