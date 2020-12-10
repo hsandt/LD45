@@ -255,7 +255,7 @@ function fight_manager:request_human_fighter_action(human_fighter)
       next_quote = gameplay_data:get_quote(quote_type, -1)
     end
 
-    self.app:wait_and_do(visual_data.ai_say_quote_delay, self.say_quote, self, human_fighter, next_quote)
+    self:wait_and_do(visual_data.ai_say_quote_delay, self.say_quote, self, human_fighter, next_quote)
   end
 end
 
@@ -299,7 +299,7 @@ function fight_manager:request_ai_fighter_action(ai_fighter)
     next_quote = gameplay_data:get_quote(quote_type, -1)
   end
 
-  self.app:wait_and_do(visual_data.ai_say_quote_delay, self.say_quote, self, ai_fighter, next_quote)
+  self:wait_and_do(visual_data.ai_say_quote_delay, self.say_quote, self, ai_fighter, next_quote)
 end
 
 function fight_manager:auto_pick_quote(fighter, quote_type)
@@ -328,14 +328,14 @@ function fight_manager:say_quote(active_fighter, quote)
     if quote.id == -1 then
       -- active fighter said "skip" attack, no need to ask opponent for reply
       -- wait just enough to show the text bubble, and skip turn
-      self.app:wait_and_do(visual_data.resolve_skip_turn_delay,
+      self:wait_and_do(visual_data.resolve_skip_turn_delay,
         self.resolve_skip_attack, self, active_fighter)
     else
       -- learning: replier receives quote and may remember it for later
       self:get_active_fighter_opponent():on_receive_quote(quote)
 
       -- normal quote was said
-      self.app:wait_and_do(visual_data.request_reply_delay,
+      self:wait_and_do(visual_data.request_reply_delay,
         self.request_next_fighter_action, self)
     end
   else  -- not is_attacking
@@ -343,7 +343,7 @@ function fight_manager:say_quote(active_fighter, quote)
     self:get_active_fighter_opponent():on_receive_quote(quote)
 
     -- last quote of opponent should be attack, and active fighter has replied
-    self.app:wait_and_do(visual_data.resolve_exchange_delay,
+    self:wait_and_do(visual_data.resolve_exchange_delay,
       self.resolve_exchange, self, self:get_active_fighter_opponent(), active_fighter)
   end
 end
@@ -386,7 +386,7 @@ function fight_manager:resolve_skip_attack(active_fighter)
     end
   end
 
-  self.app:wait_and_do(visual_data.skip_turn_delay,
+  self:wait_and_do(visual_data.skip_turn_delay,
     self.request_next_fighter_action, self)
 end
 
@@ -431,7 +431,7 @@ function fight_manager:resolve_exchange(attacker, replier)
     self:hit_fighter(replier, quote_types.attack, attacker_quote.level)
   end
 
-  self.app:wait_and_do(visual_data.check_exchange_result_delay,
+  self:wait_and_do(visual_data.check_exchange_result_delay,
     self.check_exchange_result, self, attacker, replier)
 end
 
@@ -455,7 +455,7 @@ function fight_manager:check_exchange_result(attacker, replier)
     end
 
     -- now wait to request action for appropriate fighter
-    self.app:wait_and_do(visual_data.request_action_after_exchange_delay,
+    self:wait_and_do(visual_data.request_action_after_exchange_delay,
       self.request_active_fighter_action, self)
   elseif is_attacker_alive then
     self:start_victory(attacker)
@@ -540,7 +540,7 @@ function fight_manager:start_victory(some_fighter)
     music(-1)
     sfx(audio_data.jingle.fight_victory)
 
-    self.app:wait_and_do(visual_data.victory_anim_duration,
+    self:wait_and_do(visual_data.victory_anim_duration,
       self.stop_fight_and_return_to_adv, self)
   else  -- some_fighter.fighter_progression.character_type == character_types.npc
     log("npc '"..some_fighter.character.character_info.name.."' WINS", 'fight')
@@ -549,7 +549,7 @@ function fight_manager:start_victory(some_fighter)
     -- audio: stop bgm
     music(-1)
 
-    self.app:wait_and_do(visual_data.defeat_anim_duration,
+    self:wait_and_do(visual_data.defeat_anim_duration,
       self.stop_fight_and_return_to_adv, self)
   end
 end
@@ -585,5 +585,21 @@ function fight_manager:draw_hud()
     self.hit_feedback_label:draw()
   end
 end
+
+
+-- coroutine helper (used to be in engine, but extracted as other projects didn't need it)
+
+-- nice, but to avoid lamdba prefer a generic function that takes a callback
+-- as parameter itself as coroutine curry param
+
+-- start a coroutine that waits N seconds and apply callback with variadic args
+-- ! for methods, remember to pass the instance it*self* as first optional argument !
+function fight_manager:wait_and_do(delay_s, callback, ...)
+  self.app:start_coroutine(function (delay_s, ...)
+    self.app:yield_delay_s(delay_s)
+    callback(...)
+  end, delay_s, ...)
+end
+
 
 return fight_manager
