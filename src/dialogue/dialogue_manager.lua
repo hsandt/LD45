@@ -5,6 +5,7 @@ require("engine/core/helper")
 local input = require("engine/input/input")
 local animated_sprite = require("engine/render/animated_sprite")
 local graphics_helper = require("engine/ui/graphics_helper")
+local text_helper = require("engine/ui/text_helper")
 
 local text_menu = require("menu/text_menu_with_sfx")
 local visual_data = require("resources/visual_data")
@@ -111,7 +112,7 @@ end
 -- draw text in bottom box for narration/notification/instruction
 function dialogue_manager:draw_bottom_text()
   local top_left = visual_data.bottom_box_topleft + vector(2, 2)  -- padding 2px
-  api.print(wwrap(self.current_bottom_text, visual_data.bottom_box_max_chars_per_line), top_left.x, top_left.y, colors.black)
+  api.print(text_helper.wwrap(self.current_bottom_text, visual_data.bottom_box_max_chars_per_line), top_left.x, top_left.y, colors.black)
 
   if self.bottom_text_wait_for_input then
     self:draw_bottom_text_continue_hint()
@@ -143,7 +144,7 @@ end
 
 -- static
 function dialogue_manager.draw_bubble_with_text(bubble_type, text, bubble_tail_pos, wait_for_input, continue_hint_sprite)
-  local wrapped_text = wwrap(text, visual_data.bubble_line_max_chars)
+  local wrapped_text = text_helper.wwrap(text, visual_data.bubble_line_max_chars)
   local bubble_left, bubble_top, bubble_right, bubble_bottom = dialogue_manager.compute_bubble_bounds(bubble_type, wrapped_text, bubble_tail_pos)
   dialogue_manager.draw_bubble(bubble_type, bubble_left, bubble_top, bubble_right, bubble_bottom, bubble_tail_pos)
   dialogue_manager.draw_text(wrapped_text, bubble_left, bubble_top)

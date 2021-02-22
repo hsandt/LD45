@@ -1,8 +1,3 @@
-quote_types = {
-  attack = 1,
-  reply = 2
-}
-
 local quote_info = new_struct()
 
 -- id: int

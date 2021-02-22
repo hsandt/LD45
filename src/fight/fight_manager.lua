@@ -7,7 +7,6 @@ local quote_info = require("content/quote_info")
 local fighter = require("fight/fighter")
 local menu_helper = require("menu/menu_helper")
 local menu_item = require("menu/menu_item")
-local fighter_progression = require("progression/fighter_progression")
 local audio_data = require("resources/audio_data")
 local gameplay_data = require("resources/gameplay_data")
 local visual_data = require("resources/visual_data")
@@ -513,9 +512,11 @@ function fight_manager:async_show_hit_feedback_label(target_fighter, quote_type,
   local repr_damage = min(damage, 3)
   self.hit_feedback_label = visual_data.hit_feedback_labels[target_fighter.fighter_progression.character_type][quote_type][repr_damage]
 --#if assert
+--#if tostring
   -- note that assert => log so joinstr should be defined
   assert(self.hit_feedback_label, "no hit feedback label for (character type, quote type, representative damage): "..
     joinstr(", ", target_fighter.fighter_progression.character_type, quote_type, repr_damage))
+--#endif
 --#endif
   self.app:yield_delay_s(1.0)
   self.hit_feedback_label = nil

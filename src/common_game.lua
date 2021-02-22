@@ -6,8 +6,23 @@
 
 require("engine/core/fun_helper")
 require("engine/core/seq_helper")
+--#if minify_level3
+-- already required in string (and text_helper), but re-required for early definition
+-- (must be above require string)
+require("engine/core/string_split")
+--#endif
 require("engine/core/string")
 require("engine/core/vector_ext_mirror")
+
+--#if minify_level3
+
+-- required by animated_sprite_data, just here for early definition
+require("engine/render/animated_sprite_data_enums")
+
+--#endif
+
+require("content/character_enums")
+require("content/quote_enums")
 
 --[[#pico8
 --#if unity

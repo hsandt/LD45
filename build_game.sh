@@ -72,20 +72,23 @@ build_output_path="${build_dir_path}/v${version}_${config}"
 # Define symbols from config
 symbols=''
 
+# below, we put tostring together with assert because some asserts
+# use joinstr and engine only requires string_join in common if #tostring
+
 if [[ $config == 'debug' ]]; then
   # symbols='assert,log,visual_logger,tuner,profiler,mouse'
   # lighter config (to remain under 65536 chars)
-  symbols='assert,deprecated,log,cheat,sandbox'
+  symbols='assert,tostring,deprecated,log,cheat,sandbox'
 elif [[ $config == 'debug-ultrafast' ]]; then
-  symbols='assert,deprecated,log,cheat,sandbox,ultrafast'
+  symbols='assert,tostring,deprecated,log,cheat,sandbox,ultrafast'
 elif [[ $config == 'cheat' ]]; then
-  symbols='assert,cheat'
+  symbols='assert,tostring,cheat'
 elif [[ $config == 'ultrafast' ]]; then
-  symbols='assert,ultrafast'
+  symbols='assert,tostring,ultrafast'
 elif [[ $config == 'cheat-ultrafast' ]]; then
-  symbols='assert,cheat,ultrafast'
+  symbols='assert,tostring,cheat,ultrafast'
 elif [[ $config == 'sandbox' ]]; then
-  symbols='assert,sandbox'
+  symbols='assert,tostring,sandbox'
 fi
 
 if [[ -n "$symbols" ]]; then
@@ -105,10 +108,8 @@ symbols+="manager"
   -o "${cartridge_stem}"                                 \
   -c "$config"                                           \
   -s "$symbols"                                          \
-  --minify-level 2
-
-  # --minify-level 3                                       \
-  # --unify ''
+  --minify-level 3                                       \
+  --unify ''
 
 if [[ $? -ne 0 ]]; then
   echo ""

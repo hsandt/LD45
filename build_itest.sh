@@ -34,4 +34,5 @@ build_output_path="${build_dir_path}/v${version}_${config}"
   -o "${cartridge_stem}_v${version}"                  \
   -c "$config"                                        \
   -s "$symbols"                                       \
-  --minify-level 3
+  --minify-level 3                                    \
+  --unify ''

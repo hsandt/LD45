@@ -112,9 +112,9 @@ end
 
 function main_menu:draw_instructions()
   local y = 41
-  text_helper.print_centered(wwrap("learn verbal attacks and matching replies", 25), 64, y, colors.white)
+  text_helper.print_centered(text_helper.wwrap("learn verbal attacks and matching replies", 25), 64, y, colors.white)
   y = y + 15
-  text_helper.print_centered(wwrap("win to reach the top!", 25), 64, y, colors.white)
+  text_helper.print_centered(text_helper.wwrap("win to reach the top!", 25), 64, y, colors.white)
 
   y = 110
   api.print("arrows: navigate", 33, y, colors.white)

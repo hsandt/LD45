@@ -79,7 +79,7 @@ describe('main_menu', function ()
 
         local s = assert.spy(text_menu.show_items)
         s.was_called(1)
-        s.was_called_with(match.ref(menu.text_menu), match.ref(main_menu._items))
+        s.was_called_with(match.ref(menu.text_menu), match.ref(main_menu.items))
       end)
 
     end)
