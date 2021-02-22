@@ -1,12 +1,9 @@
-require("engine/core/class")
-local logging = require("engine/debug/logging")
-
 local fighter_progression = require("progression/fighter_progression")
 local gameplay_data = require("resources/gameplay_data")
 
 local game_session = new_class()
 
-function game_session:_init()
+function game_session:init()
   -- current floor number the player character is located at
   self.floor_number = gameplay_data.initial_floor
   -- highest floor unlocked by player (excludes the initial floor for the tutorial fight,

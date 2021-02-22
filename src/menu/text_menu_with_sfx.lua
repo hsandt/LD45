@@ -1,5 +1,3 @@
-require("engine/core/class")
-
 local text_menu = require("menu/text_menu")
 local audio_data = require("resources/audio_data")
 

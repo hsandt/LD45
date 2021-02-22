@@ -1,4 +1,4 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local adventure_state = require("story/adventure_state")
 
 require("engine/application/constants")
@@ -20,24 +20,24 @@ describe('adventure_state', function ()
 
   end)
 
-  describe('_init', function ()
+  describe('init', function ()
 
     setup(function ()
-      spy.on(gamestate, "_init")
+      spy.on(gamestate, "init")
     end)
 
     teardown(function ()
-      gamestate._init:revert()
+      gamestate.init:revert()
     end)
 
     after_each(function ()
-      gamestate._init:clear()
+      gamestate.init:clear()
     end)
 
     it('should call base constructor', function ()
       local state = adventure_state()
 
-      local s = assert.spy(gamestate._init)
+      local s = assert.spy(gamestate.init)
       s.was_called(1)
       s.was_called_with(match.ref(state))
     end)

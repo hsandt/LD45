@@ -1,9 +1,5 @@
-require("engine/application/constants")
-require("engine/core/class")
-require("engine/core/helper")
-require("engine/render/color")
 local input = require("engine/input/input")
-local ui = require("engine/ui/ui")
+local text_helper = require("engine/ui/text_helper")
 
 local visual_data = require("resources/visual_data")
 
@@ -34,7 +30,7 @@ Instance state
 --]]
 
 local text_menu = new_class()
-function text_menu:_init(app, items_count_per_page, alignment, text_color, prev_page_arrow_offset)
+function text_menu:init(app, items_count_per_page, alignment, text_color, prev_page_arrow_offset)
   -- external references
   self.app = app
 
@@ -208,7 +204,7 @@ function text_menu:draw(x, top)
        end
     end
 
-    ui.print_aligned(label, item_x, y, self.alignment, self.text_color)
+    text_helper.print_aligned(label, item_x, y, self.alignment, self.text_color)
     y = y + character_height
   end
 

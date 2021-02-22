@@ -1,4 +1,3 @@
-require("engine/application/constants")
 local gamestate = require("engine/application/gamestate")
 
 local flow = require("engine/application/flow")
@@ -14,8 +13,8 @@ local adventure_state = derived_class(gamestate)
 
 adventure_state.type = ':adventure'
 
-function adventure_state:_init()
-  gamestate._init(self)
+function adventure_state:init()
+  gamestate.init(self)
 
   self.forced_next_floor_number = nil
   self.should_finish_game = false

@@ -1,4 +1,4 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local text_menu = require("menu/text_menu")
 
 local flow = require("engine/application/flow")
@@ -6,7 +6,7 @@ local gameapp = require("engine/application/gameapp")
 local input = require("engine/input/input")
 require("engine/render/color")
 local sprite_data = require("engine/render/sprite_data")
-local ui = require("engine/ui/ui")
+local text_helper = require("engine/ui/text_helper")
 
 local menu_item = require("menu/menu_item")
 local visual_data = require("resources/visual_data")
@@ -510,17 +510,17 @@ describe('text_menu', function ()
     describe('draw', function ()
 
       setup(function ()
-        stub(ui, "print_aligned")
+        stub(text_helper, "print_aligned")
         stub(sprite_data, "render")
       end)
 
       teardown(function ()
-        ui.print_aligned:revert()
+        text_helper.print_aligned:revert()
         sprite_data.render:revert()
       end)
 
       after_each(function ()
-        ui.print_aligned:clear()
+        text_helper.print_aligned:clear()
         sprite_data.render:clear()
       end)
 
@@ -529,7 +529,7 @@ describe('text_menu', function ()
         it('it should do nothing', function ()
           menu:draw(77, 99)
 
-          assert.spy(ui.print_aligned).was_not_called()
+          assert.spy(text_helper.print_aligned).was_not_called()
         end)
 
       end)
@@ -545,7 +545,7 @@ describe('text_menu', function ()
 
           menu:draw(60, 48)
 
-          local s = assert.spy(ui.print_aligned)
+          local s = assert.spy(text_helper.print_aligned)
           s.was_called(2)
           -- non-selected item is offset to the right
           s.was_called_with("in-game", 68, 48, alignments.left, colors.red)
@@ -558,7 +558,7 @@ describe('text_menu', function ()
 
           menu:draw(60, 48)
 
-          local s = assert.spy(ui.print_aligned)
+          local s = assert.spy(text_helper.print_aligned)
           s.was_called(2)
           s.was_called_with("in-game", 60, 48, alignments.horizontal_center, colors.red)
           s.was_called_with("> credits <", 60, 54, alignments.horizontal_center, colors.red)
@@ -570,7 +570,7 @@ describe('text_menu', function ()
 
           menu:draw(60, 48)
 
-          local s = assert.spy(ui.print_aligned)
+          local s = assert.spy(text_helper.print_aligned)
           s.was_called(2)
           s.was_called_with("in-game", 60, 48, alignments.center, colors.red)
           s.was_called_with("> credits <", 60, 54, alignments.center, colors.red)
@@ -596,7 +596,7 @@ describe('text_menu', function ()
 
           menu:draw(60, 48)
 
-          local s = assert.spy(ui.print_aligned)
+          local s = assert.spy(text_helper.print_aligned)
           s.was_called(2)
           -- non-selected item is offset to the right
           s.was_called_with("in-game", 68, 48, alignments.left, colors.red)
@@ -608,7 +608,7 @@ describe('text_menu', function ()
 
           menu:draw(60, 48)
 
-          local s = assert.spy(ui.print_aligned)
+          local s = assert.spy(text_helper.print_aligned)
           s.was_called(2)
           s.was_called_with("> extra1", 60, 48, alignments.left, colors.red)
           -- non-selected item is offset to the right
@@ -620,7 +620,7 @@ describe('text_menu', function ()
 
           menu:draw(60, 48)
 
-          local s = assert.spy(ui.print_aligned)
+          local s = assert.spy(text_helper.print_aligned)
           s.was_called(1)
           s.was_called_with("> extra3", 60, 48, alignments.left, colors.red)
         end)

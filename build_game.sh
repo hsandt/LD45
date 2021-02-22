@@ -7,13 +7,13 @@
 picoboots_scripts_path="$(dirname "$0")/pico-boots/scripts"
 game_src_path="$(dirname "$0")/src"
 data_path="$(dirname "$0")/data"
-build_output_path="$(dirname "$0")/build"
+build_dir_path="$(dirname "$0")/build"
 
 # Configuration: cartridge
-author="hsandt"
-title="wit fighter"
+version=`cat "$data_path/version.txt"`
+author="komehara"
 cartridge_stem="wit_fighter"
-version="1.0"
+title="wit fighter v$version"
 
 help() {
   echo "Build a PICO-8 cartridge with the passed config."
@@ -21,7 +21,7 @@ help() {
 }
 
 usage() {
-  echo "Usage: test.sh [CONFIG]
+  echo "Usage: build_game.sh [CONFIG]
 
 ARGUMENTS
   CONFIG                    Build config. Determines defined preprocess symbols.
@@ -66,6 +66,9 @@ if [[ ${#positional_args[@]} -ge 1 ]]; then
   config="${positional_args[0]}"
 fi
 
+# Define build output folder from config
+build_output_path="${build_dir_path}/v${version}_${config}"
+
 # Define symbols from config
 symbols=''
 
@@ -76,13 +79,13 @@ if [[ $config == 'debug' ]]; then
 elif [[ $config == 'debug-ultrafast' ]]; then
   symbols='assert,deprecated,log,cheat,sandbox,ultrafast'
 elif [[ $config == 'cheat' ]]; then
-  symbols='assert,deprecated,cheat'
+  symbols='assert,cheat'
 elif [[ $config == 'ultrafast' ]]; then
-  symbols='assert,deprecated,ultrafast'
+  symbols='assert,ultrafast'
 elif [[ $config == 'cheat-ultrafast' ]]; then
-  symbols='assert,deprecated,cheat,ultrafast'
+  symbols='assert,cheat,ultrafast'
 elif [[ $config == 'sandbox' ]]; then
-  symbols='assert,deprecated,sandbox'
+  symbols='assert,sandbox'
 fi
 
 # Build from main
@@ -91,7 +94,16 @@ fi
   -d "$data_path/data.p8" -M "$data_path/metadata.p8"    \
   -a "$author" -t "$title"                               \
   -p "$build_output_path"                                \
-  -o "${cartridge_stem}_v${version}"                     \
+  -o "${cartridge_stem}"                                 \
   -c "$config"                                           \
   -s "$symbols"                                          \
   --minify-level 2
+
+  # --minify-level 3                                       \
+  # --unify ''
+
+if [[ $? -ne 0 ]]; then
+  echo ""
+  echo "Build failed, STOP."
+  exit 1
+fi

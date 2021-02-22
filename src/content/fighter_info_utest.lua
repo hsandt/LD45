@@ -1,9 +1,9 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local fighter_info = require("content/fighter_info")
 
 describe('fighter_info', function ()
 
-  describe('_init', function ()
+  describe('init', function ()
     it('should init a fighter_info with id, name, level, initial quote ids', function ()
       local f_info = fighter_info(8, 3, 4, 5, {11, 27}, {12, 28})
       assert.are_same({8, 3, 4, 5, {11, 27}, {12, 28}},

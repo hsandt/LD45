@@ -13,6 +13,38 @@
 	"build_systems":
 	[
 		{
+			"name": "Dev: analyze engine scripts (intermediate release)",
+			"shell": true,
+			"working_dir": "${project_path}",
+			"cmd": ["python3 -m pico-boots.scripts.analyze intermediate/release/pico-boots"],
+			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax"
+		},
+		{
+			"name": "Dev: analyze game scripts (intermediate release)",
+			"shell": true,
+			"working_dir": "${project_path}",
+			"cmd": ["python3 -m pico-boots.scripts.analyze intermediate/release/src"],
+			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax"
+		},
+		{
+			"name": "Dev: generate dependency graph",
+			"shell": true,
+			"working_dir": "${project_path}",
+			"cmd": ["python3 -m pico-boots.scripts.generate_dependency_graph log/dependency_graph.dot src pico-boots/src"],
+			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax"
+		},
+		{
+			"name": "Dev: generate ordered require file for unity build (for testing)",
+			"shell": true,
+			"working_dir": "${project_path}",
+			"cmd": ["python3 -m pico-boots.scripts.generate_ordered_require_file log/ordered_require.lua main src pico-boots/src"],
+			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax"
+		},
+		{
 			"name": "Debug: print data",
 			"shell": true,
 			"cmd": ["lua src/debug/print_data.lua"],
@@ -24,20 +56,11 @@
 			}
 		},
 		{
-			"name": "Dev: analyze engine scripts",
+			"name": "Engine: setup",
+			"working_dir": "${project_path}/pico-boots",
 			"shell": true,
-			"working_dir": "${project_path}",
-			"cmd": ["pico-boots/scripts/analyze.py intermediate/release/pico-boots"],
-			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
-			"syntax": "Packages/Python/Python.sublime-syntax"
-		},
-		{
-			"name": "Dev: analyze game scripts",
-			"shell": true,
-			"working_dir": "${project_path}",
-			"cmd": ["pico-boots/scripts/analyze.py intermediate/release/src"],
-			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
-			"syntax": "Packages/Python/Python.sublime-syntax"
+			"cmd": ["./setup.sh"],
+			"syntax": "Packages/Python/Python.sublime-syntax",
 		},
 		{
 			"name": "Game: edit data",
@@ -188,6 +211,46 @@
 			]
 		},
 		{
+			"name": "Game: install cartridge",
+			"working_dir": "${project_path}",
+			"shell": true,
+			"cmd": ["./install_cartridge.sh debug"],
+			"syntax": "Packages/Python/Python.sublime-syntax",
+			"variants":
+			[
+				{
+					"name": "debug",
+					"cmd": ["./install_cartridge.sh debug"]
+				},
+				{
+					"name": "cheat",
+					"cmd": ["./install_cartridge.sh cheat"]
+				},
+				{
+					"name": "release",
+					"cmd": ["./install_cartridge.sh release"]
+				}
+			]
+		},
+		{
+			"name": "Game: export and patch cartridge release",
+			"working_dir": "${project_path}",
+			"shell": true,
+			"cmd": ["./export_and_patch_cartridge_release.sh"],
+		},
+		{
+			"name": "Game: upload cartridge release",
+			"working_dir": "${project_path}",
+			"shell": true,
+			"cmd": ["./upload_cartridge_release.sh"],
+		},
+		{
+			"name": "Game: build game release, export and patch it, upload it",
+			"working_dir": "${project_path}",
+			"shell": true,
+			"cmd": ["./build_game.sh release && ./install_cartridge.sh release && ./export_and_patch_cartridge_release.sh && ./upload_cartridge_release.sh"],
+		},
+		{
 			"name": "Game: test",
 			"working_dir": "${project_path}",
 			"shell": true,
@@ -291,6 +354,14 @@
 					"env": {
 						"ENABLE_RENDER": "1"
 					}
+				},
+				{
+					// if you aim for 100% coverage including render methods
+					"name": "(utests only)",
+					"cmd": ["./test.sh && echo '' && pico-boots/test.sh"],
+					"env": {
+						"ITEST_MODE": "ignore"
+					}
 				}
 			]
 		},
@@ -327,10 +398,42 @@
 			"syntax": "Packages/Python/Python.sublime-syntax"
 		},
 		{
-			"name": "Engine: Postbuild: test preprocess",
+			"name": "Engine: Postbuild: test unify",
 			"working_dir": "${project_path}/pico-boots",
 			"shell": true,
-			"cmd": ["python3 -m scripts.test_preprocess"],
+			"cmd": ["python3 -m scripts.test_unify"],
+			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax"
+		},
+		{
+			"name": "Engine: Postbuild: test generate_dependency_graph",
+			"working_dir": "${project_path}/pico-boots",
+			"shell": true,
+			"cmd": ["python3 -m scripts.test_generate_dependency_graph"],
+			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax"
+		},
+		{
+			"name": "Engine: Postbuild: test generate_ordered_require_file",
+			"working_dir": "${project_path}/pico-boots",
+			"shell": true,
+			"cmd": ["python3 -m scripts.test_generate_ordered_require_file"],
+			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax"
+		},
+		{
+			"name": "Engine: Postbuild: test adapt_for_png",
+			"working_dir": "${project_path}/pico-boots",
+			"shell": true,
+			"cmd": ["python3 -m scripts.test_adapt_for_png"],
+			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax"
+		},
+		{
+			"name": "Engine: Postbuild: test patch_pico8_js",
+			"working_dir": "${project_path}/pico-boots",
+			"shell": true,
+			"cmd": ["python3 -m scripts.test_patch_pico8_js"],
 			"file_regex": "\"(.*\\.py)\"(?:, line )([\\d]+)(?:\\:)?([\\d]+)?(.*)",
 			"syntax": "Packages/Python/Python.sublime-syntax"
 		},

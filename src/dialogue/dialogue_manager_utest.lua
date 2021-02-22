@@ -1,4 +1,4 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local dialogue_manager = require("dialogue/dialogue_manager")
 
 require("engine/application/constants")
@@ -37,24 +37,24 @@ describe('dialogue_manager', function ()
 
   end)
 
-  describe('_init', function ()
+  describe('init', function ()
 
     setup(function ()
-      spy.on(manager, "_init")
+      spy.on(manager, "init")
     end)
 
     teardown(function ()
-      manager._init:revert()
+      manager.init:revert()
     end)
 
     after_each(function ()
-      manager._init:clear()
+      manager.init:clear()
     end)
 
     it('should call base constructor', function ()
       local d = dialogue_manager()
 
-      local s = assert.spy(manager._init)
+      local s = assert.spy(manager.init)
       s.was_called(1)
       s.was_called_with(match.ref(d))
     end)

@@ -1,4 +1,4 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local fight_state = require("fight/fight_state")
 
 require("engine/application/constants")

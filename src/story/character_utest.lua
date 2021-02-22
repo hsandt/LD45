@@ -1,4 +1,4 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local character = require("story/character")
 
 require("engine/core/math")
@@ -20,7 +20,7 @@ describe('character', function ()
     c = character(mock_character_info, horizontal_dirs.right, pos)
   end)
 
-  describe('_init', function ()
+  describe('init', function ()
     it('should init a character', function ()
       assert.are_equal(mock_character_info, c.character_info)
       assert.are_equal(visual_data.anim_sprites.character[5], c.sprite.data_table)
@@ -35,7 +35,7 @@ describe('character', function ()
   describe('register_speaker', function ()
 
     local fake_dialogue_mgr = {}
-    fake_dialogue_mgr.add_speaker = spy.new()
+    fake_dialogue_mgr.add_speaker = spy.new(function () end)
 
     it('should add speaker to passed dialogue manager', function ()
       c:register_speaker(fake_dialogue_mgr)
@@ -50,7 +50,7 @@ describe('character', function ()
   describe('unregister_speaker', function ()
 
     local fake_dialogue_mgr = {}
-    fake_dialogue_mgr.remove_speaker = spy.new()
+    fake_dialogue_mgr.remove_speaker = spy.new(function () end)
 
     it('should remove speaker from passed dialogue manager', function ()
       c:unregister_speaker(fake_dialogue_mgr)

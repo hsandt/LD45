@@ -1,4 +1,3 @@
-require("engine/core/class")
 local animated_sprite = require("engine/render/animated_sprite")
 
 local speaker_component = require("dialogue/speaker_component")
@@ -25,7 +24,7 @@ local character = new_class()
 --                                       changes during animations
 
 -- after constructing a character, you should call register_speaker
-function character:_init(character_info, direction, pos)
+function character:init(character_info, direction, pos)
   -- paremeters
   self.character_info = character_info
   local sprite_data_table = visual_data.anim_sprites.character[character_info.sprite_id]

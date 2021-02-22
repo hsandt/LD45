@@ -1,4 +1,3 @@
-require("engine/core/class")
 local animated_sprite = require("engine/render/animated_sprite")
 
 local visual_data = require("resources/visual_data")
@@ -29,7 +28,7 @@ State
                                 next confirm input will stop saying
   higher_text: bool             if true, bubble should be shown higher
 --]]
-function speaker_component:_init(entity)
+function speaker_component:init(entity)
   self.entity = entity
 
   self.continue_hint_sprite = animated_sprite(visual_data.anim_sprites.button_o)

@@ -1,8 +1,6 @@
-require("engine/core/class")
-
 local floor_info = new_struct()
 
-function floor_info:_init(number, npc_level_min, npc_level_max)
+function floor_info:init(number, npc_level_min, npc_level_max)
   self.number = number
   self.npc_level_min = npc_level_min
   self.npc_level_max = npc_level_max

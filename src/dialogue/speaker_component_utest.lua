@@ -1,4 +1,4 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local speaker_component = require("dialogue/speaker_component")
 
 local animated_sprite = require("engine/render/animated_sprite")
@@ -21,7 +21,7 @@ describe('speaker_component', function ()
     s = speaker_component(c)
   end)
 
-  describe('_init', function ()
+  describe('init', function ()
     it('should init a speaker_component', function ()
       assert.are_equal(c, s.entity)
       assert.are_same({animated_sprite(visual_data.anim_sprites.button_o), bubble_types.speech, nil, false, false},
@@ -158,7 +158,7 @@ describe('speaker_component', function ()
     end)
 
     it('should play continue hint sprite press_loop anim if waiting for input', function ()
-      -- animated_sprite.play is called in character:_init (before_each), so clear call count now
+      -- animated_sprite.play is called in character:init (before_each), so clear call count now
       animated_sprite.play:clear()
 
       s:show_bubble(bubble_types.thought, "hello", true)
@@ -169,7 +169,7 @@ describe('speaker_component', function ()
     end)
 
     it('should not play continue hint sprite press_loop anim if not waiting for input', function ()
-      -- animated_sprite.play is called in character:_init (before_each), so clear call count now
+      -- animated_sprite.play is called in character:init (before_each), so clear call count now
       animated_sprite.play:clear()
 
       s:show_bubble(bubble_types.thought, "hello", false)

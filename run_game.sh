@@ -1,14 +1,23 @@
 #!/bin/bash
 
-# Run build for passed config with PICO-8 executable
-# Pass any extra arguments to pico8
+# Run game cartridge with PICO-8 executable
+# Must be called after build script
+# Usage: run_game.sh config [extra]
+#   config            build config (e.g. 'debug' or 'release')
+
+# Any extra arguments are passed to pico8
+
+# Configuration: paths
+data_path="$(dirname "$0")/data"
 
 # Configuration: cartridge
 cartridge_stem="wit_fighter"
-version="1.0"
+version=`cat "$data_path/version.txt"`
+
+# shift allows to pass extra arguments as $@
 config="$1"; shift
 
-run_cmd="pico8 -run build/${cartridge_stem}_v${version}_${config}.p8 -screenshot_scale 4 -gif_scale 4 $@"
+run_cmd="pico8 -run build/v${version}_${config}/${cartridge_stem}_${config}.p8 -screenshot_scale 4 -gif_scale 4 $@"
 
 # Support UNIX platforms without gnome-terminal by checking if the command exists
 # If you `reload.sh` the game, the separate terminal allows you to keep watching the program output,

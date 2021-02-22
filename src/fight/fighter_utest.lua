@@ -1,4 +1,4 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local fighter = require("fight/fighter")
 
 local character_info = require("content/character_info")
@@ -41,7 +41,7 @@ describe('fighter', function ()
     f = fighter(mock_npc, mock_npc_fighter_progression)
   end)
 
-  describe('_init', function ()
+  describe('init', function ()
 
     it('should init a fighter with character and progression refs', function ()
       assert.are_equal(mock_npc, f.character)
@@ -85,7 +85,7 @@ describe('fighter', function ()
   describe('auto_pick_attack', function ()
 
     setup(function ()
-      stub(_G, "pick_random", function (seq)
+      stub(_G, "rnd", function (seq)
         -- always return last element for this test
         assert(#seq > 0)
         return seq[#seq]
@@ -104,16 +104,16 @@ describe('fighter', function ()
     end)
 
     teardown(function ()
-      pick_random:revert()
+      rnd:revert()
       gameplay_data.get_quote_match_with_id:revert()
     end)
 
     after_each(function ()
-      pick_random:clear()
+      rnd:clear()
       gameplay_data.get_quote_match_with_id:clear()
     end)
 
-    it('(npc) should return a random available attack using pick_random', function ()
+    it('(npc) should return a random available attack using rnd', function ()
       -- f.available_attack_ids is {1, 3, 5}
       assert.are_equal(gameplay_data.attacks[5], f:auto_pick_attack())
     end)
@@ -125,7 +125,7 @@ describe('fighter', function ()
       end)
     end)
 
-    it('(pc, knows all replies) should return a random available attack using pick_random', function ()
+    it('(pc, knows all replies) should return a random available attack using rnd', function ()
       -- pcf.available_attack_ids is {1, 3, 5}
       -- pcf.fighter_progression.known_reply_ids is {2, 4, 7}
       -- we stubbed get_quote_match_with_id so that A1 => R2, A3 => R4, A5 => R7
@@ -155,7 +155,7 @@ describe('fighter', function ()
     local original_npc_random_reply_fallback = gameplay_data.npc_random_reply_fallback
 
     setup(function ()
-      stub(_G, "pick_random", function (seq)
+      stub(_G, "rnd", function (seq)
         -- always return last element for this test
         assert(#seq > 0)
         return seq[#seq]
@@ -163,11 +163,11 @@ describe('fighter', function ()
     end)
 
     teardown(function ()
-      pick_random:revert()
+      rnd:revert()
     end)
 
     after_each(function ()
-      pick_random:clear()
+      rnd:clear()
     end)
 
     it('should return a random matching reply', function ()

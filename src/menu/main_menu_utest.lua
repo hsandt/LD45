@@ -1,10 +1,10 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local main_menu = require("menu/main_menu")
 
 local gamestate = require("engine/application/gamestate")
 local input = require("engine/input/input")
 require("engine/render/color")
-local ui = require("engine/ui/ui")
+local text_helper = require("engine/ui/text_helper")
 
 local text_menu = require("menu/text_menu")
 
@@ -13,27 +13,27 @@ describe('main_menu', function ()
   describe('init', function ()
 
     setup(function ()
-      spy.on(gamestate, "_init")
+      spy.on(gamestate, "init")
     end)
 
     teardown(function ()
-      gamestate._init:revert()
+      gamestate.init:revert()
     end)
 
     after_each(function ()
-      gamestate._init:clear()
+      gamestate.init:clear()
     end)
 
     it('should call base constructor', function ()
       local state = main_menu()
 
-      local s = assert.spy(gamestate._init)
+      local s = assert.spy(gamestate.init)
       s.was_called(1)
       s.was_called_with(match.ref(state))
     end)
 
     it('should set text menu to nil', function ()
-      -- as long as there are no type/attribute checks in _init, we don't need
+      -- as long as there are no type/attribute checks in init, we don't need
       --  to actualy derive from gameapp for the dummy app
       local fake_app = {}
       local menu = main_menu(fake_app)
@@ -160,21 +160,21 @@ describe('main_menu', function ()
       describe('draw_title', function ()
 
         setup(function ()
-          stub(ui, "print_centered")
+          stub(text_helper, "print_centered")
         end)
 
         teardown(function ()
-          ui.print_centered:revert()
+          text_helper.print_centered:revert()
         end)
 
         after_each(function ()
-          ui.print_centered:clear()
+          text_helper.print_centered:clear()
         end)
 
         it('should print "wit fighter by komehara" centered, in white', function ()
           menu:draw_title()
 
-          local s = assert.spy(ui.print_centered)
+          local s = assert.spy(text_helper.print_centered)
           s.was_called(2)
           -- no need to check what exactly is printed
         end)
@@ -184,24 +184,24 @@ describe('main_menu', function ()
       describe('draw_instructions', function ()
 
         setup(function ()
-          stub(ui, "print_centered")
+          stub(text_helper, "print_centered")
           stub(api, "print")
         end)
 
         teardown(function ()
-          ui.print_centered:revert()
+          text_helper.print_centered:revert()
           api.print:revert()
         end)
 
         after_each(function ()
-          ui.print_centered:clear()
+          text_helper.print_centered:clear()
           api.print:clear()
         end)
 
         it('should print a few lines', function ()
           menu:draw_instructions()
 
-          local s = assert.spy(ui.print_centered)
+          local s = assert.spy(text_helper.print_centered)
           s.was_called(2)
 
           local s = assert.spy(api.print)

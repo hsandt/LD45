@@ -3,11 +3,14 @@
 # Run itest with PICO-8 executable (itests only work in debug config)
 # Pass any extra arguments to pico8
 
+# Configuration: paths
+data_path="$(dirname "$0")/data"
+
 # Configuration: cartridge
 cartridge_stem="wit_fighter_itest_all"
-version="1.0"
+version=`cat "$data_path/version.txt"`
 
-run_cmd="pico8 -run build/${cartridge_stem}_v${version}_debug.p8 -screenshot_scale 4 -gif_scale 4 $@"
+run_cmd="pico8 -run build/v${version}_itest/${cartridge_stem}_v${version}_itest.p8 -screenshot_scale 4 -gif_scale 4 $@"
 
 # Support UNIX platforms without gnome-terminal by checking if the command exists
 # If you `reload.sh` the game, the separate terminal allows you to keep watching the program output,

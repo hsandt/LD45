@@ -1,5 +1,3 @@
-require("engine/core/class")
-
 -- connects an attack with a reply, stating that the reply works against the attack
 local quote_match_info = new_struct()
 
@@ -7,7 +5,7 @@ local quote_match_info = new_struct()
 -- attack_id: int
 -- reply_id: int
 -- power: int
-function quote_match_info:_init(id, attack_id, reply_id, power)
+function quote_match_info:init(id, attack_id, reply_id, power)
   self.id = id
   self.attack_id = attack_id
   self.reply_id = reply_id

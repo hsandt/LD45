@@ -1,4 +1,4 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local menu_helper = require("menu/menu_helper")
 
 describe('menu_helper', function ()

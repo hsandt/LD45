@@ -1,7 +1,3 @@
-require("engine/core/class")
-require("engine/core/math")
-require("engine/render/color")
-
 local flow = require("engine/application/flow")
 local manager = require("engine/application/manager")
 local input = require("engine/input/input")
@@ -34,8 +30,8 @@ State
   hit_fx_pos            vector|nil                 position of the hit fx animated sprite, if any
   hit_feedback_label    ui.label|nil               label for hit feedback (set reference directly)
 --]]
-function fight_manager:_init()
-  manager._init(self)
+function fight_manager:init()
+  manager.init(self)
 
   self.next_opponent = nil
   self.fighters = {}
@@ -108,7 +104,7 @@ end
 function fight_manager:pick_matching_random_npc_fighter_prog()
   local candidate_npc_fighter_prog_s = self.app.game_session:get_all_candidate_npc_fighter_prog()
   assert(#candidate_npc_fighter_prog_s > 0, "no candidate npc found at floor "..self.app.game_session.floor_number)
-  return pick_random(candidate_npc_fighter_prog_s)
+  return rnd(candidate_npc_fighter_prog_s)
 end
 
 function fight_manager:start_fight_with_next_opponent()

@@ -1,5 +1,3 @@
-require("engine/core/class")
-
 local manager = require("engine/application/manager")
 
 local gameplay_data = require("resources/gameplay_data")
@@ -20,8 +18,8 @@ Dynamic parameters (fixed for a given adventure segment, i.e. until adventure st
 
 State
 --]]
-function adventure_manager:_init()
-  manager._init(self)
+function adventure_manager:init()
+  manager.init(self)
 
   self.next_step = ""
   self.pc = nil

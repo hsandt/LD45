@@ -1,9 +1,7 @@
 -- custom game application
 -- used by main and itest_main
 
-require("engine/application/constants")
 local gameapp = require("engine/application/gameapp")
-require("engine/core/class")
 local input = require("engine/input/input")
 
 --#if tuner
@@ -23,7 +21,7 @@ local vlogger = require("engine/debug/visual_logger")
 --#endif
 
 --#if mouse
-local ui = require("engine/ui/ui")
+local mouse = require("engine/ui/mouse")
 --#endif
 
 --#if sandbox
@@ -40,8 +38,8 @@ local adventure_state = require("story/adventure_state")
 
 local wit_fighter_app = derived_class(gameapp)
 
-function wit_fighter_app:_init()
-  gameapp._init(self, fps30)
+function wit_fighter_app:init()
+  gameapp.init(self, fps30)
 
   -- component
   self.game_session = game_session()
@@ -63,7 +61,7 @@ end
 function wit_fighter_app:on_post_start() -- override
   -- enable mouse devkit
   input:toggle_mouse(true)
-  ui:set_cursor_sprite_data(visual_data.sprites.cursor)
+  mouse:set_cursor_sprite_data(visual_data.sprites.cursor)
 end
 --#endif
 
@@ -72,7 +70,7 @@ function wit_fighter_app:on_reset() -- override
   self.game_session = game_session()
 
 --#if mouse
-  ui:set_cursor_sprite_data(nil)
+  mouse:set_cursor_sprite_data(nil)
 --#endif
 end
 
@@ -105,7 +103,7 @@ function wit_fighter_app:on_render() -- override
 
 --#if mouse
   -- always draw cursor on top
-  ui:render_mouse()
+  mouse:render()
 --#endif
 end
 

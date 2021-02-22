@@ -1,8 +1,6 @@
-require("engine/core/math")
-local sprite_data = require("engine/render/sprite_data")
 local animated_sprite_data = require("engine/render/animated_sprite_data")
-require("engine/render/color")
-local ui = require("engine/ui/ui")
+local sprite_data = require("engine/render/sprite_data")
+local label = require("engine/ui/label")
 
 local quote_info = require("content/quote_info")  -- quote_types
 local fighter_progression = require("progression/fighter_progression")  -- character_types
@@ -70,14 +68,15 @@ local function generate_character_anim_sprite_data_table()
   return character_anim_sprite_data_table
 end
 
+local hit_fx = sprites.hit_fx
+
 local anim_sprites = {
   button_o = {
     ["press_loop"] = animated_sprite_data({sprites.button_o.idle, sprites.button_o.pressed}, 30, anim_loop_modes.loop)
   },
   character = generate_character_anim_sprite_data_table(),
   hit_fx = {
-    ["once"] = animated_sprite_data.create(sprites.hit_fx,
-      {1, 2, 3, 4, 5}, 1, anim_loop_modes.clear)
+    ["once"] = animated_sprite_data({hit_fx[1], hit_fx[2], hit_fx[3], hit_fx[4], hit_fx[5]}, 1, anim_loop_modes.clear)
   }
 }
 
@@ -110,28 +109,28 @@ local visual_data = {
     [character_types.pc] = {
       [quote_types.attack] = {
         -- todo: support center mode in label to avoid changing x based on text length
-        [1] = ui.label("direct hit!", vector(32, 53), colors.orange),
-        [2] = ui.label("direct hit!", vector(32, 53), colors.orange),
-        [3] = ui.label("direct hit!", vector(32, 53), colors.red)
+        [1] = label("direct hit!", vector(32, 53), colors.orange),
+        [2] = label("direct hit!", vector(32, 53), colors.orange),
+        [3] = label("direct hit!", vector(32, 53), colors.red)
       },
       [quote_types.reply] = {
-        [0] = ui.label("neutralized!", vector(32, 53), colors.white),
-        [1] = ui.label("countered!", vector(32, 53), colors.orange),
-        [2] = ui.label("countered!", vector(32, 53), colors.orange),
-        [3] = ui.label("countered!", vector(32, 53), colors.red)
+        [0] = label("neutralized!", vector(32, 53), colors.white),
+        [1] = label("countered!", vector(32, 53), colors.orange),
+        [2] = label("countered!", vector(32, 53), colors.orange),
+        [3] = label("countered!", vector(32, 53), colors.red)
       }
     },
     [character_types.npc] = {
       [quote_types.attack] = {
-        [1] = ui.label("direct hit!", vector(32, 53), colors.brown),
-        [2] = ui.label("direct hit!", vector(32, 53), colors.brown),
-        [3] = ui.label("direct hit!", vector(32, 53), colors.yellow)
+        [1] = label("direct hit!", vector(32, 53), colors.brown),
+        [2] = label("direct hit!", vector(32, 53), colors.brown),
+        [3] = label("direct hit!", vector(32, 53), colors.yellow)
       },
       [quote_types.reply] = {
-        [0] = ui.label("neutralized!", vector(32, 53), colors.white),
-        [1] = ui.label("ok", vector(32, 53), colors.brown),
-        [2] = ui.label("smart!", vector(32, 53), colors.dark_green),
-        [3] = ui.label("witty!", vector(32, 53), colors.indigo)
+        [0] = label("neutralized!", vector(32, 53), colors.white),
+        [1] = label("ok", vector(32, 53), colors.brown),
+        [2] = label("smart!", vector(32, 53), colors.dark_green),
+        [3] = label("witty!", vector(32, 53), colors.indigo)
       }
     }
   },

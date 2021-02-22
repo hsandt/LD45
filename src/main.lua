@@ -2,23 +2,37 @@
 
 -- we must require engine/pico8/api at the top of our main.lua, so API bridges apply to all modules
 require("engine/pico8/api")
+require("engine/common")
+require("common_game")
+
+-- we also require codetuner so any file can used tuned()
+-- if tuner symbol is defined, then we also initialize it in init
+local codetuner = require("engine/debug/codetuner")
 
 --#if log
 local logging = require("engine/debug/logging")
 --#endif
 
--- always require code tuner, since ifn tuned, `tuned` will simply use the default value
-local codetuner = require("engine/debug/codetuner")
+--#if visual_logger
+local vlogger = require("engine/debug/visual_logger")
+--#endif
+
+--#if profiler
+local profiler = require("engine/debug/profiler")
+--#endif
 
 local wit_fighter_app = require("application/wit_fighter_app")
 
 local app = wit_fighter_app()
 
-function _init()
+function init()
 --#if log
   -- start logging before app in case we need to read logs about app start itself
   logging.logger:register_stream(logging.console_log_stream)
   logging.logger:register_stream(logging.file_log_stream)
+--#if visual_logger
+  logging.logger:register_stream(vlogger.vlog_stream)
+--#endif
 
   logging.file_log_stream.file_prefix = "wit_fighter"
 
@@ -34,7 +48,7 @@ function _init()
     ['itest'] = true,
     ['log'] = true,
     ['ui'] = true,
-    -- ['frame'] = nil,
+    -- ['frame'] = true,
 
     -- game
     ['fight'] = true,
@@ -44,9 +58,14 @@ function _init()
   }
 --#endif
 
+--#if visual_logger
+  -- uncomment to enable visual logger
+  -- vlogger.window:show()
+--#endif
+
 --#if profiler
   -- uncomment to enable profiler
-  -- profiler.window:show(colors.orange)
+  profiler.window:show(colors.orange)
 --#endif
 
 --#if tuner

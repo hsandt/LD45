@@ -1,6 +1,3 @@
-require("engine/core/class")
-require("engine/core/helper")
-
 local fighter_info = new_struct()
 
 -- id: int
@@ -9,7 +6,7 @@ local fighter_info = new_struct()
 -- initial_max_hp: int
 -- initial_attack_ids: {int}
 -- initial_reply_ids: {int}
-function fighter_info:_init(id, character_info_id, initial_level, initial_max_hp, initial_attack_ids, initial_reply_ids)
+function fighter_info:init(id, character_info_id, initial_level, initial_max_hp, initial_attack_ids, initial_reply_ids)
   self.id = id
   self.character_info_id = character_info_id
   self.initial_level = initial_level

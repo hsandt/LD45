@@ -12,8 +12,8 @@ local sandbox_state = derived_class(gamestate)
 
 sandbox_state.type = ':sandbox'
 
-function sandbox_state:_init()
-  gamestate._init(self)
+function sandbox_state:init()
+  gamestate.init(self)
 
   self.hit_fx = animated_sprite(visual_data.anim_sprites.hit_fx)
   self.fighter_sprite = animated_sprite(visual_data.anim_sprites.character[0])

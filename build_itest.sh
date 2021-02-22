@@ -10,17 +10,20 @@
 picoboots_scripts_path="$(dirname "$0")/pico-boots/scripts"
 game_src_path="$(dirname "$0")/src"
 data_path="$(dirname "$0")/data"
-build_output_path="$(dirname "$0")/build"
+build_dir_path="$(dirname "$0")/build"
 
 # Configuration: cartridge
-author="hsandt"
-title="wit fighter itests (all)"
+version=`cat "$data_path/version.txt"`
+author="komehara"
+title="wit fighter itests (all) v$version"
 cartridge_stem="wit_fighter_itest_all"
-version="1.0"
-config='debug'
+config='itest'
 # for now, we don't set `cheat` symbol to make it lighter, but it's still possible
 # to test cheats in headless itests as busted preserves all (non-#pico8) code
 symbols='assert,log,itest'
+
+# Define build output folder from config
+build_output_path="${build_dir_path}/v${version}_${config}"
 
 # Build from itest main for all itests
 "$picoboots_scripts_path/build_cartridge.sh"          \
@@ -31,4 +34,4 @@ symbols='assert,log,itest'
   -o "${cartridge_stem}_v${version}"                  \
   -c "$config"                                        \
   -s "$symbols"                                       \
-  --minify-level 2
+  --minify-level 3

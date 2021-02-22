@@ -1,6 +1,3 @@
-require("engine/core/class")
-require("engine/core/helper")
-
 quote_types = {
   attack = 1,
   reply = 2
@@ -12,7 +9,7 @@ local quote_info = new_struct()
 -- quote_type: quote_types
 -- level: int
 -- text: string
-function quote_info:_init(id, quote_type, level, text)
+function quote_info:init(id, quote_type, level, text)
   self.id = id
   self.type = quote_type
   self.level = level

@@ -1,6 +1,3 @@
-require("engine/core/class")
-require("engine/core/helper")
-
 local gameplay_data = require("resources/gameplay_data")
 
 character_types = {
@@ -36,7 +33,7 @@ State
                                       count of new replies received over past fights,
                                       indexed by reply id (as in fighter, but persistent)
 --]]
-function fighter_progression:_init(character_type, some_fighter_info)
+function fighter_progression:init(character_type, some_fighter_info)
   -- Parameters
   self.character_type = character_type
   self.control_type = character_type == character_types.pc and control_types.human or control_types.ai

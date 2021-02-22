@@ -1,5 +1,4 @@
 local gamestate = require("engine/application/gamestate")
-local ui = require("engine/ui/ui")
 
 local painter = require("render/painter")
 local visual_data = require("resources/visual_data")

@@ -1,9 +1,9 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local character_info = require("content/character_info")
 
 describe('character_info', function ()
 
-  describe('_init', function ()
+  describe('init', function ()
     it('should init a character_info with id, name, level, initial quote ids', function ()
       local f_info = character_info(8, "employee")
       assert.are_same({8, "employee"},

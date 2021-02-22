@@ -1,4 +1,4 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local fighter_progression = require("progression/fighter_progression")
 
 local fighter_info = require("content/fighter_info")
@@ -8,7 +8,7 @@ require("engine/debug/logging")
 
 describe('fighter_progression', function ()
 
-  describe('_init', function ()
+  describe('init', function ()
 
     it('should init a fighter_progression for an npc', function ()
       local mock_fighter_info = fighter_info(4, 4, 2, 5, {11, 27}, {12, 28})

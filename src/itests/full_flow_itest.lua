@@ -1,5 +1,4 @@
-local integrationtest = require("engine/test/integrationtest")
-local itest_manager = integrationtest.itest_manager
+local itest_manager = require("engine/test/itest_manager")
 local flow = require("engine/application/flow")
 
 local fighter_progression = require("progression/fighter_progression")

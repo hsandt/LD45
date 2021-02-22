@@ -1,4 +1,4 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local game_session = require("progression/game_session")
 
 local floor_info = require("content/floor_info")
@@ -12,7 +12,7 @@ describe('game_session', function ()
   local fake_npc_fighter_prog2 = {level = 2}
   local fake_npc_fighter_prog3 = {level = 3}
 
-  describe('_init', function ()
+  describe('init', function ()
 
     setup(function ()
       stub(game_session, "generate_npc_fighter_progressions", function ()

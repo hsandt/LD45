@@ -1,4 +1,4 @@
-require("engine/test/bustedhelper")
+require("test/bustedhelper_game")
 local fight_manager = require("fight/fight_manager")
 
 local manager = require("engine/application/manager")
@@ -32,24 +32,24 @@ describe('fight_manager', function ()
 
   end)
 
-  describe('_init', function ()
+  describe('init', function ()
 
     setup(function ()
-      spy.on(manager, "_init")
+      spy.on(manager, "init")
     end)
 
     teardown(function ()
-      manager._init:revert()
+      manager.init:revert()
     end)
 
     after_each(function ()
-      manager._init:clear()
+      manager.init:clear()
     end)
 
     it('should call base constructor', function ()
       local fm = fight_manager()
 
-      local s = assert.spy(manager._init)
+      local s = assert.spy(manager.init)
       s.was_called(1)
       s.was_called_with(match.ref(fm))
     end)
@@ -680,7 +680,7 @@ describe('fight_manager', function ()
             return fake_reply_items[1]
           end
         end)
-        stub(wit_fighter_app, "wait_and_do")
+        stub(fight_manager, "wait_and_do")
       end)
 
       teardown(function ()
@@ -689,7 +689,7 @@ describe('fight_manager', function ()
         dialogue_manager.prompt_items:revert()
 
         fight_manager.auto_pick_quote:revert()
-        wit_fighter_app.wait_and_do:revert()
+        fight_manager.wait_and_do:revert()
       end)
 
       before_each(function ()
@@ -714,7 +714,7 @@ describe('fight_manager', function ()
         dialogue_manager.prompt_items:clear()
 
         fight_manager.auto_pick_quote:clear()
-        wit_fighter_app.wait_and_do:clear()
+        fight_manager.wait_and_do:clear()
       end)
 
       describe('(when active fighter is attacking)', function ()
@@ -817,9 +817,9 @@ describe('fight_manager', function ()
               local s = assert.spy(dialogue_manager.prompt_items)
               s.was_not_called()
 
-              local s = assert.spy(wit_fighter_app.wait_and_do)
+              local s = assert.spy(fight_manager.wait_and_do)
               s.was_called(1)
-              s.was_called_with(match.ref(app), visual_data.ai_say_quote_delay, fight_manager.say_quote,
+              s.was_called_with(match.ref(fm), visual_data.ai_say_quote_delay, fight_manager.say_quote,
                 fm, mock_pc_fighter, fake_attack_items[2])
             end)
 
@@ -900,9 +900,9 @@ describe('fight_manager', function ()
               local s = assert.spy(dialogue_manager.prompt_items)
               s.was_not_called()
 
-              local s = assert.spy(wit_fighter_app.wait_and_do)
+              local s = assert.spy(fight_manager.wait_and_do)
               s.was_called(1)
-              s.was_called_with(match.ref(app), visual_data.ai_say_quote_delay, fight_manager.say_quote,
+              s.was_called_with(match.ref(fm), visual_data.ai_say_quote_delay, fight_manager.say_quote,
                 fm, mock_pc_fighter, fake_reply_items[1])
             end)
 

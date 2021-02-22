@@ -4,7 +4,7 @@ require("engine/core/class")
 require("engine/core/helper")
 local input = require("engine/input/input")
 local animated_sprite = require("engine/render/animated_sprite")
-local ui = require("engine/ui/ui")
+local graphics_helper = require("engine/ui/graphics_helper")
 
 local text_menu = require("menu/text_menu_with_sfx")
 local visual_data = require("resources/visual_data")
@@ -18,8 +18,8 @@ local dialogue_manager = derived_class(manager)
 
 dialogue_manager.type = ':dialogue'
 
-function dialogue_manager:_init()
-  manager._init(self)
+function dialogue_manager:init()
+  manager.init(self)
 
   -- component (wait for start to create text_menu so app has been registered)
   self.text_menu = nil
@@ -201,7 +201,7 @@ end
 
 -- static
 function dialogue_manager.draw_bubble(bubble_type, bubble_left, bubble_top, bubble_right, bubble_bottom, bubble_tail_pos)
-  ui.draw_rounded_box(bubble_left, bubble_top, bubble_right, bubble_bottom, colors.black, colors.white)
+  graphics_helper.draw_rounded_box(bubble_left, bubble_top, bubble_right, bubble_bottom, colors.black, colors.white)
   visual_data.sprites.bubble_tail_by_bubble_type[bubble_type]:render(bubble_tail_pos)
 end
 
@@ -220,7 +220,7 @@ end
 
 -- static
 function dialogue_manager.draw_bottom_box()
-  ui.draw_rounded_box(visual_data.bottom_box_topleft.x, visual_data.bottom_box_topleft.y,
+  graphics_helper.draw_rounded_box(visual_data.bottom_box_topleft.x, visual_data.bottom_box_topleft.y,
     visual_data.bottom_box_bottomright.x, visual_data.bottom_box_bottomright.y, colors.dark_blue, colors.indigo)
 end
 

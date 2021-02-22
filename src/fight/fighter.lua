@@ -1,6 +1,5 @@
-require("engine/core/class")
-require("engine/core/math")
-local ui = require("engine/ui/ui")
+local graphics_helper = require("engine/ui/graphics_helper")
+local text_helper = require("engine/ui/text_helper")
 
 local gameplay_data = require("resources/gameplay_data")
 local visual_data = require("resources/visual_data")
@@ -29,7 +28,7 @@ State
   has_just_skipped: bool                    true iff this fighter has said the "skip" attack last turn
                                             cleared as soon as this fighter becomes active again
 --]]
-function fighter:_init(char, fighter_prog)
+function fighter:init(char, fighter_prog)
 --#if assert
   assert(fighter_prog.fighter_info.character_info_id, char.character_info.id,
     "fighter_prog.fighter_info.character_info_id ("..fighter_prog.fighter_info.character_info_id..
@@ -118,17 +117,17 @@ function fighter:auto_pick_attack()
     end)
 
     if #unmatched_attack_ids > 0 then
-      random_attack_id = pick_random(unmatched_attack_ids)
+      random_attack_id = rnd(unmatched_attack_ids)
       log("fighter \""..self:get_name().."\" picks unmatched attack ("..random_attack_id..")", 'fight')
     else
       -- all attacks have known replies and and we are not sure if there are *better* replies to learn
       --   (more exactly the player is not supposed to know), so just use a random attack
-      random_attack_id = pick_random(available_attack_ids)
+      random_attack_id = rnd(available_attack_ids)
       log("fighter \""..self:get_name().."\" picks random attack ("..random_attack_id..")", 'fight')
     end
   else
     -- for attack, ai picks random one among available (sequence is never empty here)
-    random_attack_id = pick_random(available_attack_ids)
+    random_attack_id = rnd(available_attack_ids)
       log("fighter \""..self:get_name().."\" picks random attack ("..random_attack_id..")", 'fight')
   end
 
@@ -162,13 +161,13 @@ function fighter:auto_pick_reply(attack_id)
   end)
 
   if #candidate_replies > 0 then
-    picked_reply_id = pick_random(candidate_replies)
+    picked_reply_id = rnd(candidate_replies)
     log("fighter \""..self:get_name().."\" picks randomly matching reply ("..picked_reply_id..")", 'fight')
   else
     if gameplay_data.npc_random_reply_fallback then
       -- no matching quote found; pick a random reply instead (it will lose, but may teach a new reply
       --   to the player as an extra)
-      picked_reply_id = pick_random(available_reply_ids)
+      picked_reply_id = rnd(available_reply_ids)
       log("fighter \""..self:get_name().."\" picks cannot find match => picks randomly reply ("..picked_reply_id..")", 'fight')
     else
       -- no matching quote found; pick a losing reply instead
@@ -304,7 +303,7 @@ function fighter:draw_health_bar()
   local top = self.character.root_pos.y + visual_data.health_bar_top_from_char
   local bottom = self.character.root_pos.y + visual_data.health_bar_bottom_from_char
   local hp_ratio = self.hp / self.fighter_progression.max_hp
-  ui.draw_gauge(left, top, right, bottom, hp_ratio, directions.up, colors.dark_blue, colors.white, colors.blue)
+  graphics_helper.draw_gauge(left, top, right, bottom, hp_ratio, directions.up, colors.dark_blue, colors.white, colors.blue)
 end
 
 function fighter:draw_name_label()
@@ -322,8 +321,8 @@ function fighter:draw_name_label()
   local box_right = ceil(center_x + label_width / 2)
   local box_top = flr(center_y - label_height / 2)
   local box_bottom = ceil(center_y + label_height / 2)
-  ui.draw_rounded_box(box_left, box_top, box_right, box_bottom, colors.black, colors.white)
-  ui.print_centered(text, center_x, center_y, colors.black)
+  graphics_helper.draw_rounded_box(box_left, box_top, box_right, box_bottom, colors.black, colors.white)
+  text_helper.print_centered(text, center_x, center_y, colors.black)
 end
 
 return fighter

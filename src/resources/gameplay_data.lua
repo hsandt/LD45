@@ -1,5 +1,3 @@
-require("engine/core/helper")
-
 local character_info = require("content/character_info")
 local fighter_info = require("content/fighter_info")
 local floor_info = require("content/floor_info")
@@ -303,7 +301,7 @@ function gameplay_data:get_zone(floor_number)
   return 0
 end
 
-function gameplay_data:get_all_npc_fighter_info_with_initial_level(level)
+function gameplay_data:get_all_npc_fighter_info_withinitial_level(level)
   return filter(self.npc_fighter_info_s, function (some_fighter_info)
     return some_fighter_info.initial_level == level
   end)

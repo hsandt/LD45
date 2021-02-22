@@ -2,10 +2,15 @@
 --   by querying gameplay_data
 -- it is not really testing anything, so instead of making it a utest
 --   that includes bustedhelper, I only included PICO-8 bridge (to make it work
---   in native Lua)
--- it can be run under PICO-8 to test actual data, but most of the time
+--   in native Lua) and the usual common files as it is an entry Lua file
+-- it could be run under PICO-8 to test actual data (replacing first
+--   require with engine/pico8/api.lua), but most of the time
 --   you'll just want to run it directly as a Lua file and read the output
 require("engine/test/pico8api")
+require("engine/common")
+require("common_game")
+
+require("engine/core/seq_helper")
 
 local quote_info = require("content/quote_info")  -- quote_types
 local gameplay_data = require("resources/gameplay_data")

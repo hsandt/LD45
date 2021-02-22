@@ -1,5 +1,4 @@
-local integrationtest = require("engine/test/integrationtest")
-local itest_manager = integrationtest.itest_manager
+local itest_manager = require("engine/test/itest_manager")
 local flow = require("engine/application/flow")
 
 itest_manager:register_itest('player starts game',
