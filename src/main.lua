@@ -25,7 +25,7 @@ local wit_fighter_app = require("application/wit_fighter_app")
 
 local app = wit_fighter_app()
 
-function init()
+function _init()
 --#if log
   -- start logging before app in case we need to read logs about app start itself
   logging.logger:register_stream(logging.console_log_stream)

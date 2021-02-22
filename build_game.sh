@@ -88,6 +88,14 @@ elif [[ $config == 'sandbox' ]]; then
   symbols='assert,sandbox'
 fi
 
+if [[ -n "$symbols" ]]; then
+  # there was at least one symbol before, so add comma separator
+  symbols+=","
+fi
+
+# symbols used for all configs
+symbols+="manager"
+
 # Build from main
 "$picoboots_scripts_path/build_cartridge.sh"             \
   "$game_src_path" main.lua                              \
