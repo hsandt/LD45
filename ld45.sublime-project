@@ -75,6 +75,12 @@
 			"working_dir": "${project_path}"
 		},
 		{
+			"name": "Game: edit data serialize (alphabet)",
+			"shell": true,
+			"cmd": ["./edit_data_serialize.sh"],
+			"working_dir": "${project_path}"
+		},
+		{
 			"name": "Game: build game",
 			"working_dir": "${project_path}",
 			"shell": true,
@@ -167,6 +173,25 @@
 			"cmd": ["./build_itest.sh && (./pico-boots/scripts/reload.sh || ./run_itest.sh)"],
 			"file_regex": "(.*\\.sh)(?:\\: line )([\\d]+)(?:\\:)([\\d]+)? (.*)",
 			"syntax": "Packages/Python/Python.sublime-syntax"
+		},
+		{
+			"name": "Game: serialize text into data_serialize.p8",
+			"working_dir": "${project_path}",
+			"shell": true,
+			"cmd": ["./build_serialize.sh debug && ./run_serialize.sh debug"],
+			"file_regex": "(.*\\.sh)(?:\\: line )([\\d]+)(?:\\:)([\\d]+)? (.*)",
+			"syntax": "Packages/Python/Python.sublime-syntax",
+			"variants":
+			[
+				{
+					"name": "debug",
+					"cmd": ["./build_serialize.sh debug &&  ./run_serialize.sh debug"]
+				},
+				{
+					"name": "release",
+					"cmd": ["./build_serialize.sh release && ./run_serialize.sh release"]
+				}
+			]
 		},
 		{
 			"name": "Game: start",
