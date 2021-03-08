@@ -47,14 +47,12 @@ function serialize.text_to_mem(text, addr_start, addr_exclusive_limit)
   return next_addr
 end
 
--- Write text in table into memory, by chaining text_to_mem writes to effectively
+-- Write sequence of texts into memory, by chaining text_to_mem writes to effectively
 --  concatenate all the text strings (with tag) into memory.
 -- Return address of next free address, just after the last written address
 function serialize.text_table_to_mem(text_table, addr_start, addr_exclusive_limit)
   local next_addr = addr_start
   for text in all(text_table) do
-    -- copy text character bytes into __map__ memory, which is unused in Wit Fighter
-    -- the range of unshared map memory is 0x2000-0x2fff
     serialize.text_to_mem(text, next_addr, addr_exclusive_limit)
     -- advance to start of next text
     -- we've used 1 byte for the length tag, so + 1
