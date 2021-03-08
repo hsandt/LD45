@@ -1,3 +1,4 @@
+local string_size = require("engine/core/string_size")
 local graphics_helper = require("engine/ui/graphics_helper")
 local text_helper = require("engine/ui/text_helper")
 
@@ -308,7 +309,7 @@ end
 
 function fighter:draw_name_label()
   local text = self:get_name()
-  local text_width, text_height = compute_size(text)
+  local text_width, text_height = string_size.compute_size(text)
   local label_width, label_height = text_width + 1, text_height + 1
 
   local center_x_offset = visual_data.fighter_name_label_center_offset_x

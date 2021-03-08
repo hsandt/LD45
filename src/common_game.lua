@@ -11,7 +11,6 @@ require("engine/core/seq_helper")
 -- (must be above require string)
 require("engine/core/string_split")
 --#endif
-require("engine/core/string")
 require("engine/core/vector_ext_mirror")
 
 --#if minify_level3
