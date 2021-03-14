@@ -3,7 +3,8 @@ local audio_data = {
   bgm = {
     thinking = 0,
     encounter = 5,
-    fight_normal = 8
+    fight_normal = 8,
+    fight_boss = 16
   },
   -- jingle use the sfx system
   jingle = {
