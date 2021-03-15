@@ -1,4 +1,5 @@
-require("engine/test/bustedhelper")
+-- used at runtime, so may use for game helpers
+require("test/bustedhelper_game")
 
 local deserialize = require("serialization/deserialize")
 
@@ -21,7 +22,7 @@ describe('deserialize', function ()
 
   end)
 
-  describe('#solo text_table_to_mem', function ()
+  describe('text_table_to_mem', function ()
 
     it('should read each text with length tag and characters as bytes', function ()
       pico8.poked_addresses = {
@@ -44,7 +45,7 @@ describe('deserialize', function ()
 
       -- text_table_to_mem essentialy chains calls to text_from_mem, but it's funnier to test
       --  the final result than doing a bunch of assert.spy checks
-      assert.are_same({"hello", "", "world!"}, deserialize.text_table_to_mem(0x2000, 0x2010))
+      assert.are_same({"hello", "", "world!"}, deserialize.text_table_from_mem(0x2000, 0x2010))
     end)
 
   end)

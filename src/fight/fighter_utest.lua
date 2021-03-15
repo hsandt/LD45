@@ -6,6 +6,7 @@ local fighter_info = require("content/fighter_info")
 local quote_info = require("content/quote_info")  -- for quote_types
 local quote_match_info = require("content/quote_match_info")
 local speaker_component = require("dialogue/speaker_component")
+local localizer = require("localization/localizer")
 local fighter_progression = require("progression/fighter_progression")
 local gameplay_data = require("resources/gameplay_data")
 local character = require("story/character")
@@ -231,25 +232,30 @@ describe('fighter', function ()
   describe('preview_quote', function ()
 
     setup(function ()
+      stub(localizer, "get_string", function (self, localized_string_id)
+          return "quote "..localized_string_id
+      end)
       stub(speaker_component, "think")
     end)
 
     teardown(function ()
+      localizer.get_string:revert()
       speaker_component.think:revert()
     end)
 
     after_each(function ()
+      localizer.get_string:clear()
       speaker_component.think:clear()
     end)
 
     it('should call think on character speaker component', function ()
-      local q = quote_info(3, quote_types.attack, 1, "attack 3")
+      local q = quote_info(3, quote_types.attack, 1, 30)
 
       f:preview_quote(q)
 
       local s = assert.spy(speaker_component.think)
       s.was_called(1)
-      s.was_called_with(match.ref(f.character.speaker), "attack 3", false, true)
+      s.was_called_with(match.ref(f.character.speaker), "quote 30", false, true)
     end)
 
   end)
@@ -259,29 +265,34 @@ describe('fighter', function ()
     local original_consume_reply = gameplay_data.consume_reply
 
     setup(function ()
+      stub(localizer, "get_string", function (self, localized_string_id)
+          return "quote "..localized_string_id
+      end)
       stub(speaker_component, "say")
     end)
 
     teardown(function ()
+      localizer.get_string:revert()
       speaker_component.say:revert()
     end)
 
     after_each(function ()
+      localizer.get_string:clear()
       speaker_component.say:clear()
     end)
 
     it('should call say on character speaker component', function ()
-      local q = quote_info(3, quote_types.attack, 1, "attack 3")
+      local q = quote_info(3, quote_types.attack, 1, 30)
 
       f:say_quote(q)
 
       local s = assert.spy(speaker_component.say)
       s.was_called(1)
-      s.was_called_with(match.ref(f.character.speaker), "attack 3", false, true)
+      s.was_called_with(match.ref(f.character.speaker), "quote 30", false, true)
     end)
 
     it('should set last quote to passed quote', function ()
-      local q = quote_info(3, quote_types.attack, 1, "attack 3")
+      local q = quote_info(3, quote_types.attack, 1, 30)
 
       f:say_quote(q)
 
@@ -289,7 +300,7 @@ describe('fighter', function ()
     end)
 
     it('should remove an attack id from the sequence of available attack ids', function ()
-      local q = quote_info(3, quote_types.attack, 2, "attack 3")
+      local q = quote_info(3, quote_types.attack, 2, 30)
 
       f:say_quote(q)
 
@@ -307,7 +318,7 @@ describe('fighter', function ()
       end)
 
       it('should remove an attack id from the sequence of available attack ids', function ()
-        local q = quote_info(4, quote_types.reply, 2, "reply 4")
+        local q = quote_info(4, quote_types.reply, 2, 40)
 
         f:say_quote(q)
 
@@ -327,7 +338,7 @@ describe('fighter', function ()
         end)
 
       it('should preserve available reply if saying a reply', function ()
-        local q = quote_info(4, quote_types.reply, 2, "reply 4")
+        local q = quote_info(4, quote_types.reply, 2, 40)
 
         f:say_quote(q)
 
@@ -370,49 +381,49 @@ describe('fighter', function ()
 
     it('npc should never increment count for even new quotes', function ()
       -- level 2 quote can be learned
-      f:on_receive_quote(quote_info(6, quote_types.attack, 2, "attack 6"))
+      f:on_receive_quote(quote_info(6, quote_types.attack, 2, 60))
       assert.are_same({}, f.received_attack_id_count_map)
     end)
 
     it('pc should not increment count for known quote', function ()
       pcf.fighter_progression.known_attack_ids = {3}
-      pcf:on_receive_quote(quote_info(3, quote_types.attack, 1, "attack 3"))
+      pcf:on_receive_quote(quote_info(3, quote_types.attack, 1, 30))
       assert.are_same({}, pcf.received_attack_id_count_map)
     end)
 
     it('pc should not increment count for losing quote', function ()
       pcf.fighter_progression.known_attack_ids = {}
-      pcf:on_receive_quote(quote_info(-1, quote_types.attack, 0, "losing attack"))
+      pcf:on_receive_quote(quote_info(-1, quote_types.attack, 0, -1))
       assert.are_same({}, pcf.received_attack_id_count_map)
     end)
 
     it('pc should not increment count for quotes at 1+ levels above fighter level', function ()
       pcf.fighter_progression.known_attack_ids = {}
       -- level 3 attack vs fighter level 2
-      pcf:on_receive_quote(quote_info(7, quote_types.attack, 3, "attack 7"))
+      pcf:on_receive_quote(quote_info(7, quote_types.attack, 3, 70))
       assert.are_same({}, pcf.received_attack_id_count_map)
     end)
 
     it('should initialize reception count of new learnable attack to 1', function ()
       -- level 2 quote can be learned
-      pcf:on_receive_quote(quote_info(6, quote_types.attack, 2, "attack 6"))
+      pcf:on_receive_quote(quote_info(6, quote_types.attack, 2, 60))
       assert.are_same({[6] = 1}, pcf.received_attack_id_count_map)
     end)
 
     it('should initialize reception count of new learnable reply to 1', function ()
-      pcf:on_receive_quote(quote_info(8, quote_types.reply, 1, "reply 8"))
+      pcf:on_receive_quote(quote_info(8, quote_types.reply, 1, 80))
       assert.are_same({[8] = 1}, pcf.received_reply_id_count_map)
     end)
 
     it('should increment reception count of received attack by 1', function ()
       pcf.received_attack_id_count_map[8] = 10
-      pcf:on_receive_quote(quote_info(8, quote_types.attack, 1, "attack 8"))
+      pcf:on_receive_quote(quote_info(8, quote_types.attack, 1, 80))
       assert.are_same({[8] = 11}, pcf.received_attack_id_count_map)
     end)
 
     it('should increment reception count of received reply by 1', function ()
       pcf.received_reply_id_count_map[8] = 10
-      pcf:on_receive_quote(quote_info(8, quote_types.reply, 1, "reply 8"))
+      pcf:on_receive_quote(quote_info(8, quote_types.reply, 1, 80))
       assert.are_same({[8] = 11}, pcf.received_reply_id_count_map)
     end)
 

@@ -32,6 +32,7 @@ local game_session = require("progression/game_session")
 local main_menu = require("menu/main_menu")
 local fight_state = require("fight/fight_state")
 local fight_manager = require("fight/fight_manager")
+local localizer = require("localization/localizer")
 local visual_data = require("resources/visual_data")
 local adventure_manager = require("story/adventure_manager")
 local adventure_state = require("story/adventure_state")
@@ -41,7 +42,7 @@ local wit_fighter_app = derived_class(gameapp)
 function wit_fighter_app:init()
   gameapp.init(self, fps30)
 
-  -- component
+  -- components
   self.game_session = game_session()
 end
 
@@ -55,6 +56,12 @@ function wit_fighter_app:instantiate_gamestates() -- override
     sandbox_state()
 --#endif
   }
+end
+
+function wit_fighter_app:on_pre_start() -- override
+  -- deserialize all strings into localizer for future usage
+  -- better do this on pre-start in case for manager:start needs strings
+  localizer:load_all_strings()
 end
 
 --#if mouse

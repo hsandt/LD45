@@ -12,56 +12,56 @@ local attacks = {
   -- this is the "skip" attack, it automatically skips your turn
   -- - the pc fighter can always choose it
   -- - the npc fighters, and pc fighter as AI will only pick it if there is no attack is left
-  [-1] = quote_info(-1, quote_types.attack, 0, to_big("Uh... I'll skip this one.")),
+  [-1] = quote_info(-1, quote_types.attack, 0, 1),
   -- no [0] "cancel" entry for attacks
-  quote_info( 1, quote_types.attack, 1, to_big("Already exhausted? You should really avoid staircases.")),
-  quote_info( 2, quote_types.attack, 3, to_big("I hope your personality is not as flat as your fashion sense.")),
-  quote_info( 3, quote_types.attack, 1, to_big("It took me a single day to find my job.")),
-  quote_info( 4, quote_types.attack, 1, to_big("I can easily type 70 words per minute.")),
-  quote_info( 5, quote_types.attack, 1, to_big("You couldn't write a sum formula in Excel.")),
-  quote_info( 6, quote_types.attack, 1, to_big("Yesterday I completed all my tasks for the day under 3 hours.")),
-  quote_info( 7, quote_types.attack, 1, to_big("Unlike you, all my neurons still work at full throttle after 6pm.")),
-  quote_info( 8, quote_types.attack, 2, to_big("I'm so good at networking I doubled the number of my contacts in a single event.")),
-  quote_info( 9, quote_types.attack, 2, "DEPRECATED"),
-  quote_info(10, quote_types.attack, 2, to_big("It took me only thirty minutes to build a website for my portfolio.")),
-  quote_info(11, quote_types.attack, 2, "DEPRECATED"),
-  quote_info(12, quote_types.attack, 2, to_big("My devices are much more reliable than yours, they can easily last 10 years.")),
-  quote_info(13, quote_types.attack, 2, to_big("Yesterday, I stayed focused six hours straight on my computer.")),
-  quote_info(14, quote_types.attack, 3, to_big("I can find any book in my shelf without lifting a finger.")),
-  quote_info(15, quote_types.attack, 3, to_big("I have so much charisma I'm getting paid just for being here.")),
-  quote_info(16, quote_types.attack, 3, to_big("People like you can also get here now? They really lowered the bar.")),
-  quote_info(17, quote_types.attack, 3, to_big("For my website, I set up a much better security system than yours.")),
-  quote_info(18, quote_types.attack, 3, to_big("You couldn't install an app if I gave you a setup.exe.")),
-  quote_info(19, quote_types.attack, 3, to_big("You should leave the hard stuff to pros with hands-on experience like me.")),
-  quote_info(20, quote_types.attack, 3, "DEPRECATED"),
+  quote_info( 1, quote_types.attack, 1,  2),
+  quote_info( 2, quote_types.attack, 3,  3),
+  quote_info( 3, quote_types.attack, 1,  4),
+  quote_info( 4, quote_types.attack, 1,  5),
+  quote_info( 5, quote_types.attack, 1,  6),
+  quote_info( 6, quote_types.attack, 1,  7),
+  quote_info( 7, quote_types.attack, 1,  8),
+  quote_info( 8, quote_types.attack, 2,  9),
+  quote_info( 9, quote_types.attack, 2,  0),  -- DEPRECATED
+  quote_info(10, quote_types.attack, 2, 11),
+  quote_info(11, quote_types.attack, 2,  0),  -- DEPRECATED
+  quote_info(12, quote_types.attack, 2, 13),
+  quote_info(13, quote_types.attack, 2, 14),
+  quote_info(14, quote_types.attack, 3, 15),
+  quote_info(15, quote_types.attack, 3, 16),
+  quote_info(16, quote_types.attack, 3, 17),
+  quote_info(17, quote_types.attack, 3, 18),
+  quote_info(18, quote_types.attack, 3, 19),
+  quote_info(19, quote_types.attack, 3, 20),
+  quote_info(20, quote_types.attack, 3, 21),  -- DEPRECATED
 }
 
 -- see doc/quote_graph.dot R nodes
 local replies = {
   -- first is dummy reply, to fill menu when there are no known replies
   --   or no replies left to say
-  [-1] = quote_info(-1, quote_types.reply, 0, to_big("Er...")),
+  [-1] = quote_info(-1, quote_types.reply, 0, 22),
   -- this is the cancel reply, that neutralizes any attack (only available once, even if consume_reply = false)
-  [0] = quote_info(0, quote_types.reply, 0, to_big("Sorry, I didn't catch this one.")),
-  quote_info( 1, quote_types.reply,  1, to_big("At least, mine is working.")),
-  quote_info( 2, quote_types.reply,  1, "DEPRECATED"),
-  quote_info( 3, quote_types.reply,  2, to_big("I knew we could count on you to make photocopies.")),
-  quote_info( 4, quote_types.reply,  1, to_big("I see you spent time with the coffee machine.")),
-  quote_info( 5, quote_types.reply,  1, to_big("Oh, I'm pretty sure you made *some* contributions toward this.")),
-  quote_info( 6, quote_types.reply,  2, to_big("You really can't stand physical exercise, can you?")),
-  quote_info( 7, quote_types.reply,  2, "DEPRECATED"),
-  quote_info( 8, quote_types.reply,  2, to_big("I see you enjoyed your time on Discord.")),
-  quote_info( 9, quote_types.reply,  2, to_big("Oh, I don't doubt you can. Using some third-party plugin.")),
-  quote_info(10, quote_types.reply,  1, to_big("Well, we don't all browse at 56kbps.")),
-  quote_info(11, quote_types.reply,  2, to_big("Sounds easy when you've only got two of them.")),
-  quote_info(12, quote_types.reply,  2, "DEPRECATED"),
-  quote_info(13, quote_types.reply,  2, "DEPRECATED"),
-  quote_info(14, quote_types.reply,  3, to_big("Too bad they don't mean anything to you.")),
-  quote_info(15, quote_types.reply,  3, to_big("Too bad yours has so little content nobody ever cared about it.")),
-  quote_info(16, quote_types.reply,  3, to_big("And I see your relatives gave you a leg-up, uh?")),
-  quote_info(17, quote_types.reply,  3, "DEPRECATED"),
-  quote_info(18, quote_types.reply,  3, "DEPRECATED"),
-  quote_info(19, quote_types.reply,  3, to_big("Probably. I'm working on Linux.")),
+  [0] = quote_info(0, quote_types.reply, 0, 23),
+  quote_info( 1, quote_types.reply, 1, 24),
+  quote_info( 2, quote_types.reply, 1,  0),  -- DEPRECATED
+  quote_info( 3, quote_types.reply, 2, 26),
+  quote_info( 4, quote_types.reply, 1, 27),
+  quote_info( 5, quote_types.reply, 1, 28),
+  quote_info( 6, quote_types.reply, 2, 29),
+  quote_info( 7, quote_types.reply, 2,  0),  -- DEPRECATED
+  quote_info( 8, quote_types.reply, 2, 31),
+  quote_info( 9, quote_types.reply, 2, 32),
+  quote_info(10, quote_types.reply, 1, 33),
+  quote_info(11, quote_types.reply, 2, 34),
+  quote_info(12, quote_types.reply, 2,  0),  -- DEPRECATED
+  quote_info(13, quote_types.reply, 2,  0),  -- DEPRECATED
+  quote_info(14, quote_types.reply, 3, 37),
+  quote_info(15, quote_types.reply, 3, 38),
+  quote_info(16, quote_types.reply, 3, 39),
+  quote_info(17, quote_types.reply, 3,  0),  -- DEPRECATED
+  quote_info(18, quote_types.reply, 3,  0),  -- DEPRECATED
+  quote_info(19, quote_types.reply, 3, 42),
 }
 
 -- see doc/quote_graph.dot edges
@@ -249,6 +249,7 @@ local gameplay_data = {
 
 -- data access helpers
 
+-- return quote_info of given type and id
 function gameplay_data:get_quote(quote_type, id)
   if quote_type == quote_types.attack then
     return self.attacks[id]

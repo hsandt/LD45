@@ -34,13 +34,14 @@ end
 -- Return address of next free address, just after the last written address
 -- addr_exclusive_limit avoids infinite loop in case we forgot to put 255
 -- (will be replaced will null-termination convention)
-function deserialize.text_table_to_mem(addr_start, addr_exclusive_limit)
+function deserialize.text_table_from_mem(addr_start, addr_exclusive_limit)
   local text_sequence = {}
 
   local next_addr = addr_start
   while true do
     local text
     if next_addr >= addr_exclusive_limit then
+      -- we crossed the limit (we may even be a little further, but that's OK)
       break
     end
     text, next_addr = deserialize.text_from_mem(next_addr)

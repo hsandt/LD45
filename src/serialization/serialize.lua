@@ -11,6 +11,8 @@ local serialize = {}
 -- Return address of next free address, just after the last written address
 -- Thanks for doc1oo
 function serialize.text_to_mem(text, addr_start, addr_exclusive_limit)
+  assert(type(text) == "string", "expected text to be string, but it is a "..type(text))
+
   if #text > 254 then
     assert(false, "text has length "..#text..", max is 254 (255 reserved)")
 --[[#pico8

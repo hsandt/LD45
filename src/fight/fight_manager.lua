@@ -5,6 +5,7 @@ local animated_sprite = require("engine/render/animated_sprite")
 
 local quote_info = require("content/quote_info")
 local fighter = require("fight/fighter")
+local localizer = require("localization/localizer")
 local menu_helper = require("menu/menu_helper")
 local menu_item = require("menu/menu_item")
 local audio_data = require("resources/audio_data")
@@ -270,7 +271,8 @@ function fight_manager:generate_quote_menu_items(human_fighter, quote_type, avai
 
     -- menu item prefixes choices with "> " (or blank with width of 2 chars)
     --   so we need to subtract 2 from the usually available string length
-    local clamped_text = menu_helper.clamp_text_with_ellipsis(quote.text, visual_data.bottom_box_max_chars_per_line - 2)
+    local quote_string = localizer:get_string(quote.localized_string_id)
+    local clamped_text = menu_helper.clamp_text_with_ellipsis(quote_string, visual_data.bottom_box_max_chars_per_line - 2)
     return menu_item(clamped_text, say_quote_callback, select_quote_callback)
   end)
 end
@@ -316,7 +318,11 @@ function fight_manager:say_quote(active_fighter, quote)
 
   -- don't wait for input, since either the quote menu (pc replying), the auto play (npc replying),
   --   or the quote match resolution (if saying a reply) will hide that text eventually
-  log("fighter '"..active_fighter:get_name().."' "..(is_attacking and "attacks" or "replies")..": ("..quote.id..") \""..quote.text.."\"", 'fight')
+--#if log
+  local verb = is_attacking and "attacks" or "replies"
+  local quote_string = localizer:get_string(quote.localized_string_id)
+  log("fighter '"..active_fighter:get_name().."' "..verb..": ("..quote.id..") \""..quote_string.."\"", 'fight')
+--#endif
   active_fighter:say_quote(quote)  -- will set its last_quote
 
   if is_attacking then

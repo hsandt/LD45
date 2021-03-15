@@ -31,11 +31,7 @@ logging.logger.active_categories = {
 --#endif
 
 -- copy text character bytes into __map__ memory, which is unused in Wit Fighter
--- the range of unshared map memory is 0x2000-0x2fff
-local next_addr = 0x2000
-next_addr = serialize.text_to_mem(text_data.skip_attack_string, next_addr, 0x3000)
-next_addr = serialize.text_table_to_mem(text_data.attack_strings, next_addr, 0x3000)
-next_addr = serialize.text_to_mem(text_data.losing_reply_string, next_addr, 0x3000)
-next_addr = serialize.text_table_to_mem(text_data.reply_strings, next_addr, 0x3000)
+-- the range of unshared map memory is 0x2000-0x2fff, 0x3000 is the exclusive limit
+serialize.text_table_to_mem(text_data.strings, 0x2000, 0x3000)
 
-save()
+save("text_data_en_with_code.p8")

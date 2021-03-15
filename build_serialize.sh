@@ -93,7 +93,7 @@ fi
   -o "${cartridge_stem}"                                 \
   -c "$config"                                           \
   -s "$symbols"                                          \
-  --minify-level 0                                       \
+  --minify-level 3                                       \
   --unify ''
 
 if [[ $? -ne 0 ]]; then

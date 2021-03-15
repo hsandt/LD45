@@ -14,6 +14,12 @@ require("engine/core/seq_helper")
 
 local quote_info = require("content/quote_info")  -- quote_types
 local gameplay_data = require("resources/gameplay_data")
+local text_data = require("resources/text_data")
+
+-- print helper: return quote info + resolved localized string
+local function to_localized_debug_string(quote_info)
+  return quote_info.." \""..text_data:get_string(quote_info.localized_string_id).."\""
+end
 
 -- return sequence of all quote matches referring to attack
 local function get_matching_quotes_for_attack(attack_info)
@@ -137,12 +143,12 @@ end
 
 local function print_attack_and_counters_of(attack_id)
   local attack_info = gameplay_data:get_quote(quote_types.attack, attack_id)
-  printh(stringify(attack_info).." =>")
+  printh(to_localized_debug_string(attack_info).." =>")
   local matching_quotes_for_attack = get_matching_quotes_for_attack(attack_info)
 
   for matching_quote_for_attack in all(matching_quotes_for_attack) do
     local reply_info = gameplay_data:get_quote(quote_types.reply, matching_quote_for_attack.reply_id)
-    printh("  "..reply_info.." (power: "..matching_quote_for_attack.power..")")
+    printh("  "..to_localized_debug_string(reply_info).." (power: "..matching_quote_for_attack.power..")")
   end
 
   local total_counter_vulnerability = get_attack_total_counter_vulnerability_from_matching_quotes(matching_quotes_for_attack)
@@ -151,13 +157,13 @@ end
 
 local function print_reply_and_attacks_countered_by(reply_id)
   local reply_info = gameplay_data:get_quote(quote_types.reply, reply_id)
-  printh(stringify(reply_info).." <=")
+  printh(to_localized_debug_string(reply_info).." <=")
   local matching_quotes_for_reply = get_matching_quotes_for_reply(reply_info)
 
   for matching_quote_for_reply in all(matching_quotes_for_reply) do
     local attack_info = gameplay_data:get_quote(quote_types.attack, matching_quote_for_reply.attack_id)
     -- for total power estimation, always add 1 so "neutralized" power 0 is better than no match at all
-    printh("  "..attack_info.." (power: "..matching_quote_for_reply.power..")")
+    printh("  "..to_localized_debug_string(attack_info).." (power: "..matching_quote_for_reply.power..")")
   end
 
   local total_power = get_reply_total_power_from_matching_quotes(matching_quotes_for_reply)
@@ -169,10 +175,10 @@ local function print_attacks_working_against(npc_fighter_id)
   local attacks_working_against = get_attacks_working_against(npc_fighter_info)
   printh("NPC "..npc_fighter_id.." '"..gameplay_data.npc_info_s[npc_fighter_info.character_info_id].name.."' weak against:")
   for attack_info in all(attacks_working_against) do
-    -- DEPRECATED attacks have no replies, so they would normally be considered
-    -- uncounterable; ignore them instead
-    if attack_info.text ~= "DEPRECATED" then
-      printh("  "..attack_info)
+    -- DEPRECATED attacks (localized string id 0) have no replies,
+    -- so they would normally be considered uncounterable; ignore them instead
+    if attack_info.localized_string_id ~= 0 then
+      printh("  "..to_localized_debug_string(attack_info))
     end
   end
 end
@@ -182,7 +188,7 @@ local function print_attacks_countered_by(npc_fighter_id)
   local attacks_working_against = get_attacks_countered_by(npc_fighter_info)
   printh("NPC "..npc_fighter_id.." '"..gameplay_data.npc_info_s[npc_fighter_info.character_info_id].name.."' can counter:")
   for attack_info in all(attacks_working_against) do
-    printh("  "..attack_info)
+    printh("  "..to_localized_debug_string(attack_info))
   end
 end
 
@@ -202,7 +208,8 @@ local function print_unused_attacks()
   local unused_attacks = get_unused_attacks()
   printh("=== UNUSED ATTACKS ===")
   for unused_attack in all(unused_attacks) do
-    printh(stringify(unused_attack))
+    printh("UNUSED: "..dump(unused_attack))
+    printh(to_localized_debug_string(unused_attack))
   end
   printh("")
 end
@@ -211,7 +218,7 @@ local function print_unused_replies()
   local unused_replies = get_unused_replies()
   printh("=== UNUSED REPLIES ===")
   for unused_reply in all(unused_replies) do
-    printh(stringify(unused_reply))
+    printh(to_localized_debug_string(unused_reply))
   end
   printh("")
 end

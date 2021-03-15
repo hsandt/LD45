@@ -1,3 +1,4 @@
+-- used offline, so just use engine helpers
 require("engine/test/bustedhelper")
 
 local serialize = require("serialization/serialize")
@@ -18,6 +19,12 @@ describe('serialize', function ()
           [0x2004] = ord('l'),
           [0x2005] = ord('o'),
         }, pico8.poked_addresses)
+    end)
+
+    it('should assert if passing a non-string', function ()
+      assert.has_error(function ()
+        serialize.text_to_mem({})
+      end)
     end)
 
     it('should assert if trying to write a string over 254 chars', function ()

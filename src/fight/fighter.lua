@@ -2,6 +2,7 @@ local string_size = require("engine/core/string_size")
 local graphics_helper = require("engine/ui/graphics_helper")
 local text_helper = require("engine/ui/text_helper")
 
+local localizer = require("localization/localizer")
 local gameplay_data = require("resources/gameplay_data")
 local visual_data = require("resources/visual_data")
 
@@ -185,13 +186,13 @@ end
 
 function fighter:preview_quote(quote)
   local is_attacking = quote.type == quote_types.attack
-  self.character.speaker:think(quote.text, false, is_attacking)
+  self.character.speaker:think(localizer:get_string(quote.localized_string_id), false, is_attacking)
 end
 
 function fighter:say_quote(quote)
   local is_attacking = quote.type == quote_types.attack
 
-  self.character.speaker:say(quote.text, false, is_attacking)
+  self.character.speaker:say(localizer:get_string(quote.localized_string_id), false, is_attacking)
   self.last_quote = quote
 
   if is_attacking then

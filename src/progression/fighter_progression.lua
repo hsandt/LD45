@@ -1,3 +1,4 @@
+local localizer = require("localization/localizer")
 local gameplay_data = require("resources/gameplay_data")
 
 -- class holding persistent information on the fighter, pc or npc
@@ -103,8 +104,9 @@ function fighter_progression:check_learn_quote(added_count_map, quote_type)
       add(known_quote_ids, quote_id)
 --#if log
       local quote_type_name = quote_type == quote_types.attack and "attack" or "reply"
+      local quote_string = localizer:get_string(gameplay_data:get_quote(quote_type, quote_id).localized_string_id)
       log("fighter '"..self:get_name().."' learns "..quote_type_name.." quote "..quote_id..": \""..
-        gameplay_data:get_quote(quote_type, quote_id).text.."\"", 'progression')
+        quote_string.."\"", 'progression')
 --#endif
     end
   end

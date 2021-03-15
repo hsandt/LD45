@@ -1,9 +1,7 @@
-require("engine/application/constants")
 local manager = require("engine/application/manager")
-require("engine/core/class")
-require("engine/core/helper")
 local input = require("engine/input/input")
 local animated_sprite = require("engine/render/animated_sprite")
+local string_size = require("engine/core/string_size")
 local graphics_helper = require("engine/ui/graphics_helper")
 local text_helper = require("engine/ui/text_helper")
 
@@ -156,7 +154,7 @@ end
 -- static
 function dialogue_manager.compute_bubble_bounds(bubble_type, text, bubble_tail_pos)
   -- compute bubble size to wrap around text, while respecting minimum for this character
-  local text_width, text_height = compute_size(text)
+  local text_width, text_height = string_size.compute_size(text)
   -- add border of 1px for the bubble (actually 2px with left+right, top+bottom,
   --   but since we compute right = left + width, bottom = top + height, we exclude the initial pixel)
   local bubble_width, bubble_height = text_width + 1, text_height + 1
