@@ -1,3 +1,5 @@
+local audio_data = require("resources/audio_data")
+
 local fighter_info = new_struct()
 
 -- id: int
@@ -6,13 +8,15 @@ local fighter_info = new_struct()
 -- initial_max_hp: int
 -- initial_attack_ids: {int}
 -- initial_reply_ids: {int}
-function fighter_info:init(id, character_info_id, initial_level, initial_max_hp, initial_attack_ids, initial_reply_ids)
+-- fight_bgm: int (bgm id, defaults to audio_data.bgm.fight_normal)
+function fighter_info:init(id, character_info_id, initial_level, initial_max_hp, initial_attack_ids, initial_reply_ids, fight_bgm)
   self.id = id
   self.character_info_id = character_info_id
   self.initial_level = initial_level
   self.initial_max_hp = initial_max_hp
   self.initial_attack_ids = initial_attack_ids
   self.initial_reply_ids = initial_reply_ids
+  self.fight_bgm = fight_bgm or audio_data.bgm.fight_normal
 end
 
 --#if log

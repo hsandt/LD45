@@ -296,7 +296,7 @@ describe('fight_manager', function ()
 
     describe('start_fight_with', function ()
 
-      local mock_npc_fighter_prog = fighter_progression(character_types.npc, fighter_info(10, 2, 3, 3, {6, 7}, {}, {}))
+      local mock_npc_fighter_prog = fighter_progression(character_types.npc, fighter_info(10, 2, 3, 3, {6, 7}, {}, 99))
 
       setup(function ()
         stub(fight_manager, "spawn_fighters")
@@ -352,12 +352,12 @@ describe('fight_manager', function ()
 
         describe('on_selection_changed', function ()
 
-          it('should play fight normal bgm', function ()
+          it('should play fight bgm associated to opponent fighter info', function ()
             fm:start_fight_with(mock_npc_fighter_prog)
 
             local s = assert.spy(music)
             s.was_called(1)
-            s.was_called_with(audio_data.bgm.fight_normal)
+            s.was_called_with(99)
           end)
 
         end)

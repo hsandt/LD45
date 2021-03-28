@@ -3,6 +3,7 @@ local fighter_info = require("content/fighter_info")
 local floor_info = require("content/floor_info")
 local quote_info = require("content/quote_info")
 local quote_match_info = require("content/quote_match_info")
+local audio_data = require("resources/audio_data")
 
 -- string note: we use to_big until we support big/small letters completely
 -- (in which case we will only show upper case characters as big chars)
@@ -192,7 +193,7 @@ local npc_fighter_info_s = {
   fighter_info(5, 5, 3, 6, {1, 7}, {1, 3, 10, 15, 16, 19}),  -- rossmann (IT)
 
   -- make sure that this index and id matches with gameplay_data.ceo_fighter_id
-  fighter_info(6, 6, 4, 8, {2, 5, 12, 14, 18, 19}, {1, 3, 5, 6, 8, 10, 11, 14, 15}),  -- ceo/boss
+  fighter_info(6, 6, 4, 8, {2, 5, 12, 14, 18, 19}, {1, 3, 5, 6, 8, 10, 11, 14, 15}, audio_data.bgm.fight_boss),  -- ceo/boss
 
 --#if sandbox
   fighter_info(7, 7, 99, 2, {8, 14, 19}, {15}),  -- debug man (longest quotes)

@@ -119,7 +119,7 @@ function fight_manager:start_fight_with(opponent_fighter_prog)
   self.app.game_session.last_opponent = opponent_fighter_prog
 
   -- audio: start bgm
-  music(audio_data.bgm.fight_normal)
+  music(opponent_fighter_prog.fighter_info.fight_bgm)
 
   self:spawn_fighters(self.app.game_session.pc_fighter_progression, opponent_fighter_prog)
 
