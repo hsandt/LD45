@@ -19,7 +19,9 @@ function localizer:load_all_strings()
   --  so I just manually copied __map__ content into data.p8 so we don't need
   --  to reload anything
   -- reload(0x2000, 0x2000, 0x1000, "text_data_en.p8")
+--[[#pico8
   self.strings = deserialize.text_table_from_mem(0x2000, 0x3000)
+--#pico8]]
 end
 
 function localizer:get_string(localized_string_id)
