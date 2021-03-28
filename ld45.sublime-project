@@ -175,7 +175,7 @@
 			"syntax": "Packages/Python/Python.sublime-syntax"
 		},
 		{
-			"name": "Game: serialize text into data_serialize.p8",
+			"name": "Game: serialize text into carts > wit_fighter_text_data_en_with_code[dot]p8",
 			"working_dir": "${project_path}",
 			"shell": true,
 			"cmd": ["./build_serialize.sh debug && ./run_serialize.sh debug"],

@@ -34,4 +34,4 @@ logging.logger.active_categories = {
 -- the range of unshared map memory is 0x2000-0x2fff, 0x3000 is the exclusive limit
 serialize.text_table_to_mem(text_data.strings, 0x2000, 0x3000)
 
-save("text_data_en_with_code.p8")
+save("wit_fighter_text_data_en_with_code.p8")
