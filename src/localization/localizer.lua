@@ -29,6 +29,7 @@ function localizer:get_string(localized_string_id)
   return text_data.strings[localized_string_id]
 --#endif
 --[[#pico8
+  assert(self.strings[localized_string_id], "localizer:get_string: no string found for localized_string_id: "..localized_string_id)
   return self.strings[localized_string_id]
 --#pico8]]
 end

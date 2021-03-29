@@ -23,9 +23,9 @@ local attacks = {
   quote_info( 6, quote_types.attack, 1,  7),
   quote_info( 7, quote_types.attack, 1,  8),
   quote_info( 8, quote_types.attack, 2,  9),
-  quote_info( 9, quote_types.attack, 2,  0),  -- DEPRECATED
+  quote_info( 9, quote_types.attack, 2, 10),  -- DEPRECATED
   quote_info(10, quote_types.attack, 2, 11),
-  quote_info(11, quote_types.attack, 2,  0),  -- DEPRECATED
+  quote_info(11, quote_types.attack, 2, 12),  -- DEPRECATED
   quote_info(12, quote_types.attack, 2, 13),
   quote_info(13, quote_types.attack, 2, 14),
   quote_info(14, quote_types.attack, 3, 15),
@@ -45,23 +45,23 @@ local replies = {
   -- this is the cancel reply, that neutralizes any attack (only available once, even if consume_reply = false)
   [0] = quote_info(0, quote_types.reply, 0, 23),
   quote_info( 1, quote_types.reply, 1, 24),
-  quote_info( 2, quote_types.reply, 1,  0),  -- DEPRECATED
+  quote_info( 2, quote_types.reply, 1, 25),  -- DEPRECATED
   quote_info( 3, quote_types.reply, 2, 26),
   quote_info( 4, quote_types.reply, 1, 27),
   quote_info( 5, quote_types.reply, 1, 28),
   quote_info( 6, quote_types.reply, 2, 29),
-  quote_info( 7, quote_types.reply, 2,  0),  -- DEPRECATED
+  quote_info( 7, quote_types.reply, 2, 30),  -- DEPRECATED
   quote_info( 8, quote_types.reply, 2, 31),
   quote_info( 9, quote_types.reply, 2, 32),
   quote_info(10, quote_types.reply, 1, 33),
   quote_info(11, quote_types.reply, 2, 34),
-  quote_info(12, quote_types.reply, 2,  0),  -- DEPRECATED
-  quote_info(13, quote_types.reply, 2,  0),  -- DEPRECATED
+  quote_info(12, quote_types.reply, 2, 35),  -- DEPRECATED
+  quote_info(13, quote_types.reply, 2, 36),  -- DEPRECATED
   quote_info(14, quote_types.reply, 3, 37),
   quote_info(15, quote_types.reply, 3, 38),
   quote_info(16, quote_types.reply, 3, 39),
-  quote_info(17, quote_types.reply, 3,  0),  -- DEPRECATED
-  quote_info(18, quote_types.reply, 3,  0),  -- DEPRECATED
+  quote_info(17, quote_types.reply, 3, 40),  -- DEPRECATED
+  quote_info(18, quote_types.reply, 3, 41),  -- DEPRECATED
   quote_info(19, quote_types.reply, 3, 42),
 }
 
