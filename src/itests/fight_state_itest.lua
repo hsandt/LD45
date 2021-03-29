@@ -87,7 +87,7 @@ end)
 --#endif
 
 --#if cheat
-itest_manager:register_itest('#solo insta-kill then change floor',
+itest_manager:register_itest('insta-kill then change floor',
     -- keep active_gamestate for now, for retrocompatibility with pico-sonic...
     -- but without gamestate_proxy, not used
     {':fight'}, function ()
