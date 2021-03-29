@@ -8,7 +8,7 @@ local function register_fight_balance_itest(opponent_id, pc_max_hp, initial_atta
   --   used as fighter progression id, we should go through fighter info first
   local opponent_info = gameplay_data.npc_fighter_info_s[opponent_id]
   local opponent_name = gameplay_data.npc_info_s[opponent_info.character_info_id].name
-  itest_manager:register_itest('vs '..opponent_name..' - knows A: '..dump_sequence(initial_attack_ids)..', R: '..dump_sequence(initial_reply_ids),
+  itest_manager:register_itest('#solo vs '..opponent_name..' - knows A: '..dump_sequence(initial_attack_ids)..', R: '..dump_sequence(initial_reply_ids),
     {':fight'}, function ()
 
     -- enter fight state
@@ -51,7 +51,7 @@ local function register_fight_balance_itest(opponent_id, pc_max_hp, initial_atta
 end
 
 -- first fight with rossmann
-register_fight_balance_itest(gameplay_data.rossmann_fighter_id, 3, {}, {})
+-- register_fight_balance_itest(gameplay_data.rossmann_fighter_id, 3, {}, {})
 
 -- jr accountant
 -- register_fight_balance_itest(1, 3, {1, 7}, {})  -- 1F: after rossmann, as in normal play
@@ -85,3 +85,6 @@ register_fight_balance_itest(gameplay_data.rossmann_fighter_id, 3, {}, {})
 -- -- register_fight_balance_itest(4, 4, {1, 7, 4, 5, 6, 8, 9}, {3, 6, 10})  -- 4F: possible knowledge after path [A] + vs manager (lose) + vs programmer (win)
 -- -- -- only possible if you let player stay on 3F after losing to manager and programmer
 -- -- register_fight_balance_itest(4, 4, {1, 7, 6, 3, 4, 5, 8, 10, 15, 17}, {6, 3, 9, 8, 10})  -- 3F: possible knowledge after path [B] + vs manager (lose) + vs programmer (lose)
+
+-- CEO
+register_fight_balance_itest(gameplay_data.ceo_fighter_id, 5, {1, 7, 4, 5, 6, 8, 9}, {3, 6, 10})
