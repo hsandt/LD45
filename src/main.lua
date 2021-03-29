@@ -45,6 +45,7 @@ function _init()
     ['default'] = true,
     ['codetuner'] = true,
     ['flow'] = true,
+    ['coroutine'] = true,
     ['itest'] = true,
     ['log'] = true,
     ['ui'] = true,
