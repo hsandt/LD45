@@ -54,7 +54,23 @@ function fight_manager:update()  -- override
   self.hit_fx:update()
 
 --#if cheat
-  if input:is_just_pressed(button_ids.x) and self.fighters[2].hp > 0 then
+  if input:is_just_pressed(button_ids.x) then
+    if input:is_down(button_ids.left) then
+      -- insta-suicide
+      self:insta_kill(1)
+    else
+      -- insta-kill
+      self:insta_kill(2)
+    end
+  end
+--#endif
+end
+
+--#if cheat
+function fight_manager:insta_kill(fighter_index)
+  if self.fighters[fighter_index].hp > 0 then
+    log("insta-kill fighter "..fighter_index, 'fight')
+
     -- clear any coroutines to avoid conflict with running animations and sequences about to prompt quotes
     self.app:stop_all_coroutines()
 
@@ -64,13 +80,12 @@ function fight_manager:update()  -- override
       dm.text_menu.active = false
     end
 
-    -- insta-kill
-    log("insta-kill enemy", 'fight')
-    self.fighters[2]:take_damage(10)
+    -- insta-kill target
+    self.fighters[fighter_index]:take_damage(10)
     self:check_exchange_result(self.fighters[1], self.fighters[2])
   end
---#endif
 end
+--#endif
 
 function fight_manager:render()  -- override
   -- we should have some fx manager rendering all fx, but for now we do it ourselves

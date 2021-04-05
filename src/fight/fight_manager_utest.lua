@@ -2,6 +2,7 @@ require("test/bustedhelper_game")
 local fight_manager = require("fight/fight_manager")
 
 local manager = require("engine/application/manager")
+local input = require("engine/input/input")
 local animated_sprite = require("engine/render/animated_sprite")
 
 local wit_fighter_app = require("application/wit_fighter_app")
@@ -82,6 +83,64 @@ describe('fight_manager', function ()
     end)
 
     describe('update', function ()
+
+      setup(function ()
+        stub(fight_manager, "update_fighters")
+        stub(animated_sprite, "update")
+        stub(fight_manager, "insta_kill")
+      end)
+
+      teardown(function ()
+        fight_manager.update_fighters:revert()
+        animated_sprite.update:revert()
+        fight_manager.insta_kill:revert()
+      end)
+
+      after_each(function ()
+        input:init()
+
+        fight_manager.update_fighters:clear()
+        animated_sprite.update:clear()
+        fight_manager.insta_kill:clear()
+      end)
+
+      it('should call update_fighters, hud', function ()
+        fm:update()
+
+        s = assert.spy(fight_manager.update_fighters)
+        s.was_called(1)
+        s.was_called_with(match.ref(fm))
+
+        s = assert.spy(animated_sprite.update)
+        s.was_called(1)
+        s.was_called_with(match.ref(fm.hit_fx))
+      end)
+
+      it('(cheat) should insta-suicide if left is held and x is just pressed', function ()
+        input.players_btn_states[0][button_ids.left] = btn_states.down
+        input.players_btn_states[0][button_ids.x] = btn_states.just_pressed
+
+        fm:update()
+
+        s = assert.spy(fight_manager.insta_kill)
+        s.was_called(1)
+        s.was_called_with(match.ref(fm), 1)
+      end)
+
+      it('(cheat) should insta-kill enemy if x is just pressed', function ()
+        input.players_btn_states[0][button_ids.x] = btn_states.just_pressed
+
+        fm:update()
+
+        s = assert.spy(fight_manager.insta_kill)
+        s.was_called(1)
+        s.was_called_with(match.ref(fm), 2)
+      end)
+
+    end)
+
+    describe('insta_kill', function ()
+      -- TODO
     end)
 
     describe('render', function ()
@@ -98,7 +157,7 @@ describe('fight_manager', function ()
         fight_manager.draw_hud:revert()
       end)
 
-      it('should call draw fighters, hud', function ()
+      it('should call draw_fighters, render on hit_fx, draw_hud', function ()
         fm.hit_fx_pos = vector(10, 10)
 
         fm:render()
