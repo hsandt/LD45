@@ -17,7 +17,7 @@ function adventure_state:init()
   gamestate.init(self)
 
   self.forced_next_floor_number = nil
-  self.should_finish_game = false
+  self.should_go_to_final_scene = false
 
   -- render param (precomputed on game start)
   self.max_nb_lines = screen_height + ceil(screen_width / visual_data.fade_line_step_width) - 1
@@ -144,6 +144,7 @@ end
 function adventure_state:_async_step_floor_loop()
   local gs = self.app.game_session
   local am = self.app.managers[':adventure']
+  local dm = self.app.managers[':dialogue']
   local fm = self.app.managers[':fight']
   local pc_speaker = am.pc.speaker
 
@@ -152,13 +153,12 @@ function adventure_state:_async_step_floor_loop()
     self:async_fight_aftermath()
   end
 
-  if self.should_finish_game then
-    -- we should also despawn pc, but currently it's spawned on adventure_manager:start
-    -- so to be really symmetrical, we need to create methods for in-game start/stop
-    --   to be called when actually starting game from menu, and finishing game session
-    --   to come back to main menu (maybe put them in game session or some game session manager)
-    -- then call spawn_npc on game session start, despawn_pc on game session end
-    am:despawn_npc()
+  if self.should_go_to_final_scene then
+    -- todo: pc turning toward the camera
+    pc_speaker:say_and_wait_for_input("what a day. i hope it was worth it.")
+
+    self.app:yield_delay_s(1.0)
+    dm:show_bottom_text_and_wait_for_input('game end')
 
     -- back to main menu
     flow:query_gamestate_type(':main_menu')
@@ -242,10 +242,11 @@ function adventure_state:async_fight_aftermath()
   -- remember pc met that npc so you don't always play the same special dialogues twice
   gs:register_met_npc(npc_fighter_id)
 
-  if self.should_finish_game then
-    -- avoid any extra events until we leave the game properly
+  if self.should_go_to_final_scene then
+    -- make sure we switch floor one last time with a proper anim (so player
+    --  character leaves CEO's room) to run the final sequence before credits
     -- despawn npc, stop music, etc. will be done in adventure_state:on_exit
-    return
+    self.forced_next_floor_number = 1
   end
 
   if self.forced_next_floor_number then
@@ -534,17 +535,11 @@ local function async_after_fight_with_ceo(self, npc_fighter_id)
     pc_speaker:say_and_wait_for_input("er... thanks.")
     self.app:yield_delay_s(2)
     npc_speaker:say_and_wait_for_input("you can go, now.")
-    self.app:yield_delay_s(0.5)
+    self.app:yield_delay_s(0.2)
     pc_speaker:say_and_wait_for_input("ah, ok.")
-    self.app:yield_delay_s(0.5)
-    -- todo: pc turning toward the camera
-    pc_speaker:say_and_wait_for_input("what a day. i hope it was worth it.")
+    self.app:yield_delay_s(1)
 
-    self.app:yield_delay_s(0.5)
-    dm:show_bottom_text_and_wait_for_input('game end')
-
-    -- GAME END
-    self.should_finish_game = true
+    self.should_go_to_final_scene = true
   else
     npc_speaker:say_and_wait_for_input("that's all? you're wasting my time.")
     self.app:yield_delay_s(0.5)
