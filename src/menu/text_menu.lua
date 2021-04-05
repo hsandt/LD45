@@ -60,8 +60,10 @@ end
 --
 -- We deep copy the sequence content to avoid referencing the passed sequence,
 --   which may change later.
-function text_menu:show_items(items)
+function text_menu:show_items(items, initial_selection)
   assert(#items > 0)
+  initial_selection = initial_selection or 1
+
   self.active = true
 
   -- deep copy of menu items to be safe on future change
@@ -72,9 +74,11 @@ function text_menu:show_items(items)
 
   -- we prefer direct calls to change_selection() because the latter would not call
   --   try_select_callback if the index was already 1 on the previously shown items
-  --   (and we didn't clear), and we don't want to call on_selection_changed either
-  self.selection_index = 1
-  self:try_select_callback(1)
+  --   (and we didn't clear). We also don't want to call on_selection_changed because
+  --   unlike try_select_callback, it is only meant for transitions from a choice to
+  --   another.
+  self.selection_index = initial_selection
+  self:try_select_callback(initial_selection)
 
   -- visual
   self.anim_time = 0

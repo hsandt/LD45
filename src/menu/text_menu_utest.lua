@@ -62,7 +62,7 @@ describe('text_menu', function ()
     describe('show_items', function ()
 
       setup(function ()
-        spy.on(text_menu, "try_select_callback")
+        stub(text_menu, "try_select_callback")
         end)
 
       teardown(function ()
@@ -94,18 +94,32 @@ describe('text_menu', function ()
         assert.is_false(rawequal(mock_items[2], menu.items[2]))
       end)
 
-      it('should set selection index to 1', function ()
+      it('should set selection index to 1 by default', function ()
         menu:show_items(mock_items)
 
         assert.are_equal(1, menu.selection_index)
       end)
 
-      it('should call try_select_callback', function ()
+      it('should set selection index to initial_selection if passed', function ()
+        menu:show_items(mock_items, 2)
+
+        assert.are_equal(2, menu.selection_index)
+      end)
+
+      it('should call try_select_callback by default', function ()
         menu:show_items(mock_items)
 
         local s = assert.spy(text_menu.try_select_callback)
         s.was_called(1)
         s.was_called_with(match.ref(menu), 1)
+      end)
+
+      it('should call try_select_callback with initial_selection if passed', function ()
+        menu:show_items(mock_items, 2)
+
+        local s = assert.spy(text_menu.try_select_callback)
+        s.was_called(1)
+        s.was_called_with(match.ref(menu), 2)
       end)
 
       it('should initialize animation state', function ()
