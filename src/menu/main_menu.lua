@@ -27,7 +27,7 @@ main_menu.items = transform({
       app.game_session.floor_number = 1
       app.game_session.fight_count = 10  -- just to avoid tutorials
       -- don't let Rossmann send you back to 1F after fight
-      app.game_session.met_npc_fighter_ids[gameplay_data.rossmann_fighter_id] = true
+      app.game_session:register_met_npc(gameplay_data.rossmann_fighter_id)
       local pc_fighter_prog = app.game_session.pc_fighter_progression
       pc_fighter_prog.known_attack_ids = {1, 7}  -- learned from rossmann
       pc_fighter_prog.known_reply_ids = {}
@@ -38,9 +38,21 @@ main_menu.items = transform({
       app.game_session.floor_number = 3
       app.game_session.fight_count = 10  -- just to avoid tutorials
       -- don't let Rossmann send you back to 1F after fight
-      app.game_session.met_npc_fighter_ids[gameplay_data.rossmann_fighter_id] = true
+      app.game_session:register_met_npc(gameplay_data.rossmann_fighter_id)
       local pc_fighter_prog = app.game_session.pc_fighter_progression
       pc_fighter_prog.max_hp = gameplay_data.max_hp_after_win_by_floor_number[2]
+      pc_fighter_prog.known_attack_ids = {1, 7, 4, 5, 6, 4, 12}
+      pc_fighter_prog.known_reply_ids = {4, 9, 5}
+      app.managers[':adventure'].next_step = 'floor_loop'
+      flow:query_gamestate_type(':adventure')
+    end},
+    {"debug: rossmann fight", function(app)
+      app.game_session.floor_number = 5
+      app.game_session.fight_count = 10  -- just to avoid tutorials
+      -- don't let Rossmann send you back to 1F after fight
+      app.game_session:register_met_npc(gameplay_data.rossmann_fighter_id)
+      local pc_fighter_prog = app.game_session.pc_fighter_progression
+      pc_fighter_prog.max_hp = gameplay_data.max_hp_after_win_by_floor_number[4]
       pc_fighter_prog.known_attack_ids = {1, 7, 4, 5, 6, 4, 12}
       pc_fighter_prog.known_reply_ids = {4, 9, 5}
       app.managers[':adventure'].next_step = 'floor_loop'
@@ -50,7 +62,7 @@ main_menu.items = transform({
       app.game_session.floor_number = #gameplay_data.floors  -- last floor
       app.game_session.fight_count = 10  -- high count to avoid unwanted tutorials
       -- don't let Rossmann send you back to 1F after fight
-      app.game_session.met_npc_fighter_ids[gameplay_data.rossmann_fighter_id] = true
+      app.game_session:register_met_npc(gameplay_data.rossmann_fighter_id)
       local pc_fighter_prog = app.game_session.pc_fighter_progression
       pc_fighter_prog.max_hp = gameplay_data.max_hp_after_win_by_floor_number[4]
       pc_fighter_prog.known_attack_ids = {1, 2, 3, 4, 5, 6, 7, 8, 10}
@@ -62,7 +74,7 @@ main_menu.items = transform({
       app.game_session.floor_number = #gameplay_data.floors  -- last floor
       app.game_session.fight_count = 10
       -- don't let Rossmann send you back to 1F after fight
-      app.game_session.met_npc_fighter_ids[gameplay_data.rossmann_fighter_id] = true
+      app.game_session:register_met_npc(gameplay_data.rossmann_fighter_id)
       local pc_fighter_prog = app.game_session.pc_fighter_progression
       pc_fighter_prog.max_hp = gameplay_data.max_hp_after_win_by_floor_number[4]
       pc_fighter_prog.known_attack_ids = {1, 2, 3, 4, 5, 6, 7, 8, 10}
