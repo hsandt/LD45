@@ -265,6 +265,10 @@ function adventure_state:async_fight_aftermath()
     -- check if player lost or won previous fight
     local floor_number = gs.floor_number
     if fm.won_last_fight then
+      -- remember pc beat that npc (note we don't check this if forced_next_floor_number,
+      --  since it is meant for scripted events for unbeatable characters)
+      gs:register_beaten_npc(npc_fighter_id)
+
       -- remove existing npc first, as he lost
       am:despawn_npc()
 
@@ -602,8 +606,12 @@ local function async_after_fight_with_rossmann(self, npc_fighter_id)
     npc_speaker:say_and_wait_for_input("can't believe i lost to a brat...")
     pc_speaker:say_and_wait_for_input("ehe")
   else
-    npc_speaker:say_and_wait_for_input("just as i expected.")
-    pc_speaker:say_and_wait_for_input("damn!")
+    if gs:has_beaten_npc(npc_fighter_id) then
+      npc_speaker:say_and_wait_for_input("ha! this time i win!")
+    else
+      npc_speaker:say_and_wait_for_input("just as i expected.")
+      pc_speaker:say_and_wait_for_input("damn!")
+    end
   end
 end
 

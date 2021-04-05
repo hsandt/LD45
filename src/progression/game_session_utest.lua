@@ -26,7 +26,7 @@ describe('game_session', function ()
 
     it('should init a game_session', function ()
       local gs = game_session()
-      assert.are_same({gameplay_data.initial_floor, 0, {}}, {gs.floor_number, gs.fight_count, gs.met_npc_fighter_ids})
+      assert.are_same({gameplay_data.initial_floor, 0, {}, {}}, {gs.floor_number, gs.fight_count, gs.met_npc_fighter_ids, gs.beaten_npc_fighter_ids})
       assert.are_same(fighter_progression(character_types.pc, gameplay_data.pc_fighter_info), gs.pc_fighter_progression)
       assert.are_equal(fake_npc_fighter_prog1, gs.npc_fighter_progressions[1])
       assert.are_equal(fake_npc_fighter_prog2, gs.npc_fighter_progressions[2])
@@ -109,6 +109,32 @@ describe('game_session', function ()
       local gs = game_session()
       gs:register_met_npc(5)
       assert.is_true(gs.met_npc_fighter_ids[5])
+    end)
+
+  end)
+
+  describe('has_beaten_npc', function ()
+
+    it('should return true if npc was beaten', function ()
+      local gs = game_session()
+      gs.beaten_npc_fighter_ids = {[1] = true, [5] = true}
+      assert.is_true(gs:has_beaten_npc(5))
+    end)
+
+    it('should return true if npc was beaten', function ()
+      local gs = game_session()
+      gs.beaten_npc_fighter_ids = {[1] = true, [5] = true}
+      assert.is_false(gs:has_beaten_npc(4))
+    end)
+
+  end)
+
+  describe('register_beaten_npc', function ()
+
+    it('should add npc id to set of beaten npc ids', function ()
+      local gs = game_session()
+      gs:register_beaten_npc(5)
+      assert.is_true(gs.beaten_npc_fighter_ids[5])
     end)
 
   end)
