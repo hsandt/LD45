@@ -82,8 +82,8 @@ function dialogue_manager:remove_speaker(speaker)
 end
 
 -- prompt items: {menu_item}
-function dialogue_manager:prompt_items(items)
-  self.text_menu:show_items(items)
+function dialogue_manager:prompt_items(items, initial_selection)
+  self.text_menu:show_items(items, initial_selection)
 end
 
 function dialogue_manager:show_bottom_text_and_wait_for_input(text)

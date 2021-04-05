@@ -310,13 +310,13 @@ describe('dialogue_manager', function ()
           text_menu.show_items:clear()
         end)
 
-        it('should show items in text menu component', function ()
+        it('should show items in text menu component with initial_selection', function ()
           local fake_items = {}  -- dummy menu item sequence
-          d:prompt_items(fake_items)
+          d:prompt_items(fake_items, 2)
 
           local s = assert.spy(text_menu.show_items)
           s.was_called(1)
-          s.was_called_with(match.ref(d.text_menu), match.ref(fake_items))
+          s.was_called_with(match.ref(d.text_menu), match.ref(fake_items), 2)
         end)
 
       end)

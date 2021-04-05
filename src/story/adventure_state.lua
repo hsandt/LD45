@@ -311,11 +311,11 @@ function adventure_state:async_prompt_go_to_floor(next_floor, default_verb)
   local chosen_floor_number = nil
 
   -- first item is always to continue to next floor
-  local items = {
-    menu_item(default_verb.." "..next_floor.."f", function ()
-      chosen_floor_number = next_floor
-    end)
-  }
+  local items = {}
+
+  -- track iteration index to find the selection index of next floor
+  local i = 1
+  local next_floor_selection_index
 
   -- then, if zone starts aka checkpoints have been reached and are in a different zone than
   --   the next floor, add them as other choices
@@ -323,18 +323,27 @@ function adventure_state:async_prompt_go_to_floor(next_floor, default_verb)
   for zone = #gameplay_data.zone_start_floors, 1, -1 do
     local checkpoint_floor_number = gameplay_data.zone_start_floors[zone]
     if checkpoint_floor_number <= gs.max_unlocked_floor then
+      local item
       local next_zone = gameplay_data:get_zone(next_floor)
+
       if next_zone ~= zone then
         local verb_str = checkpoint_floor_number == gs.floor_number and "retry at" or "warp to"
-        local item = menu_item(verb_str.." "..checkpoint_floor_number.."f", function ()
+        item = menu_item(verb_str.." "..checkpoint_floor_number.."f", function ()
           chosen_floor_number = checkpoint_floor_number
         end)
-        add(items, item)
+      else
+        item = menu_item(default_verb.." "..next_floor.."f", function ()
+          chosen_floor_number = next_floor
+        end)
+        next_floor_selection_index = i
       end
+
+      add(items, item)
+      i = i + 1
     end
   end
 
-  dm:prompt_items(items)
+  dm:prompt_items(items, next_floor_selection_index)
 
   -- async wait for confirming a choice
   while not chosen_floor_number do
