@@ -1,19 +1,16 @@
+# Do not trigger Travis if commit message contains "(WIP)" or "#no_travis" (case-insensitive)
+if: commit_message !~ /(\(WIP\)|#no_travis)/
+
 os: linux
 
 language: python # Can use any language here, but if it's not 'python'
                  # it becomes necessary to pass '--user' to pip when installing hererocks.
 python: "3.6"
 
-# REMOVE, DEPRECATED
-# https://docs.travis-ci.com/user/reference/overview/
-# sudo: false      # Use container-based infrastructure.
-
 env:
-  - LUA_VERSION=5.3 ENABLE_RENDER=1
+  - LUA_VERSION=5.3 BUILD_VERSION=`cat data/version.txt` ENABLE_RENDER=1
 
 cache:
-  # REMOVE, DEPRECATED
-  # apt: true  # private repositories only
   directories:
     # remember to "travis cache --delete" in travis CL each time a custom cached directory needs upgrade (unlike cached packages)
     - hererocks     # for hererocks (make a parent folder, then install lua inside, to make sure the folder will be used as cache)
@@ -58,12 +55,13 @@ before_script:
   - ln -s "$(pwd)/tool/picotool-master/p8tool" "$HOME/.local/bin/p8tool"
 
 script:
+  # in the tests below, we don't pass `-m all` anymore because
+  #  we *do* want to ignore WIP tests flagged #mute
   # test (including rendered headless itests thanks to ENABLE_RENDER=1)
-  - ./test.sh -m all
+  - ./test.sh
   # coverage
   - bash <(curl -s https://codecov.io/bash)
-  # build game and itest to make sure everything works fine
-  - ./build_game.sh
-  - ./build_itest.sh
+  # build game to make sure everything works fine (only release in case we go over character limit)
+  - ./build_game.sh release
   # just to print advanced DB info so we can track balance progression over commits
   - LUA_PATH="pico-boots/src/?.lua;src/?.lua" lua src/debug/print_data.lua
