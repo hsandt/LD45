@@ -17,7 +17,7 @@ version=`cat "$data_path/version.txt"`
 # shift allows to pass extra arguments as $@
 config="$1"; shift
 
-run_cmd="pico8 -run build/v${version}_${config}/${cartridge_stem}_${config}.p8 -screenshot_scale 4 -gif_scale 4 $@"
+run_cmd="pico8 -run build/v${version}_${config}/${cartridge_stem}.p8 -screenshot_scale 4 -gif_scale 4 $@"
 
 # Support UNIX platforms without gnome-terminal by checking if the command exists
 # If you `reload.sh` the game, the separate terminal allows you to keep watching the program output,

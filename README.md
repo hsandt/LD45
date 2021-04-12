@@ -23,9 +23,9 @@ Insults are named "attacks" and comebacks are named "replies". They are both ref
 ### Run the game
 
 This game was made with [PICO-8](https://www.lexaloffle.com/pico-8.php), so there are different ways to play:
-- Download the HTML5 version, or go to the [itch.io page](https://hsandt.itch.io/wit-fighter) (WIP) to play in your browser
+- Download the HTML5 version, or go to the [itch.io page](https://komehara.itch.io/wit-fighter) (WIP) to play in your browser
 - Download one of the release binaries to play directly on Windows, OSX, Linux
-- If you own PICO-8, download the .p8 cartridge and run it inside PICO-8
+- If you own PICO-8, download the .p8 or .p8.png cartridge and run it inside PICO-8. However, the cartridge exceeds the maximum token limit (8192), so to play it, you need to patch your PICO-8 executable to support more tokens, by either following the procedure I described in [this thread](https://www.lexaloffle.com/bbs/?pid=71689#p) or applying the patches provided in [pico-boots/scripts/patches](https://github.com/hsandt/pico-boots/tree/develop/scripts/patches) (currently only provided for Linux, OSX and Windows runtime binaries; I will try to push patches for the editor, which you are probably using if you own PICO-8). You will need xdelta3 to apply the patches.
 
 ### Controls
 

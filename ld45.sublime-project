@@ -81,41 +81,41 @@
 			"working_dir": "${project_path}"
 		},
 		{
-			"name": "Game: build game",
+			"name": "Game: build and install game",
 			"working_dir": "${project_path}",
 			"shell": true,
-			"cmd": ["./build_game.sh debug"],
+			"cmd": ["./build_and_install_game.sh debug"],
 			"file_regex": "(.*\\.sh)(?:\\: line )([\\d]+)(?:\\:)([\\d]+)? (.*)",
 			"syntax": "Packages/Python/Python.sublime-syntax",
 			"variants":
 			[
 				{
 					"name": "debug",
-					"cmd": ["./build_game.sh debug"]
+					"cmd": ["./build_and_install_game.sh debug"]
 				},
 				{
 					"name": "debug-ultrafast",
-					"cmd": ["./build_game.sh debug-ultrafast"]
+					"cmd": ["./build_and_install_game.sh debug-ultrafast"]
 				},
 				{
 					"name": "cheat",
-					"cmd": ["./build_game.sh cheat"]
+					"cmd": ["./build_and_install_game.sh cheat"]
 				},
 				{
 					"name": "ultrafast",
-					"cmd": ["./build_game.sh ultrafast"]
+					"cmd": ["./build_and_install_game.sh ultrafast"]
 				},
 				{
 					"name": "cheat-ultrafast",
-					"cmd": ["./build_game.sh cheat-ultrafast"]
+					"cmd": ["./build_and_install_game.sh cheat-ultrafast"]
 				},
 				{
 					"name": "sandbox",
-					"cmd": ["./build_game.sh sandbox"]
+					"cmd": ["./build_and_install_game.sh sandbox"]
 				},
 				{
 					"name": "release",
-					"cmd": ["./build_game.sh release"]
+					"cmd": ["./build_and_install_game.sh release"]
 				}
 			]
 		},
@@ -128,41 +128,41 @@
 			"syntax": "Packages/Python/Python.sublime-syntax"
 		},
 		{
-			"name": "Game: build and reload or run",
+			"name": "Game: build, install and reload or run",
 			"working_dir": "${project_path}",
 			"shell": true,
-			"cmd": ["./build_game.sh debug && (./pico-boots/scripts/reload.sh || ./run_game.sh debug)"],
+			"cmd": ["./build_and_install_game.sh debug && (./pico-boots/scripts/reload.sh || ./run_game.sh debug)"],
 			"file_regex": "(.*\\.sh)(?:\\: line )([\\d]+)(?:\\:)([\\d]+)? (.*)",
 			"syntax": "Packages/Python/Python.sublime-syntax",
 			"variants":
 			[
 				{
 					"name": "debug",
-					"cmd": ["./build_game.sh debug && (./pico-boots/scripts/reload.sh || ./run_game.sh debug)"]
+					"cmd": ["./build_and_install_game.sh debug && (./pico-boots/scripts/reload.sh || ./run_game.sh debug)"]
 				},
 				{
 					"name": "debug-ultrafast",
-					"cmd": ["./build_game.sh debug-ultrafast && (./pico-boots/scripts/reload.sh || ./run_game.sh debug-ultrafast)"]
+					"cmd": ["./build_and_install_game.sh debug-ultrafast && (./pico-boots/scripts/reload.sh || ./run_game.sh debug-ultrafast)"]
 				},
 				{
 					"name": "cheat",
-					"cmd": ["./build_game.sh cheat && (./pico-boots/scripts/reload.sh || ./run_game.sh cheat)"]
+					"cmd": ["./build_and_install_game.sh cheat && (./pico-boots/scripts/reload.sh || ./run_game.sh cheat)"]
 				},
 				{
 					"name": "ultrafast",
-					"cmd": ["./build_game.sh ultrafast && (./pico-boots/scripts/reload.sh || ./run_game.sh ultrafast)"]
+					"cmd": ["./build_and_install_game.sh ultrafast && (./pico-boots/scripts/reload.sh || ./run_game.sh ultrafast)"]
 				},
 				{
 					"name": "cheat-ultrafast",
-					"cmd": ["./build_game.sh cheat-ultrafast && (./pico-boots/scripts/reload.sh || ./run_game.sh cheat-ultrafast)"]
+					"cmd": ["./build_and_install_game.sh cheat-ultrafast && (./pico-boots/scripts/reload.sh || ./run_game.sh cheat-ultrafast)"]
 				},
 				{
 					"name": "sandbox",
-					"cmd": ["./build_game.sh sandbox && (./pico-boots/scripts/reload.sh || ./run_game.sh sandbox)"]
+					"cmd": ["./build_and_install_game.sh sandbox && (./pico-boots/scripts/reload.sh || ./run_game.sh sandbox)"]
 				},
 				{
 					"name": "release",
-					"cmd": ["./build_game.sh release && (./pico-boots/scripts/reload.sh || ./run_game.sh release)"]
+					"cmd": ["./build_and_install_game.sh release && (./pico-boots/scripts/reload.sh || ./run_game.sh release)"]
 				}
 			]
 		},
@@ -236,24 +236,24 @@
 			]
 		},
 		{
-			"name": "Game: install cartridge",
+			"name": "Game: install single cartridge",
 			"working_dir": "${project_path}",
 			"shell": true,
-			"cmd": ["./install_cartridge.sh debug"],
+			"cmd": ["./install_single_cartridge.sh debug"],
 			"syntax": "Packages/Python/Python.sublime-syntax",
 			"variants":
 			[
 				{
 					"name": "debug",
-					"cmd": ["./install_cartridge.sh debug"]
+					"cmd": ["./install_single_cartridge.sh debug"]
 				},
 				{
 					"name": "cheat",
-					"cmd": ["./install_cartridge.sh cheat"]
+					"cmd": ["./install_single_cartridge.sh cheat"]
 				},
 				{
 					"name": "release",
-					"cmd": ["./install_cartridge.sh release"]
+					"cmd": ["./install_single_cartridge.sh release"]
 				}
 			]
 		},
@@ -270,10 +270,10 @@
 			"cmd": ["./upload_cartridge_release.sh"],
 		},
 		{
-			"name": "Game: build game release, export and patch it, upload it",
+			"name": "Game: build game release, install, export and patch it, upload it",
 			"working_dir": "${project_path}",
 			"shell": true,
-			"cmd": ["./build_game.sh release && ./install_cartridge.sh release && ./export_and_patch_cartridge_release.sh && ./upload_cartridge_release.sh"],
+			"cmd": ["./build_and_install_game.sh release && ./export_and_patch_cartridge_release.sh && ./upload_cartridge_release.sh"],
 		},
 		{
 			"name": "Game: test",

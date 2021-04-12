@@ -107,6 +107,7 @@ symbols+="manager"
   -p "$build_output_path"                                \
   -o "${cartridge_stem}"                                 \
   -c "$config"                                           \
+  --no-append-config                                     \
   -s "$symbols"                                          \
   --minify-level 3                                       \
   --unify ''
