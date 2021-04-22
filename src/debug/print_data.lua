@@ -32,6 +32,25 @@ local function get_matching_quotes_for_attack(attack_info)
   return matching_quotes_for_reply
 end
 
+local function get_npc_counter_vulnerability_count_table(npc_fighter_info)
+  local counter_vulnerability_count_table = {}
+
+  for attack_id in all(npc_fighter_info.initial_attack_ids) do
+    local attack_info = gameplay_data:get_quote(quote_types.attack, attack_id)
+    local matching_quotes_for_attack = get_matching_quotes_for_attack(attack_info)
+
+    for matching_quote_for_attack in all(matching_quotes_for_attack) do
+      -- initialize entry if needed
+      if not counter_vulnerability_count_table[matching_quote_for_attack.reply_id] then
+        counter_vulnerability_count_table[matching_quote_for_attack.reply_id] = 0
+      end
+      counter_vulnerability_count_table[matching_quote_for_attack.reply_id] = counter_vulnerability_count_table[matching_quote_for_attack.reply_id] + 1
+    end
+  end
+
+  return counter_vulnerability_count_table
+end
+
 local function get_attack_total_counter_vulnerability_from_matching_quotes(matching_quotes_for_attack)
   local total_counter_vulnerability = 0
   for matching_quote_for_attack in all(matching_quotes_for_attack) do
@@ -45,7 +64,7 @@ local function get_attack_total_counter_vulnerability(attack_info)
   return get_attack_total_counter_vulnerability_from_matching_quotes(matching_quotes_for_attack)
 end
 
-local function get_npc_attacks_average_vulnerability(npc_fighter_info)
+local function get_npc_attacks_average_counter_vulnerability(npc_fighter_info)
   local npc_attacks_total_counter_vulnerability = 0
   for attack_id in all(npc_fighter_info.initial_attack_ids) do
     local attack_info = gameplay_data:get_quote(quote_types.attack, attack_id)
@@ -141,6 +160,17 @@ local function get_unused_replies()
   end)
 end
 
+local function get_npc_attack_total_vulnerability(npc_fighter_info)
+  local attacks_total_vulnerability = 0
+
+  local attacks_working_against = get_attacks_working_against(npc_fighter_info)
+  for attack_info in all(attacks_working_against) do
+    attacks_total_vulnerability = attacks_total_vulnerability + attack_info.level
+  end
+
+  return attacks_total_vulnerability
+end
+
 local function print_attack_and_counters_of(attack_id)
   local attack_info = gameplay_data:get_quote(quote_types.attack, attack_id)
   printh(to_localized_debug_string(attack_info).." =>")
@@ -183,6 +213,17 @@ local function print_attacks_working_against(npc_fighter_id)
   end
 end
 
+local function print_counters_against(npc_fighter_id)
+  local npc_fighter_info = gameplay_data.npc_fighter_info_s[npc_fighter_id]
+  local counter_ids = get_npc_counter_vulnerability_count_table(npc_fighter_info)
+  printh("NPC "..npc_fighter_id.." '"..gameplay_data.npc_info_s[npc_fighter_info.character_info_id].name.."' has N attacks that can be countered by: (N as table value)")
+  -- pairs
+  for reply_id, matching_attacks_count in pairs(counter_ids) do
+    local reply_info = gameplay_data:get_quote(quote_types.reply, reply_id)
+    printh("  "..to_localized_debug_string(reply_info).." against "..matching_attacks_count.." attacks")
+  end
+end
+
 local function print_attacks_countered_by(npc_fighter_id)
   local npc_fighter_info = gameplay_data.npc_fighter_info_s[npc_fighter_id]
   local attacks_working_against = get_attacks_countered_by(npc_fighter_info)
@@ -192,10 +233,29 @@ local function print_attacks_countered_by(npc_fighter_id)
   end
 end
 
-local function print_npc_attacks_average_vulnerability(npc_fighter_id)
+local function print_npc_attacks_total_vulnerability(npc_fighter_id)
   local npc_fighter_info = gameplay_data.npc_fighter_info_s[npc_fighter_id]
-  printh("NPC "..npc_fighter_id.." '"..gameplay_data.npc_info_s[npc_fighter_info.character_info_id].name.."' attacks total counter vulnerability:")
-  printh(get_npc_attacks_average_vulnerability(npc_fighter_info))
+  printh("NPC "..npc_fighter_id.." '"..gameplay_data.npc_info_s[npc_fighter_info.character_info_id].name.."' attacks total vulnerability:")
+  printh(get_npc_attack_total_vulnerability(npc_fighter_info))
+end
+
+local function print_attacks_working_against(npc_fighter_id)
+  local npc_fighter_info = gameplay_data.npc_fighter_info_s[npc_fighter_id]
+  local attacks_working_against = get_attacks_working_against(npc_fighter_info)
+  printh("NPC "..npc_fighter_id.." '"..gameplay_data.npc_info_s[npc_fighter_info.character_info_id].name.."' weak against:")
+  for attack_info in all(attacks_working_against) do
+    -- DEPRECATED attacks (localized string id 0) have no replies,
+    -- so they would normally be considered uncounterable; ignore them instead
+    if attack_info.localized_string_id ~= 0 then
+      printh("  "..to_localized_debug_string(attack_info))
+    end
+  end
+end
+
+local function print_npc_attacks_average_counter_vulnerability(npc_fighter_id)
+  local npc_fighter_info = gameplay_data.npc_fighter_info_s[npc_fighter_id]
+  printh("NPC "..npc_fighter_id.." '"..gameplay_data.npc_info_s[npc_fighter_info.character_info_id].name.."' attacks average counter vulnerability:")
+  printh(get_npc_attacks_average_counter_vulnerability(npc_fighter_info))
 end
 
 local function print_npc_replies_total_power(npc_fighter_id)
@@ -243,7 +303,8 @@ end
 printh("=== NPC STATS ===\n")
 
 for i = 1, #gameplay_data.npc_fighter_info_s do
-  print_npc_attacks_average_vulnerability(i)
+  print_npc_attacks_total_vulnerability(i)
+  print_npc_attacks_average_counter_vulnerability(i)
   print_npc_replies_total_power(i)
   printh("")
 end
@@ -252,6 +313,13 @@ printh("=== NPC VULNERABILITIES ===\n")
 
 for i = 1, #gameplay_data.npc_fighter_info_s do
   print_attacks_working_against(i)
+  printh("")
+end
+
+printh("=== NPC COUNTER VULNERABILITIES ===\n")
+
+for i = 1, #gameplay_data.npc_fighter_info_s do
+  print_counters_against(i)
   printh("")
 end
 
