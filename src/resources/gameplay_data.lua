@@ -67,6 +67,11 @@ local replies = {
 
 -- see doc/quote_graph.dot edges
 -- (default penwidth for power 1, penwidth=22 for power 2, penwidth=34 for power 3)
+-- reply power levels (for player):
+-- [0] = "neutralized!"
+-- [1] = "ok"
+-- [2] = "smart!"
+-- [3] = "witty!"
 local quote_matches = {
   -- id, attack_id, reply_id, power
   quote_match_info( 1,  1,  6, 2),
@@ -120,6 +125,10 @@ local quote_matches = {
   quote_match_info(49, 18, 19, 3),
   quote_match_info(50, 19,  3, 2),
   quote_match_info(51, 19,  4, 1),
+  -- 5th wave
+  quote_match_info(52, 18,  9, 0),  -- setup.exe => plugin
+  quote_match_info(53, 13,  4, 2),  -- six hours => coffee
+  quote_match_info(54, 13,  3, 1),  -- six hours => photocopies
 }
 
 local floors = {
@@ -196,7 +205,7 @@ local npc_fighter_info_s = {
   fighter_info(6, 6, 4, 8, {2, 5, 12, 14, 18, 19}, {1, 3, 5, 6, 8, 10, 11, 14, 15}, audio_data.bgm.fight_boss),  -- ceo/boss
 
 --#if sandbox
-  fighter_info(7, 7, 99, 2, {8, 14, 19}, {15}),  -- debug man (longest quotes)
+  fighter_info(7, 7, 99, 5, {13, 18}, {15}),  -- debug man (testing 5th wave)
 --#endif
 }
 
