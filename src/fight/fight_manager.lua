@@ -411,12 +411,13 @@ function fight_manager:resolve_skip_attack(active_fighter)
     end
   end
 
-  -- if no stale, and active fighter had nothing to say in attack (forced to skip)
+  -- if no stale, and active fighter is NPC and had nothing to say in attack (forced to skip)
   --  nor reply, then it might as well give up instead of slowly dying
+  -- we do *not* enable this for PC simply because PC must continue fight to learn as much as possible!
   -- note: this can realistically happen when consume_reply, otherwise it's a no-issue
   -- therefore, if this code and the async method used costs too many chars and consume_reply = false
   --  in final release, just strip everything
-  if #active_fighter.available_attack_ids == 0 and #active_fighter.available_reply_ids == 0 then
+  if active_fighter.fighter_progression.character_type == character_types.pc and #active_fighter.available_attack_ids == 0 and #active_fighter.available_reply_ids == 0 then
     self.app:start_coroutine(self.async_start_abandon_by_silence, self, active_fighter, opponent)
     return
   end
