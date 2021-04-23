@@ -109,28 +109,28 @@ local visual_data = {
     [character_types.pc] = {
       [quote_types.attack] = {
         -- todo: support center mode in label to avoid changing x based on text length
-        [1] = label("direct hit!", vector(32, 53), colors.orange),
-        [2] = label("direct hit!", vector(32, 53), colors.orange),
-        [3] = label("direct hit!", vector(32, 53), colors.red)
+        [1] = label("direct hit!", vector(32, 53), colors.orange, colors.black),
+        [2] = label("direct hit!", vector(32, 53), colors.orange, colors.black),
+        [3] = label("direct hit!", vector(32, 53), colors.orange, colors.black)
       },
       [quote_types.reply] = {
-        [0] = label("neutralized!", vector(32, 53), colors.white),
-        [1] = label("countered!", vector(32, 53), colors.orange),
-        [2] = label("countered!", vector(32, 53), colors.orange),
-        [3] = label("countered!", vector(32, 53), colors.red)
+        [0] = label("neutralized!", vector(32, 53), colors.white, colors.black),
+        [1] = label("countered!", vector(32, 53), colors.orange, colors.black),
+        [2] = label("countered!", vector(32, 53), colors.orange, colors.black),
+        [3] = label("countered!", vector(32, 53), colors.orange, colors.black)
       }
     },
     [character_types.npc] = {
       [quote_types.attack] = {
-        [1] = label("direct hit!", vector(32, 53), colors.brown),
-        [2] = label("direct hit!", vector(32, 53), colors.brown),
-        [3] = label("direct hit!", vector(32, 53), colors.yellow)
+        [1] = label("direct hit!", vector(32, 53), colors.blue, colors.black),
+        [2] = label("direct hit!", vector(32, 53), colors.green, colors.black),
+        [3] = label("direct hit!", vector(32, 53), colors.yellow, colors.black)
       },
       [quote_types.reply] = {
-        [0] = label("neutralized!", vector(32, 53), colors.white),
-        [1] = label("ok", vector(32, 53), colors.brown),
-        [2] = label("smart!", vector(32, 53), colors.dark_green),
-        [3] = label("witty!", vector(32, 53), colors.indigo)
+        [0] = label("neutralized!", vector(32, 53), colors.white, colors.black),
+        [1] = label("ok", vector(32, 53), colors.blue, colors.black),
+        [2] = label("smart!", vector(32, 53), colors.green, colors.black),
+        [3] = label("witty!", vector(32, 53), colors.yellow, colors.black)
       }
     }
   },
