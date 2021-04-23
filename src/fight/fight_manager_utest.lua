@@ -380,12 +380,54 @@ describe('fight_manager', function ()
         s.was_called_with(match.ref(fm), match.ref(app.game_session.pc_fighter_progression), match.ref(mock_npc_fighter_prog))
       end)
 
-      it('should set active fighter index to opponent (2)', function ()
+      it('(pc knows no attacks) should set active fighter index to opponent (2)', function ()
+        app.game_session.pc_fighter_progression.known_attack_ids = {}
+
         fm:start_fight_with(mock_npc_fighter_prog)
 
         assert.are_equal(2, fm.active_fighter_index)
       end)
 
+      describe('(pc knows some attacks & stubbing random_int_bounds_inc)', function ()
+
+        local mock_random_value
+
+        setup(function ()
+          stub(_G, "random_int_bounds_inc", function ()
+            return mock_random_value
+          end)
+        end)
+
+        teardown(function ()
+          random_int_bounds_inc:revert()
+        end)
+
+        before_each(function ()
+          app.game_session.pc_fighter_progression.known_attack_ids = {1}
+        end)
+
+        after_each(function ()
+          random_int_bounds_inc:clear()
+          mock_random_value = nil
+        end)
+
+        it('(random returns 1) should set active fighter index randomly to pc (1)', function ()
+          mock_random_value = 1
+
+          fm:start_fight_with(mock_npc_fighter_prog)
+
+          assert.are_equal(1, fm.active_fighter_index)
+        end)
+
+        it('(random returns 2) should set active fighter index randomly to opponent (2)', function ()
+          mock_random_value = 2
+
+          fm:start_fight_with(mock_npc_fighter_prog)
+
+          assert.are_equal(2, fm.active_fighter_index)
+        end)
+
+      end)
 
       it('should request next fighter action', function ()
         fm:start_fight_with(mock_npc_fighter_prog)

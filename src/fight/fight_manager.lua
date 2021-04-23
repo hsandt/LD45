@@ -138,8 +138,16 @@ function fight_manager:start_fight_with(opponent_fighter_prog)
 
   self:spawn_fighters(self.app.game_session.pc_fighter_progression, opponent_fighter_prog)
 
-  -- start battle flow (opponent starts)
-  self.active_fighter_index = 2
+  -- if player character knows no attack, no need to say nothing on first turn,
+  --  so always give hand to the opponent
+  -- otherwise, starter is chosen randomly
+  if #self.app.game_session.pc_fighter_progression.known_attack_ids == 0 then
+    -- start battle flow (opponent starts)
+    self.active_fighter_index = 2
+  else
+    self.active_fighter_index = random_int_bounds_inc(1, 2)
+  end
+
   self:request_active_fighter_action()
 end
 

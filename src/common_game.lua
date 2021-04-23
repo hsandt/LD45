@@ -6,6 +6,7 @@
 
 require("engine/core/fun_helper")
 require("engine/core/seq_helper")
+require("engine/core/random")
 --#if minify_level3
 -- already required in string (and text_helper), but re-required for early definition
 -- (must be above require string)
