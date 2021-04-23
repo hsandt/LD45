@@ -206,17 +206,10 @@ itest_manager:register_itest('insta-kill ceo',
   wait(0.5)
   short_press(button_ids.o)
   wait(0.5)
-  short_press(button_ids.o)
-  wait(0.5)
-  short_press(button_ids.o)
-  wait(0.5)
-  short_press(button_ids.o)
-  wait(0.5)
-  short_press(button_ids.o)
 
   final_assert(function (app)
     -- we must have killed the opponent and be back to adventure
-    return flow.curr_state.type == ':main_menu', "current game state is not ':main_menu', has instead type: '"..flow.curr_state.type.."'"
+    return flow.curr_state.type == ':adventure', "current game state is not ':adventure', has instead type: '"..flow.curr_state.type.."'"
   end)
 
 end)
