@@ -205,7 +205,7 @@ local npc_fighter_info_s = {
   fighter_info(6, 6, 4, 8, {2, 5, 12, 14, 18, 19}, {1, 3, 5, 6, 8, 10, 11, 14, 15}, audio_data.bgm.fight_boss),  -- ceo/boss
 
 --#if sandbox
-  fighter_info(7, 7, 99, 5, {13, 18}, {15}),  -- debug man (testing 5th wave)
+  fighter_info(7, 7, 99, 5, {}, {}),  -- debug man (testing abandon when nothing to say)
 --#endif
 }
 

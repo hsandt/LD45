@@ -245,7 +245,8 @@ function fight_manager:request_human_fighter_action(human_fighter)
   if human_fighter.fighter_progression.control_type == control_types.human then
     if quote_type == quote_types.attack then
       -- PC (with human control) can voluntarily skip turn when attacking, unless the opponent
-      --   has just skipped (voluntarily or not) => voluntary stale prevention
+      --   has just skipped (in theory voluntarily or not, but with current AI it can only be unvoluntarily
+      --   because there are no attacks left) => voluntary stale prevention
       -- if PC has no attacks left, he can only skip (as with replies)
       if not self:get_active_fighter_opponent().has_just_skipped or #temp_available_quote_ids == 0 then
         add(temp_available_quote_ids, -1)
@@ -410,6 +411,16 @@ function fight_manager:resolve_skip_attack(active_fighter)
     end
   end
 
+  -- if no stale, and active fighter had nothing to say in attack (forced to skip)
+  --  nor reply, then it might as well give up instead of slowly dying
+  -- note: this can realistically happen when consume_reply, otherwise it's a no-issue
+  -- therefore, if this code and the async method used costs too many chars and consume_reply = false
+  --  in final release, just strip everything
+  if #active_fighter.available_attack_ids == 0 and #active_fighter.available_reply_ids == 0 then
+    self.app:start_coroutine(self.async_start_abandon_by_silence, self, active_fighter, opponent)
+    return
+  end
+
   self:wait_and_do(visual_data.skip_turn_delay,
     self.request_next_fighter_action, self)
 end
@@ -553,8 +564,16 @@ end
 
 function fight_manager:async_start_victory_by_stale(some_fighter)
   self.app:yield_delay_s(visual_data.start_victory_by_stale_delay)
-  some_fighter.character.speaker:say_and_wait_for_input("stale, uh? i have more hp, so i win!", true)
+  some_fighter.character.speaker:say_and_wait_for_input("stale, uh? i have more hp, so i win!")
   self:start_victory(some_fighter)
+end
+
+-- strip this if you need more chars and consume_reply = false in final release
+function fight_manager:async_start_abandon_by_silence(abandoning_fighter, winner)
+  -- just use same delay as async_start_victory_by_stale
+  self.app:yield_delay_s(visual_data.start_victory_by_stale_delay)
+  abandoning_fighter.character.speaker:say_and_wait_for_input("uh... i got nothing more to say. you win!")
+  self:start_victory(winner)
 end
 
 function fight_manager:start_victory(some_fighter)
