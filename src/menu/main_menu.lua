@@ -29,6 +29,7 @@ main_menu.items = transform({
       -- don't let Rossmann send you back to 1F after fight
       app.game_session:register_met_npc(gameplay_data.rossmann_fighter_id)
       local pc_fighter_prog = app.game_session.pc_fighter_progression
+      pc_fighter_prog.max_hp = gameplay_data.max_hp_after_first_tutorial
       pc_fighter_prog.known_attack_ids = {1, 7}  -- learned from rossmann
       pc_fighter_prog.known_reply_ids = {}
       app.managers[':adventure'].next_step = 'floor_loop'

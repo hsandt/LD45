@@ -51,7 +51,7 @@ local function register_fight_balance_itest(opponent_id, pc_max_hp, initial_atta
 end
 
 -- first fight with rossmann
--- register_fight_balance_itest(gameplay_data.rossmann_fighter_id, 3, {}, {})
+-- register_fight_balance_itest(gameplay_data.rossmann_fighter_id, 2, {}, {})
 
 -- jr accountant
 -- register_fight_balance_itest(1, 3, {1, 7}, {})  -- 1F: after rossmann, as in normal play
@@ -59,7 +59,7 @@ end
 -- register_fight_balance_itest(1, 3, {1, 7, 3, 5, 6}, {4})  -- 2F: possible knowledge after vs jr accountant (lose) vs jr designer (win)
 
 -- jr designer
--- register_fight_balance_itest(2, 3, {1, 7}, {})  -- 1F: after rossmann, as in normal play
+register_fight_balance_itest(2, 3, {1, 7}, {})  -- 1F: after rossmann, as in normal play
 -- register_fight_balance_itest(2, 3, {1, 7, 3, 5}, {4})  -- 1F: possible knowledge after vs jr accountant (lose)
 -- register_fight_balance_itest(2, 3, {1, 7, 6, 3, 4, 5}, {6, 4})  -- 2F: possible knowledge after vs jr designer (lose) vs jr accountant (win)
 
@@ -87,4 +87,4 @@ end
 -- -- register_fight_balance_itest(4, 4, {1, 7, 6, 3, 4, 5, 8, 10, 15, 17}, {6, 3, 9, 8, 10})  -- 3F: possible knowledge after path [B] + vs manager (lose) + vs programmer (lose)
 
 -- CEO
-register_fight_balance_itest(gameplay_data.ceo_fighter_id, 5, {1, 7, 4, 5, 6, 8, 9}, {3, 6, 10})
+-- register_fight_balance_itest(gameplay_data.ceo_fighter_id, 5, {1, 7, 4, 5, 6, 8, 9}, {3, 6, 10})
