@@ -171,11 +171,11 @@ describe('main_menu', function ()
           text_helper.print_centered:clear()
         end)
 
-        it('should print "wit fighter by komehara" centered, in white', function ()
+        it('should print "wit fighter [version] by komehara" centered, in white', function ()
           menu:draw_title()
 
           local s = assert.spy(text_helper.print_centered)
-          s.was_called(2)
+          s.was_called(3)
           -- no need to check what exactly is printed
         end)
 
