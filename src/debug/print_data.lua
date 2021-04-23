@@ -165,6 +165,7 @@ local function get_npc_attack_total_vulnerability(npc_fighter_info)
 
   local attacks_working_against = get_attacks_working_against(npc_fighter_info)
   for attack_info in all(attacks_working_against) do
+    -- use level as an indication of power (corresponds to direct hit)
     attacks_total_vulnerability = attacks_total_vulnerability + attack_info.level
   end
 
