@@ -127,11 +127,15 @@ function main_menu:draw_title()
   local y = 14
   text_helper.print_centered("* wit fighter *", 64, y, colors.white)
   y = y + 8
+  -- #version
+  -- PICO-8 cannot read data/version.txt, so exceptionally set the version manually here
+  text_helper.print_centered("v1.0+", 64, y, colors.white)
+  y = y + 8
   text_helper.print_centered("by komehara", 64, y, colors.white)
 end
 
 function main_menu:draw_instructions()
-  local y = 41
+  local y = 49
   text_helper.print_centered(text_helper.wwrap("learn verbal attacks and matching replies", 25), 64, y, colors.white)
   y = y + 15
   text_helper.print_centered(text_helper.wwrap("win to reach the top!", 25), 64, y, colors.white)

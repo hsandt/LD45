@@ -11,7 +11,7 @@ __lua__
 
 -- #version
 -- PICO-8 cannot read data/version.txt, so exceptionally set the version manually here
-local version = "1.0"
+local version = "1.0+"
 local export_folder = "wit_fighter/v"..version.."_release"
 local game_release_name = "wit_fighter_v"..version.."_release"
 local rel_png_folder = game_release_name.."_png_cartridges"
