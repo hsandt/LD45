@@ -1,6 +1,8 @@
 -- main entry file for serialize
 -- much simplified from main game cartridge, since we just serialize data into cartridge memory, save and exit
 
+-- this must be run as headless with `pico8 -x` so it can be executed at once and save the result cartridge
+
 -- we must require engine/pico8/api at the top of our main.lua, so API bridges apply to all modules
 require("engine/pico8/api")
 require("engine/common")
